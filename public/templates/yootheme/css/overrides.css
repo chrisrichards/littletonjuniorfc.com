@@ -46,6 +46,17 @@
   height: 300px;
 }
 
+/* Membership card alternation. custom.css's
+   `#membership>div>div:nth-child(1), nth-child(4)` makes cards 1 + 4 blue,
+   but the current live site renders cards 2 + 4 blue instead. Swap to
+   match what's live today. */
+#membership > div > div:nth-child(1) .el-item {
+  background-color: #464547 !important;
+}
+#membership > div > div:nth-child(2) .el-item {
+  background-color: #5da9dd !important;
+}
+
 #counters .el-content {
   font-family: 'BebasKai';
   font-size: 20px;
