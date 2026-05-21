@@ -1,5 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../content/settings/site.json';
+
+const counters = [
+  { count: site.counters.players, label: 'players' },
+  { count: site.counters.coaches, label: 'coaches' },
+  { count: site.counters.teams, label: 'teams' },
+  { count: site.counters.clubs, label: 'club' },
+];
 
 const homesquares = [
   { kind: 'text', heading: 'Origins', body: 'Littleton Junior Football Club was formed in 1974 by Les Elms for the Cubs of the 1st Winchester Scout Group. Today we provide coaching and competitive football for different age groups from under 6s to under 18s.' },
@@ -55,12 +63,7 @@ const sponsors = [
               uk-grid
             >
               {
-                [
-                  { count: 614, label: 'players' },
-                  { count: 113, label: 'coaches' },
-                  { count: 43, label: 'teams' },
-                  { count: 1, label: 'club' },
-                ].map(({ count, label }) => (
+                counters.map(({ count, label }) => (
                   <div>
                     <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
                       <div class="el-content uk-panel uk-margin-top">
