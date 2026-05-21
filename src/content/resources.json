@@ -40,8 +40,8 @@
     "section": "Forms & Guides",
     "title": "Littleton Rec bookings",
     "description": "Pitch booking system – coaches only.",
-    "href": "index.php?option=com_content&view=article&id=1&catid=2",
-    "action": "link",
+    "href": "/schedule",
+    "action": "visit",
     "order": 4
   },
   {

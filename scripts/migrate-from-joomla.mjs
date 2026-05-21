@@ -552,6 +552,14 @@ function main() {
     const $ = loadHtml(resourcesArticle.introtext);
     extractHeroAndH1($);
     const resources = extractResources($);
+    // Rewrite Joomla legacy URL on the "Littleton Rec bookings" card to point
+    // at our new /schedule route.
+    for (const r of resources) {
+      if (r.href.startsWith('index.php')) {
+        r.href = '/schedule';
+        r.action = 'visit';
+      }
+    }
     writeJSON(path.join(CONTENT_DIR, 'resources.json'), resources);
     console.log(`  ${resources.length} resource entries across ${new Set(resources.map((r) => r.section)).size} sections`);
   }
