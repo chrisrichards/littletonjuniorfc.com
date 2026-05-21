@@ -193,10 +193,13 @@ Short legal page: 2 intro paragraphs + a *Terms and Conditions* section with 5 b
    - `mod_jf_login` modal on `/schedule` — replaced by Cloudflare Access.
    - Email cloaking JS — replace with plain `mailto:` (decide policy with user).
    - "Components Anywhere" calendar embed — replaced by D1-backed view.
-3. **Social links are placeholders** — `https://facebook.com`, `https://twitter.com`, `https://pinterest.com`. Get real URLs from the user, or drop the row.
-4. **Stale content drift** — terms-conditions mentions £160 for 2019/20; membership says £200 for 2025/26. Flag both for the user to confirm.
-5. **Font licensing** — BebasKai and TradeGothic LT are commercial fonts. Confirm the license covers the new self-hosting on Cloudflare or swap for free equivalents.
-6. **Google Analytics presence** — decide: keep GA, switch to Cloudflare Web Analytics, or drop.
+
+### Resolved during the 2026-05-21 open-items review
+
+- ~~**Social link placeholders**~~ → **drop entirely** when porting inner pages (membership, schedule, terms, privacy). They were placeholder anchors to `facebook.com`/`twitter.com`/`pinterest.com` and the live site already hides them via `.sociallinks { display: none }`.
+- ~~**Google Analytics**~~ → **drop**. The `G-TCWH62LNZ9` tag won't be carried over. (Already omitted from `BaseLayout.astro`.)
+- ~~**Stale fee on terms-conditions**~~ → **update to £200/£180 for 2025/26** (matching `membership.html`) when porting that page.
+- ~~**Font licensing**~~ → **OK to self-host**. BebasKai + TradeGothic LT are licensed for the domain.
 
 ### URL preservation list
 
