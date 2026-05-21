@@ -1,0 +1,198 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  active?: 'home' | 'teams' | 'official-info' | 'membership' | 'resources' | 'contact-us';
+}
+
+const {
+  title,
+  description = 'Littleton Junior Football Club - boys and girls football from 5 to 18',
+  active,
+} = Astro.props;
+
+const navLeft = [
+  { href: '/', label: 'Home', key: 'home' },
+  { href: '/teams', label: 'Teams', key: 'teams' },
+  { href: '/official-info', label: 'Official<br/>Info', key: 'official-info' },
+];
+
+const navRight = [
+  { href: '/membership', label: 'Membership', key: 'membership' },
+  { href: '/resources', label: 'Resources', key: 'resources' },
+  { href: '/contact-us', label: 'Contact<br/>Us', key: 'contact-us' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en-gb" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <link rel="shortcut icon" href="/favico-96.png" />
+    <link rel="apple-touch-icon-precomposed" href="/ljfc-ico-180.png" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+
+    <link rel="stylesheet" href="/templates/yootheme/css/theme.css" id="theme-style-css" />
+    <link rel="stylesheet" href="/templates/yootheme/css/custom.css" id="theme-custom-css" />
+    <link rel="stylesheet" href="/templates/yootheme/css/overrides.css" id="theme-overrides-css" />
+
+    <script src="/templates/yootheme/vendor/assets/uikit/dist/js/uikit.min.js" is:inline></script>
+    <script src="/templates/yootheme/vendor/assets/uikit/dist/js/uikit-icons.min.js" is:inline></script>
+  </head>
+  <body class="">
+    <div class="tm-page-container uk-clearfix">
+      <div class="tm-page uk-margin-auto">
+        {/* Mobile header */}
+        <div class="tm-header-mobile uk-hidden@m">
+          <div class="uk-navbar-container">
+            <nav uk-navbar>
+              <div class="uk-navbar-left">
+                <a class="uk-navbar-toggle" href="#tm-mobile" uk-toggle>
+                  <div uk-navbar-toggle-icon></div>
+                </a>
+              </div>
+              <div class="uk-navbar-center">
+                <a class="uk-navbar-item uk-logo" href="/">
+                  <img
+                    alt=""
+                    src="/templates/yootheme/cache/ljfc-logo-34eb6b42.png"
+                    srcset="/templates/yootheme/cache/ljfc-logo-34eb6b42.png 424w"
+                    sizes="(min-width: 424px) 424px"
+                    width="424"
+                    height="414"
+                  />
+                </a>
+              </div>
+            </nav>
+          </div>
+
+          <div id="tm-mobile" uk-offcanvas="mode: reveal; overlay: true">
+            <div class="uk-offcanvas-bar">
+              <button class="uk-offcanvas-close" type="button" uk-close></button>
+              <div class="uk-child-width-1-1" uk-grid>
+                <div>
+                  <div class="uk-panel">
+                    <ul class="uk-nav uk-nav-default">
+                      {
+                        [...navLeft, ...navRight].map((item) => (
+                          <li class={active === item.key ? 'uk-active' : ''}>
+                            <a href={item.href} set:html={item.label} />
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop header */}
+        <div class="tm-header uk-visible@m" uk-header>
+          <div class="uk-navbar-container">
+            <div class="uk-container">
+              <nav
+                class="uk-navbar"
+                uk-navbar='{"align":"left","boundary":"!.uk-navbar-container"}'
+              >
+                <div class="uk-navbar-center">
+                  <div class="uk-navbar-center-left uk-preserve-width">
+                    <div>
+                      <ul class="uk-navbar-nav">
+                        {
+                          navLeft.map((item) => (
+                            <li class={active === item.key ? 'uk-active' : ''}>
+                              <a href={item.href} set:html={item.label} />
+                            </li>
+                          ))
+                        }
+                      </ul>
+                    </div>
+                  </div>
+
+                  <a href="/" class="uk-navbar-item uk-logo">
+                    <img
+                      alt=""
+                      src="/templates/yootheme/cache/ljfc-logo-34eb6b42.png"
+                      srcset="/templates/yootheme/cache/ljfc-logo-34eb6b42.png 424w"
+                      sizes="(min-width: 424px) 424px"
+                      width="424"
+                      height="414"
+                    />
+                  </a>
+
+                  <div class="uk-navbar-center-right uk-preserve-width">
+                    <div>
+                      <ul class="uk-navbar-nav">
+                        {
+                          navRight.map((item) => (
+                            <li class={active === item.key ? 'uk-active' : ''}>
+                              <a href={item.href} set:html={item.label} />
+                            </li>
+                          ))
+                        }
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
+
+        <slot />
+
+        {/* Footer */}
+        <div id="footer-1" class="uk-section-default uk-section">
+          <div class="uk-container">
+            <div class="uk-grid-margin" uk-grid>
+              <div class="uk-width-1-1@m">
+                <div class="footer uk-margin" id="footer-4">
+                  <p>
+                    © Littleton Junior Football Club | <a href="/privacy-policy">Privacy</a> |
+                    <a href="/terms-conditions">Terms</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Page-level overrides moved to public/templates/yootheme/css/overrides.css
+        and loaded via <link> above. Astro's <style is:global> in dev mode
+        loads styles via Vite HMR which had timing/cache quirks. */}
+
+    <script src="/templates/yootheme/js/theme.js" is:inline></script>
+    <script is:inline>
+      // Counter animation lifted from the live site's inline JS.
+      // Runs once on DOMContentLoaded. Looks for .counter[data-count].
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.counter').forEach(function (el) {
+          var target = parseInt(el.getAttribute('data-count'), 10) || 0;
+          var start = 0;
+          var duration = 2000;
+          var startTime = null;
+          function step(ts) {
+            if (!startTime) startTime = ts;
+            var progress = Math.min((ts - startTime) / duration, 1);
+            // ease-out
+            var eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(start + (target - start) * eased).toString();
+            if (progress < 1) requestAnimationFrame(step);
+            else el.textContent = target.toString();
+          }
+          requestAnimationFrame(step);
+        });
+      });
+    </script>
+  </body>
+</html>

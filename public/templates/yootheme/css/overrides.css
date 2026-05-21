@@ -1,0 +1,112 @@
+/*
+ * Page-level overrides translated from the live site's inline <style> blocks.
+ * The live YOOtheme HTML used #page\#N ids (e.g. #page\#12) baked into the
+ * builder. We translate to clean hyphenated ids on the rebuilt pages.
+ *
+ * Load this AFTER theme.css and custom.css.
+ */
+
+/* ── Shared chrome ────────────────────────────────────────────── */
+
+#footer-4 {
+  padding: 15px 38px;
+  background-color: #464547;
+  color: #fff;
+}
+#footer-1 {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Two-part nav fix:
+   1. align-items: flex-start so the first line of multi-line items
+      (Official\nInfo, Contact\nUs) baselines with single-line items
+      (Home, Teams, Membership, Resources).
+   2. Bump padding-top so the (now top-anchored) text sits below the
+      white underline at `.uk-navbar-nav:before` { top: 15px }. The
+      original `padding: 14px 26px 0` puts text right against the line
+      when combined with flex-start. */
+.tm-header .uk-navbar-nav > li > a {
+  align-items: flex-start;
+  padding-top: 26px;
+}
+
+/* ── Home page ────────────────────────────────────────────────── */
+
+#hero {
+  margin-top: -246px;
+}
+
+#counters .el-content {
+  font-family: 'BebasKai';
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 15px;
+  left: 15px;
+}
+#counters .el-content h3 {
+  font-size: 110px;
+  line-height: 110px;
+  margin: -15px 0 0;
+}
+#counters .el-content p {
+  margin: 0;
+  line-height: 20px;
+}
+#counters .uk-grid-match.uk-grid > div:after {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+#homesquares-section {
+  padding-top: 0;
+}
+#homesquares .el-content h2 {
+  color: #5da9dd;
+  font-size: 46px;
+}
+#homesquares .el-content {
+  font-size: 18px;
+  color: #fff;
+  line-height: 24px;
+  font-weight: 400;
+  margin: 0 25%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 15px;
+  left: 15px;
+}
+#homesquares .el-item > .uk-margin-top a {
+  background-color: #5da9dd;
+  color: #fff;
+}
+#homesquares div[data-tag='Download'] .el-item > .uk-margin-top:last-of-type {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+}
+
+#sponsors-section {
+  padding-top: 0;
+  margin-bottom: 0 !important;
+}
+#sponsors .uk-grid-match.uk-grid > div:after {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+#sponsors .el-image {
+  position: absolute;
+  top: 0;
+  transform: none;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
