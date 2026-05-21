@@ -47,7 +47,7 @@ const { image, title, variant = 'image' } = Astro.props;
           )
         }
       </div>
-      {title && variant !== 'plain' && <h1 class="headerText">{title}</h1>}
+      {title && variant !== 'plain' && <h1 class="headerText" set:html={title} />}
     </div>
   </div>
 </div>
