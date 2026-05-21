@@ -6,47 +6,54 @@ import Hero from '../components/Hero.astro';
 const teams = await getCollection('teams');
 teams.sort((a, b) => a.data.order - b.data.order);
 
-// Chunk into rows of 4 for the navigation grid (matches the live 4-col layout).
-function chunk<T>(arr: T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-  return out;
+// Group ages into 4 quartiles of 4 to mirror the Joomla nav rows
+// (#u6-9, #u10-13, #u14-17, #u18-pan). Each row is padded to 4 cards.
+const rowClasses = ['first', 'second', 'third', 'fourth'] as const;
+const rowIds = ['u6-9', 'u10-13', 'u14-17', 'u18-pan'] as const;
+
+type Team = (typeof teams)[number];
+const rows: { id: string; cls: string; teams: Team[]; padCount: number }[] = [];
+for (let i = 0; i < 4; i++) {
+  const slice = teams.slice(i * 4, i * 4 + 4);
+  rows.push({
+    id: rowIds[i],
+    cls: rowClasses[i],
+    teams: slice,
+    padCount: Math.max(0, 4 - slice.length),
+  });
 }
 
-const navRows = chunk(teams, 4);
+// For each team's hidden panel: pad squad-card-pairs to a multiple of 4 cards.
+function panelPad(squadCount: number): number {
+  const cards = squadCount * 2;
+  const mod = cards % 4;
+  return mod === 0 ? 0 : 4 - mod;
+}
 ---
 
 <BaseLayout title="Teams | Littleton Junior FC" active="teams">
   <Hero variant="image" image="/images/heros/teams.jpg" title="Teams" />
 
-  <div class="contactus">
-    {/* Age-group navigation — clicking MORE scrolls to that age's squad section */}
-    {
-      navRows.map((row, rowIdx) => (
-        <div class="uk-section-default uk-section">
+  {
+    rows.map((row, idx) => (
+      <>
+        <div id={`alternates${idx + 1}`} class="uk-section-default uk-section">
           <div class="uk-container">
             <div class="uk-grid-margin" uk-grid>
               <div class="uk-width-1-1@m">
-                <div
-                  class:list={[
-                    'alternates',
-                    rowIdx % 2 === 0 ? 'first' : 'second',
-                    'contacts',
-                    'uk-margin',
-                    'uk-text-left',
-                  ]}
-                >
-                  <div class="js-filter uk-child-width-1-2 uk-child-width-1-4@m uk-grid-match" uk-grid>
-                    {row.map((t) => (
+                <div id={row.id} class:list={['alternates', row.cls, 'uk-margin', 'uk-text-left']}>
+                  <div class="uk-child-width-1-4 uk-grid-match" uk-grid>
+                    {row.teams.map((t) => (
                       <div>
                         <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
                           <div class="el-content uk-panel uk-margin-top">
                             <h2>{t.data.age}</h2>
-                            <p>{t.data.yearLabel}</p>
+                            <p set:html={t.data.yearLabel.replace(' / ', '<br>')} />
                           </div>
                           <div class="uk-margin-top">
                             <a
-                              href={`#squads-${t.data.id}`}
+                              href={`#${t.data.id}`}
+                              data-panel-target={t.data.id}
                               class="el-link uk-button uk-button-default"
                             >
                               More
@@ -55,54 +62,9 @@ const navRows = chunk(teams, 4);
                         </div>
                       </div>
                     ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))
-    }
-
-    {/* Per-age squad detail sections */}
-    {
-      teams.map((t) => (
-        <div id={`squads-${t.data.id}`} class="uk-section-default uk-section">
-          <div class="uk-container">
-            <div class="info uk-grid-margin" uk-grid>
-              <div class="uk-width-1-1@m">
-                <div
-                  class:list={['alternates', 'second', 'contacts', 'uk-margin', 'uk-text-left']}
-                >
-                  <div class="uk-child-width-1-2 uk-child-width-1-4@m uk-grid-match" uk-grid>
-                    {/* Header card with the age label */}
-                    <div>
-                      <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                        <div class="el-content uk-panel uk-margin-top">
-                          <h2>{t.data.age}</h2>
-                          <p>{t.data.yearLabel}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Squads in this age group */}
-                    {t.data.squads.map((s) => (
+                    {Array.from({ length: row.padCount }).map(() => (
                       <div>
-                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                          <div class="el-content uk-panel uk-margin-top">
-                            <h2>{s.name}</h2>
-                            <h4>Contact</h4>
-                            <p>{s.managerName}</p>
-                          </div>
-                          <div class="uk-margin-top">
-                            <a
-                              href={`mailto:${s.managerEmail}`}
-                              class="el-link uk-button uk-button-default"
-                            >
-                              Email
-                            </a>
-                          </div>
-                        </div>
+                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child" />
                       </div>
                     ))}
                   </div>
@@ -111,7 +73,108 @@ const navRows = chunk(teams, 4);
             </div>
           </div>
         </div>
-      ))
-    }
-  </div>
+
+        {row.teams.map((t) => (
+          <div id={t.data.id} class="hiddenbox uk-section-default uk-section">
+            <div class="uk-container">
+              <div class="info uk-grid-margin" uk-grid>
+                <div class="uk-width-1-1@m">
+                  <div class="uk-margin">
+                    <div class="uk-child-width-1-1 uk-child-width-1-4@m uk-grid-match" uk-grid>
+                      {t.data.squads.map((s) => (
+                        <>
+                          <div>
+                            <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
+                              <div class="el-content uk-panel uk-margin-top">
+                                <h2>{s.name}</h2>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
+                              <div class="el-content uk-panel uk-margin-top">
+                                <h4>Contact</h4>
+                                <p>{s.managerName}</p>
+                              </div>
+                              <div class="uk-margin-top">
+                                <a
+                                  href={`mailto:${s.managerEmail}`}
+                                  class="el-link uk-button uk-button-default"
+                                >
+                                  Email
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      ))}
+                      {Array.from({ length: panelPad(t.data.squads.length) }).map(() => (
+                        <div>
+                          <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </>
+    ))
+  }
+
+  <script is:inline>
+    (function () {
+      var openPanel = null;
+
+      function closePanel() {
+        if (!openPanel) return;
+        openPanel.style.display = '';
+        var x = openPanel.querySelector('.closeMe');
+        if (x) x.remove();
+        openPanel = null;
+      }
+
+      function openPanelEl(panel) {
+        if (openPanel === panel) {
+          closePanel();
+          return;
+        }
+        closePanel();
+        panel.style.display = 'block';
+        if (!panel.querySelector('.closeMe')) {
+          var btn = document.createElement('a');
+          btn.className = 'closeMe';
+          btn.href = '#';
+          btn.setAttribute('aria-label', 'Close');
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            closePanel();
+          });
+          panel.appendChild(btn);
+        }
+        openPanel = panel;
+        // defer scroll so display:block takes effect first
+        requestAnimationFrame(function () {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+
+      document.querySelectorAll('a[data-panel-target]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          var id = a.getAttribute('data-panel-target');
+          var panel = document.getElementById(id);
+          if (panel) openPanelEl(panel);
+        });
+      });
+
+      // Open panel if the page loads with a matching hash (e.g. /teams#u11).
+      if (window.location.hash) {
+        var target = document.getElementById(window.location.hash.slice(1));
+        if (target && target.classList.contains('hiddenbox')) openPanelEl(target);
+      }
+    })();
+  </script>
 </BaseLayout>
