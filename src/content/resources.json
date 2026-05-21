@@ -1,0 +1,344 @@
+[
+  {
+    "id": "general-our-ethos",
+    "section": "General",
+    "title": "Our ethos",
+    "description": "Download our club's ethos document here.",
+    "href": "images/downloads/Club_Ethos_2021_pb3.pdf",
+    "action": "download",
+    "order": 0
+  },
+  {
+    "id": "general-player-development",
+    "section": "General",
+    "title": "Player Development",
+    "description": "Download our club's player development plan here.",
+    "href": "images/downloads/LJFC_Player_Development.pdf",
+    "action": "download",
+    "order": 1
+  },
+  {
+    "id": "forms-guides-membership",
+    "section": "Forms & Guides",
+    "title": "Membership",
+    "description": "Instructions for joining the club. NB this must be agreed first with a year rep (see Contact Us page).",
+    "href": "images/downloads/LJFC_Registration_2025-26.pdf",
+    "action": "download",
+    "order": 2
+  },
+  {
+    "id": "forms-guides-dbs-checks",
+    "section": "Forms & Guides",
+    "title": "DBS checks",
+    "description": "Instructions on how to apply for a DBS background check – compulsory for all football coaches.",
+    "href": "images/downloads/LJFC_DBS_Instructions.pdf",
+    "action": "download",
+    "order": 3
+  },
+  {
+    "id": "forms-guides-littleton-rec-bookings",
+    "section": "Forms & Guides",
+    "title": "Littleton Rec bookings",
+    "description": "Pitch booking system – coaches only.",
+    "href": "index.php?option=com_content&view=article&id=1&catid=2",
+    "action": "link",
+    "order": 4
+  },
+  {
+    "id": "forms-guides-other-pitch-bookings",
+    "section": "Forms & Guides",
+    "title": "Other pitch bookings",
+    "description": "Guide to booking KGV pitches and Garrison Ground.",
+    "href": "images/downloads/LJFC_Pitch_Bookings_2025.pdf",
+    "action": "download",
+    "order": 5
+  },
+  {
+    "id": "forms-guides-incident-form",
+    "section": "Forms & Guides",
+    "title": "Incident Form",
+    "description": "Use this form to tell the club about any injuries or accidents that occur during training or matches.",
+    "href": "images/downloads/LJFC_Incident_Form.pdf",
+    "action": "download",
+    "order": 6
+  },
+  {
+    "id": "forms-guides-expense-claims",
+    "section": "Forms & Guides",
+    "title": "Expense Claims",
+    "description": "Use this form to claim back expenses.",
+    "href": "https://form.jotform.com/241992784670369",
+    "action": "link",
+    "order": 7
+  },
+  {
+    "id": "leagues-edmsl",
+    "section": "Leagues",
+    "title": "EDMSL",
+    "description": "Eastleigh and District Mini Soccer League for U7–U10s.",
+    "href": "https://fulltime.thefa.com/ff/LeagueDetails?leagueid=2797776",
+    "action": "link",
+    "order": 8
+  },
+  {
+    "id": "leagues-tyro",
+    "section": "Leagues",
+    "title": "Tyro",
+    "description": "Southampton and District Tyro Football League for U11–U15.",
+    "href": "https://fulltime.thefa.com/ff/LeagueDetails?leagueid=223592985",
+    "action": "link",
+    "order": 9
+  },
+  {
+    "id": "leagues-testway",
+    "section": "Leagues",
+    "title": "Testway",
+    "description": "Testway Youth Football League for U7–U18s.",
+    "href": "https://fulltime.thefa.com/ff/LeagueDetails?leagueid=915343751",
+    "action": "link",
+    "order": 10
+  },
+  {
+    "id": "leagues-csyfl",
+    "section": "Leagues",
+    "title": "CSYFL",
+    "description": "City of Southampton Youth Football League for U16–U18s.",
+    "href": "https://www.ourkidssports.com/Leagues/profile/id/26/agegroups/show",
+    "action": "link",
+    "order": 11
+  },
+  {
+    "id": "the-fa-the-fa",
+    "section": "The FA",
+    "title": "THE FA",
+    "description": "Everything you need to know about playing football in the UK from the governing body.",
+    "href": "http://www.thefa.com/",
+    "action": "link",
+    "order": 12
+  },
+  {
+    "id": "the-fa-fa-whole-game-system",
+    "section": "The FA",
+    "title": "fa whole game system",
+    "description": "Where all players are registered for any FA affiliated league.",
+    "href": "http://www.thefa.com/get-involved/more/whole-game",
+    "action": "link",
+    "order": 13
+  },
+  {
+    "id": "the-fa-fa-full-time",
+    "section": "The FA",
+    "title": "fa full time",
+    "description": "Where all league fixtures and results (for U12 upwards) are held.",
+    "href": "https://fulltime.thefa.com/ff",
+    "action": "link",
+    "order": 14
+  },
+  {
+    "id": "the-fa-fa-anti-bullying-policy",
+    "section": "The FA",
+    "title": "fa anti-bullying policy",
+    "description": "The anti-bulling policy we adhere to.",
+    "href": "images/downloads/FA-anti-bullying-policy-for-clubs.pdf",
+    "action": "download",
+    "order": 15
+  },
+  {
+    "id": "coaching-tools-the-coaching-manual",
+    "section": "Coaching Tools",
+    "title": "The Coaching Manual",
+    "description": "All club coaches have access to The Coaching Manual's library of training resources.",
+    "href": "https://www.thecoachingmanual.com/",
+    "action": "link",
+    "order": 16
+  },
+  {
+    "id": "coaching-tools-soccerxpert",
+    "section": "Coaching Tools",
+    "title": "SoccerXpert",
+    "description": "Over 160 free soccer drills searchable by age group and type of drill.",
+    "href": "https://www.soccerxpert.com/",
+    "action": "link",
+    "order": 17
+  },
+  {
+    "id": "coaching-tools-footy4kids",
+    "section": "Coaching Tools",
+    "title": "Footy4kids",
+    "description": "Tips and drills for all ages.",
+    "href": "https://www.footy4kids.co.uk/",
+    "action": "link",
+    "order": 18
+  },
+  {
+    "id": "coaching-tools-soccer-coach-weekly",
+    "section": "Coaching Tools",
+    "title": "Soccer Coach Weekly",
+    "description": "Tips and drills searchable by age group and type of drill.",
+    "href": "https://www.soccercoachweekly.net/soccer-drills-and-skills/",
+    "action": "link",
+    "order": 19
+  },
+  {
+    "id": "coaching-tools-the-boot-room",
+    "section": "Coaching Tools",
+    "title": "The Boot Room",
+    "description": "The FA’s coaching site using articles and video.",
+    "href": "http://www.thefa.com/learning/coaching",
+    "action": "link",
+    "order": 20
+  },
+  {
+    "id": "coaching-tools-boot-room-foundation",
+    "section": "Coaching Tools",
+    "title": "Boot Room Foundation",
+    "description": "The FA’s coaching site specifically for U5–U11.",
+    "href": "http://www.thefa.com/learning/england-dna-foundation-phase",
+    "action": "link",
+    "order": 21
+  },
+  {
+    "id": "coaching-tools-opportunity-elite",
+    "section": "Coaching Tools",
+    "title": "Opportunity Elite",
+    "description": "A video of 30 ball mastery skills for all age groups.",
+    "href": "https://www.youtube.com/watch?time_continue=2&v=ACzH9s-t_Ko",
+    "action": "link",
+    "order": 22
+  },
+  {
+    "id": "coaching-tools-sports-survival-guide",
+    "section": "Coaching Tools",
+    "title": "Sports Survival Guide",
+    "description": "Over 900 free soccer drills by age groups and drill types.",
+    "href": "https://www.sportsmomsurvivalguide.com/soccer-coaching-drills/",
+    "action": "link",
+    "order": 23
+  },
+  {
+    "id": "venue-guides-littleton-recreation-ground",
+    "section": "Venue Guides",
+    "title": "Littleton Recreation Ground",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_Littleton_Rec_2025.pdf",
+    "action": "download",
+    "order": 24
+  },
+  {
+    "id": "venue-guides-king-george-v-playing-fields",
+    "section": "Venue Guides",
+    "title": "King George V Playing Fields",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_KGV.pdf",
+    "action": "download",
+    "order": 25
+  },
+  {
+    "id": "venue-guides-bar-end-astro",
+    "section": "Venue Guides",
+    "title": "Bar End astro",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_Bar_End.pdf",
+    "action": "download",
+    "order": 26
+  },
+  {
+    "id": "venue-guides-the-garrison-ground",
+    "section": "Venue Guides",
+    "title": "The Garrison Ground",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_Garrison.pdf",
+    "action": "download",
+    "order": 27
+  },
+  {
+    "id": "venue-guides-the-henry-beaufort-school",
+    "section": "Venue Guides",
+    "title": "The Henry Beaufort School",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_Henry_Beaufort.pdf",
+    "action": "download",
+    "order": 28
+  },
+  {
+    "id": "venue-guides-st-peter-s-catholic-primary",
+    "section": "Venue Guides",
+    "title": "St Peter's Catholic Primary",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_St_Peters.pdf",
+    "action": "download",
+    "order": 29
+  },
+  {
+    "id": "venue-guides-river-park-astro",
+    "section": "Venue Guides",
+    "title": "River Park Astro",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_River_Park.pdf",
+    "action": "download",
+    "order": 30
+  },
+  {
+    "id": "venue-guides-north-walls-recreation-ground",
+    "section": "Venue Guides",
+    "title": "North Walls Recreation Ground",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_North_Walls.pdf",
+    "action": "download",
+    "order": 31
+  },
+  {
+    "id": "venue-guides-hunter-park",
+    "section": "Venue Guides",
+    "title": "Hunter Park",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_Hunter_Park.pdf",
+    "action": "download",
+    "order": 32
+  },
+  {
+    "id": "venue-guides-sir-john-moore-barracks",
+    "section": "Venue Guides",
+    "title": "Sir John Moore Barracks",
+    "description": "Including location and emergency action plan.",
+    "href": "images/downloads/Venue_Pack_ATR.pdf",
+    "action": "download",
+    "order": 33
+  },
+  {
+    "id": "kit-ordering-instructions",
+    "section": "Kit ordering",
+    "title": "Instructions",
+    "description": "Instructions for ordering LJFC kit.",
+    "href": "images/downloads/LJFC_Kit_2024-25.pdf",
+    "action": "download",
+    "order": 34
+  },
+  {
+    "id": "kit-ordering-pendle-kit-store",
+    "section": "Kit ordering",
+    "title": "Pendle kit store",
+    "description": "Purchase additional LJFC training kit online (please read instructions above first).",
+    "href": "https://littleton-junior-fc.pendlesportswear.co.uk",
+    "action": "link",
+    "order": 35
+  },
+  {
+    "id": "kit-ordering-macron-order-form",
+    "section": "Kit ordering",
+    "title": "Macron order form",
+    "description": "Order form for ordering LJFC match kit (please read instructions above first).",
+    "href": "https://www.macronlondonsoutheast.com/littleton-junior-fc-1095-c.asp",
+    "action": "link",
+    "order": 36
+  },
+  {
+    "id": "kit-ordering-match-kit-size-guide",
+    "section": "Kit ordering",
+    "title": "Match kit size guide",
+    "description": "Macron size charts.",
+    "href": "images/downloads/LJFC_MACRON_SIZE_CHART_2022.pdf",
+    "action": "download",
+    "order": 37
+  }
+]

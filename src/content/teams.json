@@ -1,0 +1,321 @@
+[
+  {
+    "id": "u6",
+    "age": "U6",
+    "yearLabel": "Nursery / Year 1",
+    "squads": [
+      {
+        "name": "Nursery",
+        "managerName": "Phil Denny",
+        "managerEmail": "littletonjuniorfc25@gmail.com"
+      }
+    ],
+    "order": 0
+  },
+  {
+    "id": "u7",
+    "age": "U7",
+    "yearLabel": "Nursery / Year 2",
+    "squads": [
+      {
+        "name": "Nursery",
+        "managerName": "Ed Green-Wilkinson",
+        "managerEmail": "littletonjuniorfc24@gmail.com"
+      }
+    ],
+    "order": 1
+  },
+  {
+    "id": "u8",
+    "age": "U8",
+    "yearLabel": "4 Squads / Year 3",
+    "squads": [
+      {
+        "name": "Hornets",
+        "managerName": "Eddie McKeown",
+        "managerEmail": "Mckeown.edward7@gmail.com"
+      },
+      {
+        "name": "Raptors",
+        "managerName": "Gary Lam",
+        "managerEmail": "Gary.lam@hotmail.co.uk"
+      },
+      {
+        "name": "Sabres",
+        "managerName": "Jay Adams",
+        "managerEmail": "jay-adams@hotmail.co.uk"
+      },
+      {
+        "name": "Thunderchiefs",
+        "managerName": "Max Paddick",
+        "managerEmail": "Maxpaddick@frontier-estates.com"
+      }
+    ],
+    "order": 2
+  },
+  {
+    "id": "u9",
+    "age": "U9",
+    "yearLabel": "4 Squads / Year 4",
+    "squads": [
+      {
+        "name": "Lions",
+        "managerName": "Ed Green-Wilkinson",
+        "managerEmail": "edgreenwilkinson@googlemail.com"
+      },
+      {
+        "name": "Nitros",
+        "managerName": "Mark Hermitage",
+        "managerEmail": "markhermitage@hotmail.com"
+      },
+      {
+        "name": "Panthers",
+        "managerName": "James Bailey",
+        "managerEmail": "bailey84j@gmail.com"
+      },
+      {
+        "name": "Raiders",
+        "managerName": "Tommy O'Sullivan",
+        "managerEmail": "tommyosullivan@yahoo.com"
+      }
+    ],
+    "order": 3
+  },
+  {
+    "id": "u10",
+    "age": "U10",
+    "yearLabel": "5 Squads / Year 5",
+    "squads": [
+      {
+        "name": "Jaguars",
+        "managerName": "Craig Edmondson",
+        "managerEmail": "craig.edmondson@gmail.com"
+      },
+      {
+        "name": "Leopards",
+        "managerName": "Barry Middleton",
+        "managerEmail": "barry_middleton_edin@yahoo.co.uk"
+      },
+      {
+        "name": "Scorpions",
+        "managerName": "Tim Monk",
+        "managerEmail": "timmonk@hotmail.com"
+      },
+      {
+        "name": "Wolves",
+        "managerName": "Adam Stacey",
+        "managerEmail": "ajwstacey@icloud.com"
+      },
+      {
+        "name": "Astros",
+        "managerName": "Ross Kan",
+        "managerEmail": "ros.kan@gmail.com"
+      }
+    ],
+    "order": 4
+  },
+  {
+    "id": "u11",
+    "age": "U11",
+    "yearLabel": "4 Squads / Year 6",
+    "squads": [
+      {
+        "name": "Cosmos",
+        "managerName": "James Harris",
+        "managerEmail": "james.harris6@googlemail.com"
+      },
+      {
+        "name": "Jets",
+        "managerName": "Al Colam",
+        "managerEmail": "Alistair.colam@hotmail.co.uk"
+      },
+      {
+        "name": "Rockets",
+        "managerName": "John Fagan",
+        "managerEmail": "John.Fagan@arup.com"
+      },
+      {
+        "name": "Titans",
+        "managerName": "Simon Fletcher",
+        "managerEmail": "fletchdownunder@gmail.com"
+      }
+    ],
+    "order": 5
+  },
+  {
+    "id": "u12",
+    "age": "U12",
+    "yearLabel": "4 Squads / Year 7",
+    "squads": [
+      {
+        "name": "Avalanche",
+        "managerName": "Josh Spencer",
+        "managerEmail": "josh@tlc-business.co.uk"
+      },
+      {
+        "name": "Cyclones",
+        "managerName": "Andy Vertannes",
+        "managerEmail": "andyvertannes@hotmail.co.uk"
+      },
+      {
+        "name": "Hurricanes",
+        "managerName": "Daniel Sanders",
+        "managerEmail": "sanders.daniel.joseph@gmail.com"
+      },
+      {
+        "name": "Tornadoes",
+        "managerName": "Togay Koç",
+        "managerEmail": "togay.koc@doctors.org.uk"
+      }
+    ],
+    "order": 6
+  },
+  {
+    "id": "u13",
+    "age": "U13",
+    "yearLabel": "4 Squads / Year 8",
+    "squads": [
+      {
+        "name": "Barracudas",
+        "managerName": "Richard Chaplin",
+        "managerEmail": "chaplinrj@gmail.com"
+      },
+      {
+        "name": "Broncos",
+        "managerName": "Tom Glanvill",
+        "managerEmail": "tom.glanvill@christie.com"
+      },
+      {
+        "name": "Cobras",
+        "managerName": "Andrew Johnson",
+        "managerEmail": "ajingwell@googlemail.com"
+      },
+      {
+        "name": "Vipers",
+        "managerName": "James Parker",
+        "managerEmail": "jamesparker800@gmail.com"
+      }
+    ],
+    "order": 7
+  },
+  {
+    "id": "u14",
+    "age": "U14",
+    "yearLabel": "3 Squads / Year 9",
+    "squads": [
+      {
+        "name": "Eagles",
+        "managerName": "John Kelly",
+        "managerEmail": "johnmkelly1972@hotmail.co.uk"
+      },
+      {
+        "name": "Falcons",
+        "managerName": "Rich Edwards",
+        "managerEmail": "richardedwards0803@yahoo.co.uk"
+      },
+      {
+        "name": "Hawks",
+        "managerName": "Ryan Lavelle",
+        "managerEmail": "ryan.lavelle@hotmail.co.uk"
+      }
+    ],
+    "order": 8
+  },
+  {
+    "id": "u15",
+    "age": "U15",
+    "yearLabel": "4 Squads / Year 10",
+    "squads": [
+      {
+        "name": "Kites",
+        "managerName": "Theo Diasakos",
+        "managerEmail": "diasakos@gmail.com"
+      },
+      {
+        "name": "Ospreys",
+        "managerName": "Max Downey",
+        "managerEmail": "maxdowneyfootball@yahoo.com"
+      },
+      {
+        "name": "Galaxy",
+        "managerName": "Tom Luker",
+        "managerEmail": "tomluker@hotmail.com"
+      },
+      {
+        "name": "Olympique",
+        "managerName": "Jay Poolman",
+        "managerEmail": "garypoolman@me.com"
+      }
+    ],
+    "order": 9
+  },
+  {
+    "id": "u16",
+    "age": "U16",
+    "yearLabel": "4 Squads / Year 11",
+    "squads": [
+      {
+        "name": "Sporting",
+        "managerName": "Rich Wood",
+        "managerEmail": "info@rwsport.co.uk"
+      },
+      {
+        "name": "Dynamo",
+        "managerName": "Steve Hartridge",
+        "managerEmail": "sjhartridge@hotmail.com"
+      },
+      {
+        "name": "Legions",
+        "managerName": "Jay Poolman",
+        "managerEmail": "garypoolman@me.com"
+      },
+      {
+        "name": "Lokomotiv",
+        "managerName": "Martin Hall",
+        "managerEmail": "martin-hall@hotmail.co.uk"
+      }
+    ],
+    "order": 10
+  },
+  {
+    "id": "u17",
+    "age": "U17",
+    "yearLabel": "2 Squads / Year 12",
+    "squads": [
+      {
+        "name": "Torpedo",
+        "managerName": "Mike Knowles",
+        "managerEmail": "secretary@littletonjuniorfc.com"
+      },
+      {
+        "name": "Kings",
+        "managerName": "Jim Ford",
+        "managerEmail": "nforest188@googlemail.com"
+      }
+    ],
+    "order": 11
+  },
+  {
+    "id": "u18",
+    "age": "U18",
+    "yearLabel": "3 Squads / Year 13",
+    "squads": [
+      {
+        "name": "Reds",
+        "managerName": "Paul McDonald",
+        "managerEmail": "Paul.G.McDonald@outlook.com"
+      },
+      {
+        "name": "Whites",
+        "managerName": "Ian Davies",
+        "managerEmail": "eon_line@hotmail.com"
+      },
+      {
+        "name": "Legends",
+        "managerName": "Karen Cooper/Natasha Kesby",
+        "managerEmail": "littletonlegends2016@outlook.com"
+      }
+    ],
+    "order": 12
+  }
+]

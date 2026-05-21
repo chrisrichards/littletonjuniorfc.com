@@ -1,0 +1,27 @@
+{
+  "club": {
+    "name": "Littleton Junior Football Club",
+    "shortName": "Littleton Junior FC",
+    "tagline": "Fun. Friendship. Football.",
+    "foundedYear": 1974,
+    "currentSeason": "2025/26"
+  },
+  "counters": {
+    "players": 614,
+    "coaches": 113,
+    "teams": 43,
+    "clubs": 1
+  },
+  "fees": {
+    "full": 200,
+    "trainingOnly": 180,
+    "currency": "GBP",
+    "season": "2025/26"
+  },
+  "pitches": [
+    "nursery",
+    "top",
+    "middle",
+    "bottom"
+  ]
+}
