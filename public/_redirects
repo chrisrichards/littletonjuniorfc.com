@@ -1,0 +1,5 @@
+# Legacy Joomla URL redirects — fill in once we have the final URL map
+# Format: <from> <to> <status>
+#
+# /component/users/*  /              301
+# /index.php          /              301
