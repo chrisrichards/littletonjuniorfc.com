@@ -4,21 +4,21 @@ hero: "/images/heros/resources-hero.jpg"
 headerText: "Resources"
 ---
 
--   ![](images/resources/shop.jpg)
+-   ![](/images/resources/shop.jpg)
     
     ### Our ethos
     
     Download our club's ethos document here.
     
-    [Read more](images/downloads/Club_Ethos_2021_pb3.pdf)
+    [Read more](/images/downloads/Club_Ethos_2021_pb3.pdf)
     
--   ![](images/resources/bookings.jpg)
+-   ![](/images/resources/bookings.jpg)
     
     ### Player Development
     
     Download our club's player development plan here.
     
-    [Read more](images/downloads/LJFC_Player_Development.pdf)
+    [Read more](/images/downloads/LJFC_Player_Development.pdf)
     
 
 ### Forms & Guides
@@ -27,13 +27,13 @@ headerText: "Resources"
     
     Instructions for joining the club. NB this must be agreed first with a year rep (see Contact Us page).
     
-    [Read more](images/downloads/LJFC_Registration_2025-26.pdf)
+    [Read more](/images/downloads/LJFC_Registration_2025-26.pdf)
     
 -   ### DBS checks
     
     Instructions on how to apply for a DBS background check – compulsory for all football coaches.
     
-    [Read more](images/downloads/LJFC_DBS_Instructions.pdf)
+    [Read more](/images/downloads/LJFC_DBS_Instructions.pdf)
     
 -   ### Littleton Rec bookings
     
@@ -45,14 +45,14 @@ headerText: "Resources"
     
     Guide to booking KGV pitches and Garrison Ground.
     
-    [Read more](images/downloads/LJFC_Pitch_Bookings_2025.pdf)
+    [Read more](/images/downloads/LJFC_Pitch_Bookings_2025.pdf)
     
 
 -   ### Incident Form
     
     Use this form to tell the club about any injuries or accidents that occur during training or matches.
     
-    [Read more](images/downloads/LJFC_Incident_Form.pdf)
+    [Read more](/images/downloads/LJFC_Incident_Form.pdf)
     
 -   ### Expense Claims
     
@@ -112,7 +112,7 @@ headerText: "Resources"
     
     The anti-bulling policy we adhere to.
     
-    [Read more](images/downloads/FA-anti-bullying-policy-for-clubs.pdf)
+    [Read more](/images/downloads/FA-anti-bullying-policy-for-clubs.pdf)
     
 
 ### Coaching Tools
@@ -173,63 +173,63 @@ headerText: "Resources"
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_Littleton_Rec_2025.pdf)
+    [Read more](/images/downloads/Venue_Pack_Littleton_Rec_2025.pdf)
     
 -   ### King George V Playing Fields
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_KGV.pdf)
+    [Read more](/images/downloads/Venue_Pack_KGV.pdf)
     
 -   ### Bar End astro
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_Bar_End.pdf)
+    [Read more](/images/downloads/Venue_Pack_Bar_End.pdf)
     
 -   ### The Garrison Ground
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_Garrison.pdf)
+    [Read more](/images/downloads/Venue_Pack_Garrison.pdf)
     
 
 -   ### The Henry Beaufort School
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_Henry_Beaufort.pdf)
+    [Read more](/images/downloads/Venue_Pack_Henry_Beaufort.pdf)
     
 -   ### St Peter's Catholic Primary
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_St_Peters.pdf)
+    [Read more](/images/downloads/Venue_Pack_St_Peters.pdf)
     
 -   ### River Park Astro
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_River_Park.pdf)
+    [Read more](/images/downloads/Venue_Pack_River_Park.pdf)
     
 -   ### North Walls Recreation Ground
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_North_Walls.pdf)
+    [Read more](/images/downloads/Venue_Pack_North_Walls.pdf)
     
 
 -   ### Hunter Park
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_Hunter_Park.pdf)
+    [Read more](/images/downloads/Venue_Pack_Hunter_Park.pdf)
     
 -   ### Sir John Moore Barracks
     
     Including location and emergency action plan.
     
-    [Read more](images/downloads/Venue_Pack_ATR.pdf)
+    [Read more](/images/downloads/Venue_Pack_ATR.pdf)
     
 
 ### Kit ordering
@@ -238,7 +238,7 @@ headerText: "Resources"
     
     Instructions for ordering LJFC kit.
     
-    [Read more](images/downloads/LJFC_Kit_2024-25.pdf)
+    [Read more](/images/downloads/LJFC_Kit_2024-25.pdf)
     
 -   ### Pendle kit store
     
@@ -256,4 +256,4 @@ headerText: "Resources"
     
     Macron size charts.
     
-    [Read more](images/downloads/LJFC_MACRON_SIZE_CHART_2022.pdf)
+    [Read more](/images/downloads/LJFC_MACRON_SIZE_CHART_2022.pdf)

@@ -1,0 +1,53 @@
+---
+/**
+ * Hero band for inner pages.
+ *
+ * Variants:
+ *   - "image"  — full-bleed image with optional title overlay (default for inner pages)
+ *   - "banner" — 300px dark-grey bar with title overlay (privacy + terms only)
+ *   - "plain"  — full-bleed image, no overlay (home)
+ *
+ * The hero uses a -246px top margin to tuck under the fixed-height header,
+ * matching the live YOOtheme layout.
+ */
+interface Props {
+  image?: string;
+  title?: string;
+  variant?: 'image' | 'banner' | 'plain';
+}
+
+const { image, title, variant = 'image' } = Astro.props;
+---
+
+<div
+  id="hero"
+  data-variant={variant}
+  class:list={[
+    'hero',
+    'uk-section-default',
+    'uk-section',
+    'uk-padding-remove-top',
+    'uk-padding-remove-bottom',
+    { privacysect: variant === 'banner' },
+  ]}
+>
+  <div class="uk-margin-remove-vertical" uk-grid>
+    <div class="uk-width-1-1@m">
+      <div id="hero-bg" class="uk-margin-remove-vertical">
+        {
+          image && (
+            <img
+              class="el-image"
+              alt=""
+              data-src={image}
+              data-width="2400"
+              data-height="1701"
+              uk-img
+            />
+          )
+        }
+      </div>
+      {title && variant !== 'plain' && <h1 class="headerText">{title}</h1>}
+    </div>
+  </div>
+</div>

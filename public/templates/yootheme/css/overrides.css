@@ -37,6 +37,15 @@
   margin-top: -246px;
 }
 
+/* Banner variant — used on privacy + terms. A 300px dark-grey block stands
+   in for the hero image (live site hides the image via opacity:0 + 300px
+   height; we just skip rendering it). The headerText below it is then
+   styled by custom.css's .privacysect .headerText rule. */
+#hero[data-variant='banner'] #hero-bg {
+  background-color: #464547;
+  height: 300px;
+}
+
 #counters .el-content {
   font-family: 'BebasKai';
   font-size: 20px;

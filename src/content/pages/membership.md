@@ -4,7 +4,7 @@ hero: "/images/heros/membership-hero.jpg"
 headerText: "Membership"
 ---
 
-![](images/membership/membershipblock.jpg)
+![](/images/membership/membershipblock.jpg)
 
 -   ### Our Subs
     

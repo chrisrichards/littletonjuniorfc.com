@@ -4,7 +4,7 @@ hero: "/images/heros/official-info-hero.jpg"
 headerText: "Official Info"
 ---
 
-![](images/official-info/wellfare-safeguarding.jpg)
+![](/images/official-info/wellfare-safeguarding.jpg)
 
 ### Welfare and / Safeguarding
 
@@ -66,35 +66,35 @@ headerText: "Official Info"
     
     The FA's safeguarding guidance that we adhere to as a club.
     
-    [Email](images/downloads/Safeguarding-lets-make-football-safe-not-sorry.pdf)
+    [Email](/images/downloads/Safeguarding-lets-make-football-safe-not-sorry.pdf)
     
 -   ### safeguarding / policy
     
     The FA's safeguarding policy that we adhere to as a club.
     
-    [Email](images/downloads/Littleton_JFC_Safeguarding_Children_Policy_Procedures.pdf)
+    [Email](/images/downloads/Littleton_JFC_Safeguarding_Children_Policy_Procedures.pdf)
     
 -   ### Equality / policy
     
     The FA's equality policy that we adhere to as a club.
     
-    [Email](images/downloads/Littleton_JFC_Equality_Policy.pdf)
+    [Email](/images/downloads/Littleton_JFC_Equality_Policy.pdf)
     
 
 -   ### Anti-bullying / policy
     
     The anti-bulling policy we adhere to.
     
-    [Email](images/downloads/FA-anti-bullying-policy-for-clubs.pdf)
+    [Email](/images/downloads/FA-anti-bullying-policy-for-clubs.pdf)
     
 -   ### Complaints / procedure
     
     The club's official complaints procedure.
     
-    [Email](images/downloads/LJFC_Complaints.pdf)
+    [Email](/images/downloads/LJFC_Complaints.pdf)
     
 
-![](images/official-info/codeconduct.jpg)
+![](/images/official-info/codeconduct.jpg)
 
 ### FA respect codes / of conduct
 
@@ -111,28 +111,28 @@ headerText: "Official Info"
     
     FA Respect code of conduct
     
-    [Download](images/downloads/FA-respect-code-of-conduct-young-players.pdf)
+    [Download](/images/downloads/FA-respect-code-of-conduct-young-players.pdf)
     
 -   ### spectators and parents
     
     FA Respect code of conduct
     
-    [Download](images/downloads/FA-respect-code-of-conduct-spectators-and-parents.pdf)
+    [Download](/images/downloads/FA-respect-code-of-conduct-spectators-and-parents.pdf)
     
 -   ### coaches / and club / officials
     
     FA Respect code of conduct
     
-    [Download](images/downloads/FA-respect-code-of-conduct-coaches---team-managers-and-club-officials.pdf)
+    [Download](/images/downloads/FA-respect-code-of-conduct-coaches---team-managers-and-club-officials.pdf)
     
 -   ### match officials
     
     FA Respect code of conduct
     
-    [Download](images/downloads/FA-respect-code-of-conduct-match-officials.pdf)
+    [Download](/images/downloads/FA-respect-code-of-conduct-match-officials.pdf)
     
 
-![](images/official-info/charterstandard.jpg)
+![](/images/official-info/charterstandard.jpg)
 
 ### fa charter / standard / club
 
@@ -147,7 +147,7 @@ headerText: "Official Info"
     [Email](http://www.thefa.com/get-involved/player/clubs-leagues/fa-charter-standard-programme/leagues)
     
 
-![](images/official-info/committee.jpg)
+![](/images/official-info/committee.jpg)
 
 ### The Committee
 

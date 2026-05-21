@@ -201,7 +201,13 @@ function bodyHtmlToMarkdown($) {
   // Whatever remains after hero + h1 + socials get stripped is the body.
   // Cheerio's $.html() emits a full document — pull just <body> contents.
   const bodyHtml = $('body').html() ?? $.html();
-  return turndown.turndown(bodyHtml).trim();
+  let md = turndown.turndown(bodyHtml).trim();
+  // Joomla emits image and link refs as `images/foo.jpg` (no leading slash),
+  // which Astro's markdown loader tries to resolve against src/. Rewrite to
+  // absolute paths that match what we copied into public/.
+  md = md.replace(/(!\[[^\]]*\]\()images\//g, '$1/images/');
+  md = md.replace(/(\]\()images\//g, '$1/images/');
+  return md;
 }
 
 /** Walk the teams page and return [{ age, yearLabel, squads: [...] }].

@@ -499,6 +499,6 @@ headerText: "Teams"
     12.00–1.00
     
 
-![](images/teams/teams-bottom.jpg)
+![](/images/teams/teams-bottom.jpg)
 
 > “Joe is loving his football and has made loads of new friends at the club.”

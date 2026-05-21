@@ -159,6 +159,6 @@ headerText: "Contact Us"
     [More](mailto:eon_line@hotmail.com)
     
 
-![](images/contacts/contact-bottom.jpg)
+![](/images/contacts/contact-bottom.jpg)
 
 > “Stan has not only developed as a footballer but the sport has helped him grow as a person too.”
