@@ -420,6 +420,41 @@ function extractResources($) {
   return resources;
 }
 
+// ─── 3b. Corrections for known bad source data ──────────────────────
+
+/**
+ * The Joomla DB's teams article has two known errors in its year-labels.
+ * Patch the extracted data in-place to match the live site's actual rosters.
+ *
+ *   - U10 year-label says "5 Squads" but is actually 4 (Astros belongs to U11).
+ *   - U17 year-label says "2 Squads" but is actually 4 (Legends + Rebels were
+ *     present after Kings but dropped by the count-based extractor).
+ *
+ * If/when these are fixed in the source DB, remove this function.
+ */
+function applyTeamCorrections(teams) {
+  const u10 = teams.find((t) => t.age === 'U10');
+  const u11 = teams.find((t) => t.age === 'U11');
+  if (u10 && u11) {
+    const astrosIdx = u10.squads.findIndex((s) => s.name === 'Astros');
+    if (astrosIdx >= 0) {
+      const astros = u10.squads.splice(astrosIdx, 1)[0];
+      u11.squads.unshift(astros);
+      u10.yearLabel = u10.yearLabel.replace(/\d+\s*Squads?/i, '4 Squads');
+      u11.yearLabel = u11.yearLabel.replace(/\d+\s*Squads?/i, '5 Squads');
+    }
+  }
+
+  const u17 = teams.find((t) => t.age === 'U17');
+  if (u17 && u17.squads.length === 2) {
+    u17.squads.push(
+      { name: 'Legends', managerName: 'Paul Burgess', managerEmail: 'paul@burgeagency.com' },
+      { name: 'Rebels', managerName: 'Mark Campbell', managerEmail: 'Oneanvil@gmail.com' }
+    );
+    u17.yearLabel = u17.yearLabel.replace(/\d+\s*Squads?/i, '4 Squads');
+  }
+}
+
 // ─── 4. Helpers ──────────────────────────────────────────────────────
 
 function slug(s) {
@@ -488,6 +523,7 @@ function main() {
     const $ = loadHtml(teamsArticle.introtext);
     extractHeroAndH1($); // throw away header
     const teams = extractTeams($);
+    applyTeamCorrections(teams);
     writeJSON(path.join(CONTENT_DIR, 'teams.json'), teams);
     console.log(`  ${teams.length} age groups, ${teams.reduce((n, t) => n + t.squads.length, 0)} squads`);
   }

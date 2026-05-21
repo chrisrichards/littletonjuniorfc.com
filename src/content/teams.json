@@ -84,7 +84,7 @@
   {
     "id": "u10",
     "age": "U10",
-    "yearLabel": "5 Squads / Year 5",
+    "yearLabel": "4 Squads / Year 5",
     "squads": [
       {
         "name": "Jaguars",
@@ -105,11 +105,6 @@
         "name": "Wolves",
         "managerName": "Adam Stacey",
         "managerEmail": "ajwstacey@icloud.com"
-      },
-      {
-        "name": "Astros",
-        "managerName": "Ross Kan",
-        "managerEmail": "ros.kan@gmail.com"
       }
     ],
     "order": 4
@@ -117,8 +112,13 @@
   {
     "id": "u11",
     "age": "U11",
-    "yearLabel": "4 Squads / Year 6",
+    "yearLabel": "5 Squads / Year 6",
     "squads": [
+      {
+        "name": "Astros",
+        "managerName": "Ross Kan",
+        "managerEmail": "ros.kan@gmail.com"
+      },
       {
         "name": "Cosmos",
         "managerName": "James Harris",
@@ -280,7 +280,7 @@
   {
     "id": "u17",
     "age": "U17",
-    "yearLabel": "2 Squads / Year 12",
+    "yearLabel": "4 Squads / Year 12",
     "squads": [
       {
         "name": "Torpedo",
@@ -291,6 +291,16 @@
         "name": "Kings",
         "managerName": "Jim Ford",
         "managerEmail": "nforest188@googlemail.com"
+      },
+      {
+        "name": "Legends",
+        "managerName": "Paul Burgess",
+        "managerEmail": "paul@burgeagency.com"
+      },
+      {
+        "name": "Rebels",
+        "managerName": "Mark Campbell",
+        "managerEmail": "Oneanvil@gmail.com"
       }
     ],
     "order": 11
