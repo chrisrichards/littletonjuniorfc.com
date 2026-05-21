@@ -1,0 +1,173 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+
+const resources = await getCollection('resources');
+resources.sort((a, b) => a.data.order - b.data.order);
+
+// "General" entries are the two featured image cards at the top.
+const featured = resources.filter((r) => r.data.section === 'General');
+const sectionOrder = [
+  'Forms & Guides',
+  'Leagues',
+  'The FA',
+  'Coaching Tools',
+  'Venue Guides',
+  'Kit ordering',
+];
+
+// Section colour pattern lifted from the live site (deliberate, not strict
+// alternation — Kit ordering is grey, not blue, on the live).
+const sectionColours: Record<string, 'grey' | 'blue'> = {
+  'Forms & Guides': 'grey',
+  Leagues: 'blue',
+  'The FA': 'grey',
+  'Coaching Tools': 'blue',
+  'Venue Guides': 'grey',
+  'Kit ordering': 'grey',
+};
+
+// Group resources by section
+const grouped = sectionOrder.map((section) => ({
+  section,
+  colour: sectionColours[section] ?? 'grey',
+  items: resources.filter((r) => r.data.section === section),
+}));
+
+// Featured cards use the same images as the live site
+const featuredImages: Record<string, string> = {
+  'our-ethos': '/images/resources/shop.jpg',
+  'player-development': '/images/resources/bookings.jpg',
+};
+
+function buttonLabel(action: 'download' | 'visit' | 'link') {
+  if (action === 'download') return 'Download';
+  if (action === 'visit') return 'Visit';
+  return 'Link';
+}
+---
+
+<BaseLayout title="Resources | Littleton Junior FC" active="resources">
+  <Hero variant="image" image="/images/heros/resources-hero.jpg" title="Resources" />
+
+  {/* Featured cards (Our Ethos + Player Development) */}
+  <div class="uk-section-default uk-section">
+    <div class="uk-container">
+      <div class="uk-grid-margin" uk-grid>
+        <div class="uk-width-1-1@m">
+          <div class="homesquares resources uk-margin uk-text-center">
+            <div class="uk-child-width-1-1 uk-child-width-1-2@s uk-grid-match" uk-grid>
+              {
+                featured.map((r) => {
+                  const image = featuredImages[r.id];
+                  return (
+                    <div data-tag="Visit">
+                      <div class="el-item uk-card uk-card-secondary uk-card-body uk-margin-remove-first-child">
+                        {image && (
+                          <img
+                            class="el-image"
+                            alt=""
+                            data-src={image}
+                            data-width="1240"
+                            data-height="1240"
+                            uk-img
+                          />
+                        )}
+                        <div class="el-content uk-panel uk-margin-top">
+                          <h3>{r.data.title}</h3>
+                          {r.data.description && <p>{r.data.description}</p>}
+                        </div>
+                        <div class="uk-margin-top">
+                          <a
+                            href={r.data.href}
+                            class="el-link uk-button uk-button-default"
+                            {...(r.data.action !== 'download' && { target: '_blank', rel: 'noopener' })}
+                          >
+                            Read more
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Sectioned resource cards */}
+  {
+    grouped.map((group) => (
+      <div class="uk-section-default uk-section">
+        <div class="uk-container">
+          <div class="uk-grid-margin" uk-grid>
+            <div class="uk-width-expand@m">
+              <div class:list={[group.colour === 'blue' ? 'bluesquare' : 'greysquare', 'uk-margin']}>
+                <div class="uk-child-width-1-1 uk-grid-match" uk-grid>
+                  <div>
+                    <div class="el-item uk-panel uk-margin-remove-first-child">
+                      <h3 class="el-title uk-margin-top uk-margin-remove-bottom">{group.section}</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="uk-width-expand@m">
+              <div
+                class:list={[
+                  'offinfo4x4',
+                  'gb',
+                  'alternates',
+                  'second',
+                  group.colour === 'blue' ? 'grey' : 'blue',
+                  'uk-margin',
+                ]}
+              >
+                <div
+                  class="uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-2@m uk-grid-match"
+                  uk-grid
+                >
+                  {group.items.map((r) => (
+                    <div data-tag={r.data.action === 'download' ? 'Download' : 'Visit'}>
+                      <div
+                        class:list={[
+                          'el-item',
+                          'uk-card',
+                          group.colour === 'blue' ? 'uk-card-secondary' : 'uk-card-primary',
+                          'uk-card-body',
+                          'uk-margin-remove-first-child',
+                        ]}
+                      >
+                        <div class="el-content uk-panel uk-margin-top">
+                          <h3>{r.data.title}</h3>
+                          {r.data.description && <p>{r.data.description}</p>}
+                        </div>
+                        <div class="uk-margin-top">
+                          <a
+                            href={r.data.href}
+                            class="el-link uk-button uk-button-default"
+                            {...(r.data.action !== 'download' && {
+                              target: '_blank',
+                              rel: 'noopener',
+                            })}
+                          >
+                            {buttonLabel(r.data.action)}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</BaseLayout>

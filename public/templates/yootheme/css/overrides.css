@@ -57,6 +57,41 @@
   background-color: #5da9dd !important;
 }
 
+/* Resources page — translated from the live site's inline #page\#N CSS.
+   Each greysquare/bluesquare section label needs absolute-positioned title
+   inside a square aspect-ratio container. */
+.greysquare .el-title,
+.bluesquare .el-title {
+  font-size: 64px;
+  line-height: 58px;
+  position: absolute;
+  top: 56px;
+  left: 36px;
+  color: #fff;
+  margin: 0;
+}
+.greysquare .el-item,
+.bluesquare .el-item {
+  position: relative;
+}
+
+/* Featured resource cards (Our Ethos + Player Development): give each
+   card a minimum height so the absolutely-positioned el-content overlays
+   on a real coloured region even before the lazy-loaded image arrives. */
+.homesquares.resources .el-item {
+  position: relative;
+  min-height: 400px;
+  overflow: hidden;
+}
+.homesquares.resources .el-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 #counters .el-content {
   font-family: 'BebasKai';
   font-size: 20px;
