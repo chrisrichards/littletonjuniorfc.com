@@ -27,5 +27,8 @@ pnpm-debug.log*
 .wrangler/
 .dev.vars
 
+# Claude Code per-user config
+.claude/
+
 # generated worker types
 worker-configuration.d.ts
