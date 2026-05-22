@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Card from '../components/Card.astro';
+import { chunk } from '../lib/chunk';
 
 const people = await getCollection('people');
 people.sort((a, b) => a.data.order - b.data.order);
@@ -9,25 +11,20 @@ people.sort((a, b) => a.data.order - b.data.order);
 const committee = people.filter((p) => p.data.group === 'committee');
 const coordinators = people.filter((p) => p.data.group === 'coordinator');
 
-// Split into rows of 4 — the live layout uses 4-col grids with .alternates.first
-// and .alternates.second rows for the colour checkerboard.
-function chunk<T>(arr: T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-  return out;
-}
-
-const committeeRows = chunk(committee, 4);
-const coordinatorRows = chunk(coordinators, 4);
+// Both groups share the same .alternates first/second alternation;
+// concat so the coordinator rows pick up where the committee left off.
+const allRows = [
+  ...chunk(committee, 4).map((row) => ({ kind: 'committee' as const, row })),
+  ...chunk(coordinators, 4).map((row) => ({ kind: 'coordinator' as const, row })),
+];
 ---
 
 <BaseLayout title="Contact Us | Littleton Junior FC" active="contact-us">
   <Hero variant="image" image="/images/heros/contact-us-hero.jpg" title="Contact<br>Us" />
 
   <div class="contactus">
-    {/* Committee bands */}
     {
-      committeeRows.map((row, rowIdx) => (
+      allRows.map(({ kind, row }, rowIdx) => (
         <div class="uk-section-default uk-section">
           <div class="uk-container">
             <div class="uk-grid-margin" uk-grid>
@@ -42,26 +39,23 @@ const coordinatorRows = chunk(coordinators, 4);
                   ]}
                 >
                   <div class="js-filter uk-child-width-1-2 uk-child-width-1-4@m uk-grid-match" uk-grid>
-                    {row.map((p) => (
-                      <div>
-                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                          <div class="el-content uk-panel uk-margin-top">
-                            <h3>{p.data.role}</h3>
-                            <h4 set:html={p.data.name} />
-                            {p.data.note && <p>{p.data.note}</p>}
-                            {p.data.phone && <p>{p.data.phone}</p>}
-                          </div>
-                          <div class="uk-margin-top">
-                            <a
-                              href={`mailto:${p.data.email}`}
-                              class="el-link uk-button uk-button-default"
-                            >
-                              Email
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                    {row.map((p) =>
+                      kind === 'committee' ? (
+                        <Card cta={{ label: 'Email', href: `mailto:${p.data.email}` }}>
+                          <h3>{p.data.role}</h3>
+                          <h4 set:html={p.data.name} />
+                          {p.data.note && <p>{p.data.note}</p>}
+                          {p.data.phone && <p>{p.data.phone}</p>}
+                        </Card>
+                      ) : (
+                        <Card
+                          title={p.data.ageGroup}
+                          subtitle={p.data.yearLabel}
+                          body={p.data.name}
+                          cta={{ label: 'Email', href: `mailto:${p.data.email}` }}
+                        />
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -69,55 +63,6 @@ const coordinatorRows = chunk(coordinators, 4);
           </div>
         </div>
       ))
-    }
-
-    {/* Age-group coordinator bands */}
-    {
-      coordinatorRows.map((row, rowIdx) => {
-        // Continue the alternation pattern after the committee rows
-        const totalRow = committeeRows.length + rowIdx;
-        return (
-          <div class="uk-section-default uk-section">
-            <div class="uk-container">
-              <div class="uk-grid-margin" uk-grid>
-                <div class="uk-width-1-1@m">
-                  <div
-                    class:list={[
-                      'alternates',
-                      totalRow % 2 === 0 ? 'first' : 'second',
-                      'contacts',
-                      'uk-margin',
-                      'uk-text-left',
-                    ]}
-                  >
-                    <div class="js-filter uk-child-width-1-2 uk-child-width-1-4@m uk-grid-match" uk-grid>
-                      {row.map((p) => (
-                        <div>
-                          <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                            <div class="el-content uk-panel uk-margin-top">
-                              <h3>{p.data.ageGroup}</h3>
-                              {p.data.yearLabel && <h4>{p.data.yearLabel}</h4>}
-                              <p>{p.data.name}</p>
-                            </div>
-                            <div class="uk-margin-top">
-                              <a
-                                href={`mailto:${p.data.email}`}
-                                class="el-link uk-button uk-button-default"
-                              >
-                                Email
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })
     }
   </div>
 
