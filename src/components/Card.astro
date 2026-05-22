@@ -18,7 +18,14 @@
  * instead of using the typed props.
  */
 
-export type CardCta = { label: string; href: string; blank?: boolean };
+export type CardCta = {
+  label: string;
+  href: string;
+  blank?: boolean;
+  /** Extra attributes to set on the anchor — used for data-* hooks
+   *  like the teams "More" panel-target. */
+  attrs?: Record<string, string>;
+};
 
 export interface Props {
   // Content props — render `<h2>` / `<h3>` / `<h4>` / `<p>` if set
@@ -93,6 +100,7 @@ const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remo
             href={cta.href}
             class="el-link uk-button uk-button-default"
             {...(cta.blank ? { target: '_blank', rel: 'noopener' } : {})}
+            {...(cta.attrs ?? {})}
           >
             {cta.label}
           </a>

@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Card from '../components/Card.astro';
+import { chunk } from '../lib/chunk';
 
 const teams = await getCollection('teams');
 teams.sort((a, b) => a.data.order - b.data.order);
@@ -11,55 +13,43 @@ teams.sort((a, b) => a.data.order - b.data.order);
 const rowClasses = ['first', 'second', 'third', 'fourth'] as const;
 const rowIds = ['u6-9', 'u10-13', 'u14-17', 'u18-pan'] as const;
 
-type Team = (typeof teams)[number];
-const rows: { id: string; cls: string; teams: Team[]; padCount: number }[] = [];
-for (let i = 0; i < 4; i++) {
-  const slice = teams.slice(i * 4, i * 4 + 4);
-  rows.push({
-    id: rowIds[i],
-    cls: rowClasses[i],
-    teams: slice,
-    padCount: Math.max(0, 4 - slice.length),
-  });
-}
-
+const navRows = chunk(teams, 4).map((slice, i) => ({
+  id: rowIds[i],
+  cls: rowClasses[i],
+  teams: slice,
+  padCount: Math.max(0, 4 - slice.length),
+}));
 ---
 
 <BaseLayout title="Teams | Littleton Junior FC" active="teams">
   <Hero variant="image" image="/images/heros/teams.jpg" title="Teams" />
 
   {
-    rows.map((row, idx) => (
+    navRows.map((row, idx) => (
       <>
+        {/* Age-group nav row: 4 cards, click "More" to slide open the panel */}
         <div id={`alternates${idx + 1}`} class="uk-section-default uk-section">
           <div class="uk-container">
             <div class="uk-grid-margin" uk-grid>
               <div class="uk-width-1-1@m">
-                <div id={row.id} class:list={['alternates', row.cls, 'uk-margin', 'uk-text-left']}>
+                <div
+                  id={row.id}
+                  class:list={['alternates', row.cls, 'uk-margin', 'uk-text-left']}
+                >
                   <div class="uk-child-width-1-4 uk-grid-match" uk-grid>
                     {row.teams.map((t) => (
-                      <div>
-                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                          <div class="el-content uk-panel uk-margin-top">
-                            <h2>{t.data.age}</h2>
-                            <p set:html={t.data.yearLabel.replace(' / ', '<br>')} />
-                          </div>
-                          <div class="uk-margin-top">
-                            <a
-                              href={`#${t.data.id}`}
-                              data-panel-target={t.data.id}
-                              class="el-link uk-button uk-button-default"
-                            >
-                              More
-                            </a>
-                          </div>
-                        </div>
-                      </div>
+                      <Card
+                        heading={t.data.age}
+                        body={t.data.yearLabel.replace(' / ', '<br>')}
+                        cta={{
+                          label: 'More',
+                          href: `#${t.data.id}`,
+                          attrs: { 'data-panel-target': t.data.id },
+                        }}
+                      />
                     ))}
                     {Array.from({ length: row.padCount }).map(() => (
-                      <div>
-                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child" />
-                      </div>
+                      <Card />
                     ))}
                   </div>
                 </div>
@@ -68,6 +58,7 @@ for (let i = 0; i < 4; i++) {
           </div>
         </div>
 
+        {/* Hidden squad-detail panels for each age in this nav row */}
         {row.teams.map((t) => (
           <div id={t.data.id} class="hiddenbox uk-section-default uk-section">
             <div class="uk-container">
@@ -76,32 +67,13 @@ for (let i = 0; i < 4; i++) {
                   {t.data.squads.map((s) => (
                     <div class="uk-margin">
                       <div class="uk-child-width-1-1 uk-child-width-1-4@m uk-grid-match" uk-grid>
-                        <div>
-                          <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                            <div class="el-content uk-panel uk-margin-top">
-                              <h2>{s.name}</h2>
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                            <div class="el-content uk-panel uk-margin-top">
-                              <h4>Contact</h4>
-                              <p>{s.managerName}</p>
-                            </div>
-                            <div class="uk-margin-top">
-                              <a
-                                href={`mailto:${s.managerEmail}`}
-                                class="el-link uk-button uk-button-default"
-                              >
-                                Email
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child" />
-                        </div>
+                        <Card heading={s.name} />
+                        <Card
+                          contentLabel="Contact"
+                          phone={s.managerName}
+                          cta={{ label: 'Email', href: `mailto:${s.managerEmail}` }}
+                        />
+                        <Card />
                       </div>
                     </div>
                   ))}
@@ -147,7 +119,7 @@ for (let i = 0; i < 4; i++) {
         el.style.overflow = 'hidden';
         el.style.height = '0px';
         var target = el.scrollHeight;
-        el.getBoundingClientRect(); // force layout
+        el.getBoundingClientRect();
         el.style.transition = 'height ' + DURATION + 'ms ease';
         requestAnimationFrame(function () {
           el.style.height = target + 'px';
@@ -166,7 +138,7 @@ for (let i = 0; i < 4; i++) {
       function slideUp(el, done) {
         el.style.overflow = 'hidden';
         el.style.height = el.scrollHeight + 'px';
-        el.getBoundingClientRect(); // force layout
+        el.getBoundingClientRect();
         el.style.transition = 'height ' + DURATION + 'ms ease';
         requestAnimationFrame(function () {
           el.style.height = '0px';
@@ -236,7 +208,6 @@ for (let i = 0; i < 4; i++) {
         });
       });
 
-      // Open panel if the page loads with a matching hash (e.g. /teams#u11).
       if (window.location.hash) {
         var target = document.getElementById(window.location.hash.slice(1));
         if (target && target.classList.contains('hiddenbox')) openPanelEl(target);
