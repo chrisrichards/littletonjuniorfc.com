@@ -229,6 +229,21 @@
   padding-top: 100%;
 }
 
+/* ── Membership page ─────────────────────────────────────────── */
+
+/* Slots 1 (Our Subs) and 4 (Your Details) are blue; the other two
+   stay grey via .grey .uk-card-primary. The existing custom.css rule
+   targets the same slots but loses against theme.css in some browsers —
+   restating here ensures it wins.  */
+#membership > div > div:nth-child(1) .el-item.uk-card-primary,
+#membership > div > div:nth-child(4) .el-item.uk-card-primary {
+  background-color: #5da9dd !important;
+}
+#membership > div > div:nth-child(2) .el-item.uk-card-primary,
+#membership > div > div:nth-child(3) .el-item.uk-card-primary {
+  background-color: #464547 !important;
+}
+
 /* ── Official-info page ───────────────────────────────────────── */
 
 /* Section label panel: image fills the square, title overlays top-left. */

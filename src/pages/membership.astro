@@ -15,13 +15,13 @@ const cards = [
   {
     title: 'Paying Subs',
     body: 'To pay your annual subs, please log into our Pitchero membership system.',
-    cta: { label: 'Read more', href: 'https://www.pitchero.com/clubs/littletonjuniorfc/payments' },
+    cta: { label: 'Pay subs', href: 'https://www.pitchero.com/clubs/littletonjuniorfc/payments' },
     tag: 'PAY-SUBS',
   },
   {
     title: 'Your details',
     body: 'To make any changes to your account, please log into our Pitchero membership system.',
-    cta: { label: 'Read more', href: 'https://pitchero.com/clubs/littletonjuniorfc' },
+    cta: { label: 'See your details', href: 'https://pitchero.com/clubs/littletonjuniorfc' },
     tag: 'See-Your-Details',
   },
 ];
@@ -62,7 +62,7 @@ const cards = [
               {
                 cards.map((card) => (
                   <div data-tag={card.tag}>
-                    <div class="el-item uk-card uk-card-secondary uk-card-body uk-margin-remove-first-child">
+                    <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
                       <div class="el-content uk-panel uk-margin-top">
                         <h3>{card.title}</h3>
                         <p set:html={card.body} />
