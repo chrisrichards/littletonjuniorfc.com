@@ -10,7 +10,7 @@
   {
     "id": "treasurers-stephen-porter-emilie-dumoulin",
     "role": "Treasurers",
-    "name": "Stephen Porter & Emilie Dumoulin",
+    "name": "Stephen Porter <br>& Emilie Dumoulin",
     "email": "treasurer@littletonjuniorfc.com",
     "group": "committee",
     "order": 1
@@ -37,6 +37,7 @@
     "role": "Welfare Officer",
     "name": "Adam Stacey",
     "email": "cwo@littletonjuniorfc.com",
+    "phone": "07784 692766",
     "group": "committee",
     "note": "Welfare calls only",
     "order": 4

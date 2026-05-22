@@ -47,21 +47,16 @@ const coordinatorRows = chunk(coordinators, 4);
                         <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
                           <div class="el-content uk-panel uk-margin-top">
                             <h3>{p.data.role}</h3>
-                            <h4>{p.data.name}</h4>
-                            {p.data.phone && (
-                              <p>
-                                {p.data.note}
-                                <br />
-                                {p.data.phone}
-                              </p>
-                            )}
+                            <h4 set:html={p.data.name} />
+                            {p.data.note && <p>{p.data.note}</p>}
+                            {p.data.phone && <p>{p.data.phone}</p>}
                           </div>
                           <div class="uk-margin-top">
                             <a
                               href={`mailto:${p.data.email}`}
                               class="el-link uk-button uk-button-default"
                             >
-                              More
+                              Email
                             </a>
                           </div>
                         </div>
@@ -109,7 +104,7 @@ const coordinatorRows = chunk(coordinators, 4);
                                 href={`mailto:${p.data.email}`}
                                 class="el-link uk-button uk-button-default"
                               >
-                                More
+                                Email
                               </a>
                             </div>
                           </div>
@@ -124,5 +119,27 @@ const coordinatorRows = chunk(coordinators, 4);
         );
       })
     }
+  </div>
+
+  <div class="quoteimage uk-section-default uk-section">
+    <div class="uk-container">
+      <div class="uk-grid-margin" uk-grid>
+        <div class="uk-width-1-1@m">
+          <div class="uk-margin">
+            <img
+              class="el-image"
+              src="/images/contacts/contact-bottom.jpg"
+              alt=""
+              width="2500"
+              height="1181"
+              loading="lazy"
+            />
+          </div>
+          <blockquote class="quotes">
+            <span>&ldquo;</span>Stan has not only developed as a footballer but the sport has helped him grow as a person too.<span>&rdquo;</span>
+          </blockquote>
+        </div>
+      </div>
+    </div>
   </div>
 </BaseLayout>

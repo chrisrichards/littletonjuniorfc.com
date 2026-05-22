@@ -68,7 +68,7 @@
     "title": "Expense Claims",
     "description": "Use this form to claim back expenses.",
     "href": "https://form.jotform.com/241992784670369",
-    "action": "link",
+    "action": "visit",
     "order": 7
   },
   {
@@ -77,7 +77,7 @@
     "title": "EDMSL",
     "description": "Eastleigh and District Mini Soccer League for U7–U10s.",
     "href": "https://fulltime.thefa.com/ff/LeagueDetails?leagueid=2797776",
-    "action": "link",
+    "action": "visit",
     "order": 8
   },
   {
@@ -86,7 +86,7 @@
     "title": "Tyro",
     "description": "Southampton and District Tyro Football League for U11–U15.",
     "href": "https://fulltime.thefa.com/ff/LeagueDetails?leagueid=223592985",
-    "action": "link",
+    "action": "visit",
     "order": 9
   },
   {
@@ -95,7 +95,7 @@
     "title": "Testway",
     "description": "Testway Youth Football League for U7–U18s.",
     "href": "https://fulltime.thefa.com/ff/LeagueDetails?leagueid=915343751",
-    "action": "link",
+    "action": "visit",
     "order": 10
   },
   {
@@ -104,7 +104,7 @@
     "title": "CSYFL",
     "description": "City of Southampton Youth Football League for U16–U18s.",
     "href": "https://www.ourkidssports.com/Leagues/profile/id/26/agegroups/show",
-    "action": "link",
+    "action": "visit",
     "order": 11
   },
   {
@@ -113,7 +113,7 @@
     "title": "THE FA",
     "description": "Everything you need to know about playing football in the UK from the governing body.",
     "href": "http://www.thefa.com/",
-    "action": "link",
+    "action": "visit",
     "order": 12
   },
   {
@@ -122,7 +122,7 @@
     "title": "fa whole game system",
     "description": "Where all players are registered for any FA affiliated league.",
     "href": "http://www.thefa.com/get-involved/more/whole-game",
-    "action": "link",
+    "action": "visit",
     "order": 13
   },
   {
@@ -131,7 +131,7 @@
     "title": "fa full time",
     "description": "Where all league fixtures and results (for U12 upwards) are held.",
     "href": "https://fulltime.thefa.com/ff",
-    "action": "link",
+    "action": "visit",
     "order": 14
   },
   {
@@ -149,7 +149,7 @@
     "title": "The Coaching Manual",
     "description": "All club coaches have access to The Coaching Manual's library of training resources.",
     "href": "https://www.thecoachingmanual.com/",
-    "action": "link",
+    "action": "visit",
     "order": 16
   },
   {
@@ -158,7 +158,7 @@
     "title": "SoccerXpert",
     "description": "Over 160 free soccer drills searchable by age group and type of drill.",
     "href": "https://www.soccerxpert.com/",
-    "action": "link",
+    "action": "visit",
     "order": 17
   },
   {
@@ -167,7 +167,7 @@
     "title": "Footy4kids",
     "description": "Tips and drills for all ages.",
     "href": "https://www.footy4kids.co.uk/",
-    "action": "link",
+    "action": "visit",
     "order": 18
   },
   {
@@ -176,7 +176,7 @@
     "title": "Soccer Coach Weekly",
     "description": "Tips and drills searchable by age group and type of drill.",
     "href": "https://www.soccercoachweekly.net/soccer-drills-and-skills/",
-    "action": "link",
+    "action": "visit",
     "order": 19
   },
   {
@@ -185,7 +185,7 @@
     "title": "The Boot Room",
     "description": "The FA’s coaching site using articles and video.",
     "href": "http://www.thefa.com/learning/coaching",
-    "action": "link",
+    "action": "visit",
     "order": 20
   },
   {
@@ -194,7 +194,7 @@
     "title": "Boot Room Foundation",
     "description": "The FA’s coaching site specifically for U5–U11.",
     "href": "http://www.thefa.com/learning/england-dna-foundation-phase",
-    "action": "link",
+    "action": "visit",
     "order": 21
   },
   {
@@ -203,7 +203,7 @@
     "title": "Opportunity Elite",
     "description": "A video of 30 ball mastery skills for all age groups.",
     "href": "https://www.youtube.com/watch?time_continue=2&v=ACzH9s-t_Ko",
-    "action": "link",
+    "action": "visit",
     "order": 22
   },
   {
@@ -212,7 +212,7 @@
     "title": "Sports Survival Guide",
     "description": "Over 900 free soccer drills by age groups and drill types.",
     "href": "https://www.sportsmomsurvivalguide.com/soccer-coaching-drills/",
-    "action": "link",
+    "action": "visit",
     "order": 23
   },
   {
@@ -327,10 +327,19 @@
     "id": "kit-ordering-macron-order-form",
     "section": "Kit ordering",
     "title": "Macron order form",
-    "description": "Order form for ordering LJFC match kit (please read instructions above first).",
+    "description": "Order form for managers to order match kit (read instructions above first).",
     "href": "https://www.macronlondonsoutheast.com/littleton-junior-fc-1095-c.asp",
-    "action": "link",
+    "action": "download",
     "order": 36
+  },
+  {
+    "id": "kit-ordering-additional-kit",
+    "section": "Kit ordering",
+    "title": "Additional Kit",
+    "description": "Order additional kit for players or coaches.",
+    "href": "#",
+    "action": "link",
+    "order": 37
   },
   {
     "id": "kit-ordering-match-kit-size-guide",
@@ -339,6 +348,6 @@
     "description": "Macron size charts.",
     "href": "images/downloads/LJFC_MACRON_SIZE_CHART_2022.pdf",
     "action": "download",
-    "order": 37
+    "order": 38
   }
 ]

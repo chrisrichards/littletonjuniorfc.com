@@ -23,10 +23,15 @@ const sectionColours: Record<string, 'grey' | 'blue'> = {
   'Forms & Guides': 'grey',
   Leagues: 'blue',
   'The FA': 'grey',
-  'Coaching Tools': 'blue',
+  'Coaching Tools': 'grey',
   'Venue Guides': 'grey',
   'Kit ordering': 'grey',
 };
+
+// Sections whose extra rows (row 2+) stay tucked in the right half
+// instead of breaking out full-width. Forms & Guides was the only one
+// the original Joomla page kept in-column.
+const stayInRightColumn = new Set(['Forms & Guides']);
 
 // Group resources by section
 const grouped = sectionOrder.map((section) => ({
@@ -37,14 +42,25 @@ const grouped = sectionOrder.map((section) => ({
 
 // Featured cards use the same images as the live site
 const featuredImages: Record<string, string> = {
-  'our-ethos': '/images/resources/shop.jpg',
-  'player-development': '/images/resources/bookings.jpg',
+  'general-our-ethos': '/images/resources/shop.jpg',
+  'general-player-development': '/images/resources/bookings.jpg',
 };
 
 function buttonLabel(action: 'download' | 'visit' | 'link') {
   if (action === 'download') return 'Download';
-  if (action === 'visit') return 'Visit';
-  return 'Link';
+  if (action === 'link') return 'Link';
+  return 'Visit';
+}
+
+// Sections whose cards should stay dark grey (no alternation between
+// blue and grey cells). Drop the `.gb` modifier on those so the
+// .alternates.second.gb nth-child colour overrides don't fire.
+const greyOnlySections = new Set(['Coaching Tools']);
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
 }
 ---
 
@@ -84,7 +100,7 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
                             class="el-link uk-button uk-button-default"
                             {...(r.data.action !== 'download' && { target: '_blank', rel: 'noopener' })}
                           >
-                            Read more
+                            Visit
                           </a>
                         </div>
                       </div>
@@ -102,47 +118,50 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
   {/* Sectioned resource cards */}
   {
     grouped.map((group) => (
-      <div class="uk-section-default uk-section">
-        <div class="uk-container">
-          <div class="uk-grid-margin" uk-grid>
-            <div class="uk-width-expand@m">
-              <div class:list={[group.colour === 'blue' ? 'bluesquare' : 'greysquare', 'uk-margin']}>
-                <div class="uk-child-width-1-1 uk-grid-match" uk-grid>
-                  <div>
-                    <div class="el-item uk-panel uk-margin-remove-first-child">
-                      <h3 class="el-title uk-margin-top uk-margin-remove-bottom">{group.section}</h3>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <>
+        {(() => {
+          const rows = chunk(group.items, 4);
+          const isGreyOnly = greyOnlySections.has(group.section);
+          // Default: card colour contrasts with the label panel colour.
+          // greyOnly sections (Coaching Tools) force dark-grey cards
+          // regardless of label colour so row 1 stays uniformly grey.
+          const cardClass = isGreyOnly || group.colour === 'blue' ? 'uk-card-secondary' : 'uk-card-primary';
+          const modifier = group.colour === 'blue' ? 'grey' : 'blue';
 
-            <div class="uk-width-expand@m">
+          const stays = stayInRightColumn.has(group.section);
+          const renderRow = (row: typeof group.items, rowIdx: number) => {
+            // Row 1 sits next to the label (right half) so cards are 2-col.
+            // Row 2+ uses 4-col if it breaks out full-width; sections that
+            // stay in the right column keep 2-col.
+            const twoCol = rowIdx === 0 || stays;
+            const childWidth = twoCol
+              ? 'uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-2@m'
+              : 'uk-child-width-1-2 uk-child-width-1-4@m';
+            // Pad to fill the grid: multiple of 2 for 2-col, 4 for 4-col.
+            const cols = twoCol ? 2 : 4;
+            const padCount = (cols - (row.length % cols)) % cols;
+            // Row 1 honours isGreyOnly (e.g. Coaching Tools all dark).
+            // Row 2+ in a greyOnly section uses .gb + .swap so the
+            // nth-child overrides re-tint slots 2 and 4 blue (matches
+            // the Boot Room Foundation / Sports Survival Guide colours).
+            const useGb = !isGreyOnly || rowIdx > 0;
+            const useSwap = rowIdx > 0 && !stays;
+            return (
               <div
                 class:list={[
                   'offinfo4x4',
-                  'gb',
+                  useGb && 'gb',
                   'alternates',
                   'second',
-                  group.colour === 'blue' ? 'grey' : 'blue',
+                  modifier,
+                  useSwap && 'swap',
                   'uk-margin',
                 ]}
               >
-                <div
-                  class="uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-2@m uk-grid-match"
-                  uk-grid
-                >
-                  {group.items.map((r) => (
+                <div class:list={[childWidth, 'uk-grid-match']} uk-grid>
+                  {row.map((r) => (
                     <div data-tag={r.data.action === 'download' ? 'Download' : 'Visit'}>
-                      <div
-                        class:list={[
-                          'el-item',
-                          'uk-card',
-                          group.colour === 'blue' ? 'uk-card-secondary' : 'uk-card-primary',
-                          'uk-card-body',
-                          'uk-margin-remove-first-child',
-                        ]}
-                      >
+                      <div class:list={['el-item', 'uk-card', cardClass, 'uk-card-body', 'uk-margin-remove-first-child']}>
                         <div class="el-content uk-panel uk-margin-top">
                           <h3>{r.data.title}</h3>
                           {r.data.description && <p>{r.data.description}</p>}
@@ -162,12 +181,64 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
                       </div>
                     </div>
                   ))}
+                  {Array.from({ length: padCount }).map(() => (
+                    <div>
+                      <div class:list={['el-item', 'uk-card', cardClass, 'uk-card-body', 'uk-margin-remove-first-child']} />
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            );
+          };
+
+          return (
+            <>
+              {/* Section header: label LEFT + first row of cards RIGHT */}
+              <div class="uk-section-default uk-section">
+                <div class="uk-container">
+                  <div class="uk-grid-margin" uk-grid>
+                    <div class="uk-width-expand@m">
+                      <div
+                        class:list={[
+                          group.colour === 'blue' ? 'bluesquare' : 'greysquare',
+                          'uk-margin',
+                        ]}
+                      >
+                        <div class="uk-child-width-1-1 uk-grid-match" uk-grid>
+                          <div>
+                            <div class="el-item uk-panel uk-margin-remove-first-child">
+                              <h3 class="el-title uk-margin-top uk-margin-remove-bottom">
+                                {group.section}
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="uk-width-expand@m">
+                      {rows[0] && renderRow(rows[0], 0)}
+                      {stays && rows.slice(1).map((row, i) => renderRow(row, i + 1))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Subsequent rows: full-width, each its own uk-section
+                  (only for sections that don't stay in the right column) */}
+              {!stays &&
+                rows.slice(1).map((row, i) => (
+                  <div class="uk-section-default uk-section">
+                    <div class="uk-container">
+                      <div class="uk-grid-margin" uk-grid>
+                        <div class="uk-width-1-1@m">{renderRow(row, i + 1)}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </>
+          );
+        })()}
+      </>
     ))
   }
 </BaseLayout>

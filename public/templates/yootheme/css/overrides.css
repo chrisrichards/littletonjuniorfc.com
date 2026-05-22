@@ -75,12 +75,16 @@
   position: relative;
 }
 
-/* Featured resource cards (Our Ethos + Player Development): give each
-   card a minimum height so the absolutely-positioned el-content overlays
-   on a real coloured region even before the lazy-loaded image arrives. */
+/* Featured resource cards (Our Ethos + Player Development): square
+   aspect so the el-image fills properly and the absolute .el-content
+   overlay has a real coloured region to sit on. */
+.homesquares.resources .uk-grid-match.uk-grid > div:after {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
 .homesquares.resources .el-item {
   position: relative;
-  min-height: 400px;
   overflow: hidden;
 }
 .homesquares.resources .el-image {
@@ -227,6 +231,37 @@
   content: '';
   display: block;
   padding-top: 100%;
+}
+
+/* Contact-us cards: uniform square aspect across all rows. */
+.alternates.first.contacts .uk-grid-match.uk-grid > div:after,
+.alternates.second.contacts .uk-grid-match.uk-grid > div:after {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+/* ── Resources page ───────────────────────────────────────────── */
+
+/* Featured ethos band keeps the default `.homesquares.resources
+   .el-content` positioning from custom.css (top: 56px, left: 36px,
+   left-aligned, 212px wide). No override needed here. */
+
+/* Section label panels (Forms & Guides, Leagues, The FA, etc.) — the
+   original used a per-page inline <style> to position the title; we
+   apply the same against the .bluesquare/.greysquare panels here. */
+.bluesquare .el-item,
+.greysquare .el-item {
+  position: relative;
+}
+.bluesquare .el-title,
+.greysquare .el-title {
+  font-size: 64px;
+  line-height: 58px;
+  position: absolute;
+  top: 56px;
+  left: 36px;
+  color: #fff;
 }
 
 /* ── Membership page ─────────────────────────────────────────── */
