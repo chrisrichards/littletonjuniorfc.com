@@ -10,26 +10,38 @@ type Card = {
   cta?: { label: string; href: string };
 };
 
+type Intro = { title?: string; body: string };
+
 type Section = {
   id: string;
-  label: string;
-  colour: 'grey' | 'blue';
-  image?: string;
-  intro: string[];
+  htmlId?: string; // override the rendered DOM id (defaults to `section-${id}`)
+  label: string; // can contain <br> for multi-line
+  colour: 'blue' | 'grey'; // .grey makes uk-card-primary render dark grey
+  // split  = label top-left, intros top-right, action cards full-width below
+  // compact = label left (1/2), intros + cards combined in 2-col grid right (1/2)
+  layout: 'split' | 'compact';
+  // For compact sections only — when true, the inner wrapper gets
+  // `alternates` + colour modifier classes, which trigger the bigger
+  // 46px title styling used by The Committee. Leave false for sections
+  // whose compact cards are paragraph-bodied (FA Charter).
+  alternates?: boolean;
+  image: string;
+  intro: Intro[];
   cards: Card[];
 };
 
 const sections: Section[] = [
   {
     id: 'welfare',
-    label: 'Welfare and Safeguarding',
-    colour: 'grey',
+    label: 'Welfare and <br>Safeguarding',
+    colour: 'blue',
+    layout: 'split',
     image: '/images/official-info/wellfare-safeguarding.jpg',
     intro: [
-      'We are an England Football Accredited Club and acknowledge our responsibility to safeguard the welfare of every child and young person who is entrusted to our care.',
-      "A child or young person is anyone under the age of 18 engaged in any Club football activity. We subscribe to The Football Association's Safeguarding Policy and Procedures.",
-      "Reporting a concern about a child is everyone's responsibility. If you have any questions or concerns please contact our club Welfare Officer below.",
-      "Reveal and raise concerns over misconduct or malpractice. Anyone with concerns can contact The FA's safeguarding team, the police, children's social care or the NSPCC.",
+      { title: 'A safe environment', body: 'We are an England Football Accredited Club and acknowledge our responsibility to safeguard the welfare of every child and young person who is entrusted to our care.' },
+      { title: 'Child or young person', body: "A child or young person is anyone under the age of 18 engaged in any Club football activity. We subscribe to The Football Association's Safeguarding Policy and Procedures." },
+      { title: 'Responsibility', body: "Reporting a concern about a child is everyone's responsibility. If you have any questions or concerns please contact our club Welfare Officer below." },
+      { title: 'Whistle blowing', body: "Reveal and raise concerns over misconduct or malpractice. Anyone with concerns can contact The FA's safeguarding team, the police, children's social care or the NSPCC." },
     ],
     cards: [
       { title: 'Club Welfare Officer', subtitle: 'Adam Stacey', phone: '07784 692766', cta: { label: 'Email', href: 'mailto:cwo@littletonjuniorfc.com' } },
@@ -46,14 +58,15 @@ const sections: Section[] = [
   },
   {
     id: 'fa-respect',
-    label: 'FA Respect Codes of Conduct',
-    colour: 'blue',
+    label: 'FA Respect Codes <br>of Conduct',
+    colour: 'grey',
+    layout: 'split',
     image: '/images/official-info/codeconduct.jpg',
     intro: [
-      'As a club, we abide by the FA Respect codes of conduct to ensure everyone has a good time on and off the pitch.',
-      'The codes ensure that we play fairly, by the rules, for the benefit of everyone, and in a positive manner, whether we are players, supporters, or coaches.',
-      "There are four codes of conduct; one respect code of conduct for young players, one for spectators and parents, one for coaches, managers and club officials, and one for match officials.",
-      "Please download, read, and abide by these every time there is a match. Let's get behind the FA message of… We only do positive.",
+      { body: 'As a club, we abide by the FA Respect codes of conduct to ensure everyone has a good time on and off the pitch.' },
+      { body: 'The codes ensure that we play fairly, by the rules, for the benefit of everyone, and in a positive manner, whether we are players, supporters, or coaches.' },
+      { body: "There are four codes of conduct; one respect code of conduct for young players, one for spectators and parents, one for coaches, managers and club officials, and one for match officials." },
+      { body: "Please download, read, and abide by these every time there is a match. Let's get behind the FA message of… We only do positive." },
     ],
     cards: [
       { title: 'Young players', body: 'FA Respect code of conduct', cta: { label: 'Download', href: '/images/downloads/FA-respect-code-of-conduct-young-players.pdf' } },
@@ -64,12 +77,14 @@ const sections: Section[] = [
   },
   {
     id: 'fa-charter',
-    label: 'FA Charter Standard Club',
-    colour: 'grey',
+    htmlId: 'charter', // matches the `#charter` selectors in custom.css
+    label: 'FA Charter <br>Standard <br>Club',
+    colour: 'blue',
+    layout: 'compact',
     image: '/images/official-info/charterstandard.jpg',
     intro: [
-      'The England Football Accreditation is awarded to clubs rigorously adjudged to be well-run and sustainable – and which prioritise child protection, quality coaching and implementation of the Respect programme.',
-      'Its goal is to raise standards in grassroots football, support the development of clubs and leagues, recognising and rewarding them for their commitment and achievements.',
+      { body: 'The England Football Accreditation is awarded to clubs rigorously adjudged to be well-run and sustainable – and which prioritise child protection, quality coaching and implementation of the Respect programme.' },
+      { body: 'Its goal is to raise standards in grassroots football, support the development of clubs and leagues, recognising and rewarding them for their commitment and achievements.' },
     ],
     cards: [
       { title: 'Charter standard website', body: "The FA's initiative to create the best places for people to play and enjoy football.", cta: { label: 'Visit', href: 'http://www.thefa.com/get-involved/player/clubs-leagues/fa-charter-standard-programme/leagues' } },
@@ -78,13 +93,15 @@ const sections: Section[] = [
   {
     id: 'committee',
     label: 'The Committee',
-    colour: 'blue',
+    colour: 'grey',
+    layout: 'compact',
+    alternates: true,
     image: '/images/official-info/committee.jpg',
     intro: [],
     cards: [
       { title: 'Chair', subtitle: 'Ethu Crorie', cta: { label: 'Email', href: 'mailto:chair@littletonjuniorfc.com' } },
       { title: 'Secretary', subtitle: 'Mike Knowles', cta: { label: 'Email', href: 'mailto:secretary@littletonjuniorfc.com' } },
-      { title: 'Treasurers', subtitle: 'Stephen Porter & Emilie Dumoulin', cta: { label: 'Email', href: 'mailto:treasurer@littletonjuniorfc.com' } },
+      { title: 'Treasurers', subtitle: 'Stephen Porter <br>& Emilie Dumoulin', cta: { label: 'Email', href: 'mailto:treasurer@littletonjuniorfc.com' } },
       { title: 'Welfare Officer', subtitle: 'Adam Stacey', phone: '07784 692766', cta: { label: 'Email', href: 'mailto:cwo@littletonjuniorfc.com' } },
     ],
   },
@@ -96,47 +113,37 @@ const sections: Section[] = [
 
   {
     sections.map((section) => (
-      <div class="uk-section-default uk-section">
+      <div
+        id={section.htmlId ?? `section-${section.id}`}
+        class:list={[section.colour, 'uk-section-default', 'uk-section']}
+      >
         <div class="uk-container">
           <div class="uk-grid-margin" uk-grid>
-            {/* Section label */}
+            {/* Section label panel — image with title overlaid */}
             <div class="uk-width-expand@m">
-              <div class:list={[section.colour === 'blue' ? 'bluesquare' : 'greysquare', 'uk-margin']}>
+              <div class="wellsafeimg uk-margin">
                 <div class="uk-child-width-1-1 uk-grid-match" uk-grid>
                   <div>
                     <div class="el-item uk-panel uk-margin-remove-first-child">
-                      <h3 class="el-title">{section.label}</h3>
+                      <img class="el-image" src={section.image} alt="" loading="lazy" />
+                      <h3 class="el-title uk-margin-top uk-margin-remove-bottom" set:html={section.label} />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Intro paragraphs as cards */}
-            {section.intro.length > 0 && (
+            {/* Split layout: intro cards in their own column */}
+            {section.layout === 'split' && section.intro.length > 0 && (
               <div class="uk-width-expand@m">
-                <div
-                  class:list={[
-                    'offinfo4x4',
-                    'alternates',
-                    section.colour === 'blue' ? 'grey' : 'blue',
-                    'uk-margin',
-                  ]}
-                >
+                <div class="offinfo4x4 uk-margin">
                   <div class="uk-child-width-1-2 uk-grid-match" uk-grid>
                     {section.intro.map((p) => (
                       <div>
-                        <div
-                          class:list={[
-                            'el-item',
-                            'uk-card',
-                            section.colour === 'blue' ? 'uk-card-secondary' : 'uk-card-primary',
-                            'uk-card-body',
-                            'uk-margin-remove-first-child',
-                          ]}
-                        >
+                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
                           <div class="el-content uk-panel uk-margin-top">
-                            <p>{p}</p>
+                            {p.title && <h3>{p.title}</h3>}
+                            <p>{p.body}</p>
                           </div>
                         </div>
                       </div>
@@ -145,55 +152,108 @@ const sections: Section[] = [
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Action cards */}
-          <div
-            class:list={[
-              'offinfo4x4',
-              'alternates',
-              section.colour === 'blue' ? 'grey' : 'blue',
-              'uk-margin',
-            ]}
-          >
-            <div class="uk-child-width-1-2 uk-child-width-1-4@m uk-grid-match" uk-grid>
-              {section.cards.map((card) => (
-                <div data-tag={card.cta?.label}>
-                  <div
-                    class:list={[
-                      'el-item',
-                      'uk-card',
-                      section.colour === 'blue' ? 'uk-card-secondary' : 'uk-card-primary',
-                      'uk-card-body',
-                      'uk-margin-remove-first-child',
-                    ]}
-                  >
-                    <div class="el-content uk-panel uk-margin-top">
-                      {card.title && <h3>{card.title}</h3>}
-                      {card.subtitle && <h4>{card.subtitle}</h4>}
-                      {card.phone && <p>{card.phone}</p>}
-                      {card.body && <p>{card.body}</p>}
-                    </div>
-                    {card.cta && (
-                      <div class="uk-margin-top">
-                        <a
-                          href={card.cta.href}
-                          class="el-link uk-button uk-button-default"
-                          {...(card.cta.label !== 'Email' &&
-                            card.cta.label !== 'Download' && {
-                              target: '_blank',
-                              rel: 'noopener',
-                            })}
-                        >
-                          {card.cta.label}
-                        </a>
+            {/* Compact layout: intro + action cards combined, 2-col grid */}
+            {section.layout === 'compact' && (
+              <div class="uk-width-expand@m">
+                <div
+                  class:list={[
+                    'offinfo4x4',
+                    section.alternates && 'alternates',
+                    section.alternates && section.colour,
+                    'uk-margin',
+                  ]}
+                >
+                  <div class="uk-child-width-1-2 uk-grid-match" uk-grid>
+                    {section.intro.map((p) => (
+                      <div>
+                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
+                          <div class="el-content uk-panel uk-margin-top">
+                            {p.title && <h3>{p.title}</h3>}
+                            <p>{p.body}</p>
+                          </div>
+                        </div>
                       </div>
-                    )}
+                    ))}
+                    {section.cards.map((card) => (
+                      <div data-tag={card.cta?.label}>
+                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
+                          <div class="el-content uk-panel uk-margin-top">
+                            {card.title && <h3>{card.title}</h3>}
+                            {card.subtitle && <h4 set:html={card.subtitle} />}
+                            {card.phone && <p>{card.phone}</p>}
+                            {card.body && <p>{card.body}</p>}
+                          </div>
+                          {card.cta && (
+                            <div class="uk-margin-top">
+                              <a
+                                href={card.cta.href}
+                                class="el-link uk-button uk-button-default"
+                                {...(card.cta.label !== 'Email' &&
+                                  card.cta.label !== 'Download' && {
+                                    target: '_blank',
+                                    rel: 'noopener',
+                                  })}
+                              >
+                                {card.cta.label}
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {Array.from({
+                      length: (2 - ((section.intro.length + section.cards.length) % 2)) % 2,
+                    }).map(() => (
+                      <div>
+                        <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child" />
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
+
+          {/* Split layout only: full-width action cards row */}
+          {section.layout === 'split' && (
+            <div class:list={['alternates', 'first', section.colour, 'uk-margin', 'uk-text-left']}>
+              <div class="uk-child-width-1-2 uk-child-width-1-4@m uk-grid-match" uk-grid>
+                {section.cards.map((card) => (
+                  <div data-tag={card.cta?.label}>
+                    <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
+                      <div class="el-content uk-panel uk-margin-top">
+                        {card.title && <h3>{card.title}</h3>}
+                        {card.subtitle && <h4 set:html={card.subtitle} />}
+                        {card.phone && <p>{card.phone}</p>}
+                        {card.body && <p>{card.body}</p>}
+                      </div>
+                      {card.cta && (
+                        <div class="uk-margin-top">
+                          <a
+                            href={card.cta.href}
+                            class="el-link uk-button uk-button-default"
+                            {...(card.cta.label !== 'Email' &&
+                              card.cta.label !== 'Download' && {
+                                target: '_blank',
+                                rel: 'noopener',
+                              })}
+                          >
+                            {card.cta.label}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {Array.from({ length: (4 - (section.cards.length % 4)) % 4 }).map(() => (
+                  <div>
+                    <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     ))

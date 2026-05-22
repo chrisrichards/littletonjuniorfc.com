@@ -211,3 +211,47 @@
   position: relative;
   padding-top: 0;
 }
+
+/* The original markup had an empty <p></p> after each phone number so
+   the dashed top border on every <p> visually closed off the bottom.
+   We render clean markup and add the closing line via :last-child. */
+.alternates .el-content > p:last-of-type {
+  border-bottom: 1px dashed #fff;
+}
+
+/* Action-card squares on official-info — match the inline aspect-ratio
+   the Joomla page set per #alternatesN id. .blue/.grey only appear on
+   that page's alternates rows, so this won't catch teams or contact-us. */
+.alternates.first.blue .uk-grid-match.uk-grid > div:after,
+.alternates.first.grey .uk-grid-match.uk-grid > div:after {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+/* ── Official-info page ───────────────────────────────────────── */
+
+/* Section label panel: image fills the square, title overlays top-left. */
+.wellsafeimg {
+  position: relative;
+}
+.wellsafeimg .el-item {
+  position: relative;
+}
+.wellsafeimg .el-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+}
+.wellsafeimg h3.el-title,
+#charter .wellsafeimg h3.el-title {
+  font-size: 64px;
+  line-height: 58px;
+  position: absolute;
+  top: 56px;
+  left: 36px;
+  color: #fff;
+  z-index: 1;
+}
