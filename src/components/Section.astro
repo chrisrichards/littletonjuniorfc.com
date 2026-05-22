@@ -1,0 +1,40 @@
+---
+/**
+ * The outermost wrapper repeated dozens of times across the site:
+ *
+ *   <div [id] class="[colour] uk-section-default uk-section">
+ *     <div class="uk-container">
+ *       <div class="uk-grid-margin" uk-grid>
+ *         <slot />
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * `colour` (blue | grey) lands on the outer element so the
+ * `.grey .uk-card-primary { background: #464547 }` cascade fires.
+ */
+
+export interface Props {
+  id?: string;
+  colour?: 'blue' | 'grey';
+  /** When true, skip the uk-grid wrapper (rare — pass true if children
+   *  need to be raw flow content, not grid items). */
+  noGrid?: boolean;
+}
+
+const { id, colour, noGrid = false } = Astro.props;
+---
+
+<div id={id} class:list={[colour, 'uk-section-default', 'uk-section']}>
+  <div class="uk-container">
+    {
+      noGrid ? (
+        <slot />
+      ) : (
+        <div class="uk-grid-margin" uk-grid>
+          <slot />
+        </div>
+      )
+    }
+  </div>
+</div>

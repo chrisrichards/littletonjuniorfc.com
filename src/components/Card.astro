@@ -1,0 +1,103 @@
+---
+/**
+ * The basic "square" card used across teams / official-info / membership /
+ * resources / contact-us. Renders the standard YOOtheme structure:
+ *
+ *   <div data-tag=…>
+ *     <div class="el-item uk-card uk-card-{primary|secondary} uk-card-body uk-margin-remove-first-child">
+ *       <div class="el-content uk-panel uk-margin-top">
+ *         {h2|h3 + h4 + p…}
+ *       </div>
+ *       {cta && <div class="uk-margin-top"><a class="el-link uk-button uk-button-default">…</a></div>}
+ *     </div>
+ *   </div>
+ *
+ * Calling with no props renders an empty padded slot (use for grid padding).
+ *
+ * For one-off content the default slot lets you write your own children
+ * instead of using the typed props.
+ */
+
+export type CardCta = { label: string; href: string; blank?: boolean };
+
+export interface Props {
+  // Content props — render `<h2>` / `<h3>` / `<h4>` / `<p>` if set
+  heading?: string; // <h2> — used on teams nav cards. Defaults to h3.
+  title?: string; // <h3> — most common
+  subtitle?: string; // <h4>. set:html so callers can include <br>
+  phone?: string; // dedicated <p>
+  body?: string; // <p>. set:html so callers can include <em>/<br>
+  image?: string; // optional <img class="el-image"> above content
+  imageAlt?: string;
+  // Action
+  cta?: CardCta;
+  // Visual
+  colour?: 'primary' | 'secondary';
+  // Misc
+  dataTag?: string;
+  contentLabel?: 'Contact'; // adds <h4>Contact</h4> before subtitle/phone (squad cards)
+}
+
+const {
+  heading,
+  title,
+  subtitle,
+  phone,
+  body,
+  image,
+  imageAlt = '',
+  cta,
+  colour = 'primary',
+  dataTag,
+  contentLabel,
+} = Astro.props;
+
+const hasDefaultSlot = Astro.slots.has('default');
+const hasContent =
+  hasDefaultSlot ||
+  heading ||
+  title ||
+  subtitle ||
+  phone ||
+  body ||
+  image ||
+  contentLabel;
+const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remove-first-child`;
+---
+
+<div {...dataTag ? { 'data-tag': dataTag } : {}}>
+  <div class={cardClass}>
+    {image && <img class="el-image" src={image} alt={imageAlt} loading="lazy" />}
+    {
+      hasContent && (
+        <div class="el-content uk-panel uk-margin-top">
+          {hasDefaultSlot ? (
+            <slot />
+          ) : (
+            <>
+              {heading && <h2>{heading}</h2>}
+              {title && <h3>{title}</h3>}
+              {contentLabel === 'Contact' && <h4>Contact</h4>}
+              {subtitle && <h4 set:html={subtitle} />}
+              {phone && <p>{phone}</p>}
+              {body && <p set:html={body} />}
+            </>
+          )}
+        </div>
+      )
+    }
+    {
+      cta && (
+        <div class="uk-margin-top">
+          <a
+            href={cta.href}
+            class="el-link uk-button uk-button-default"
+            {...(cta.blank ? { target: '_blank', rel: 'noopener' } : {})}
+          >
+            {cta.label}
+          </a>
+        </div>
+      )
+    }
+  </div>
+</div>

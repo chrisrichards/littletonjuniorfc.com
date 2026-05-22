@@ -1,0 +1,36 @@
+---
+/**
+ * Section label panel used by official-info and resources. Three variants
+ * keyed off the original Joomla page classes:
+ *
+ *   - wellsafeimg: image with title overlaid top-left (official-info)
+ *   - bluesquare:  blue panel with title overlaid top-left (resources)
+ *   - greysquare:  dark grey panel with title overlaid top-left (resources)
+ *
+ * All three rely on existing CSS in custom.css + overrides.css to position
+ * the title absolutely.
+ */
+
+export interface Props {
+  title: string; // set:html — callers can pass <br>
+  variant: 'wellsafeimg' | 'bluesquare' | 'greysquare';
+  image?: string; // only used by wellsafeimg
+}
+
+const { title, variant, image } = Astro.props;
+---
+
+<div class:list={[variant, 'uk-margin']}>
+  <div class="uk-child-width-1-1 uk-grid-match" uk-grid>
+    <div>
+      <div class="el-item uk-panel uk-margin-remove-first-child">
+        {
+          variant === 'wellsafeimg' && image && (
+            <img class="el-image" src={image} alt="" loading="lazy" />
+          )
+        }
+        <h3 class="el-title uk-margin-top uk-margin-remove-bottom" set:html={title} />
+      </div>
+    </div>
+  </div>
+</div>
