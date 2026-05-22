@@ -126,39 +126,93 @@ function panelPad(squadCount: number): number {
 
   <script is:inline>
     (function () {
+      var DURATION = 400;
       var openPanel = null;
+      var animating = false;
 
-      function closePanel() {
-        if (!openPanel) return;
-        openPanel.style.display = '';
-        var x = openPanel.querySelector('.closeMe');
-        if (x) x.remove();
+      function slideDown(el, done) {
+        el.style.display = 'block';
+        el.style.overflow = 'hidden';
+        el.style.height = '0px';
+        var target = el.scrollHeight;
+        el.getBoundingClientRect(); // force layout
+        el.style.transition = 'height ' + DURATION + 'ms ease';
+        requestAnimationFrame(function () {
+          el.style.height = target + 'px';
+        });
+        var onEnd = function (e) {
+          if (e.target !== el || e.propertyName !== 'height') return;
+          el.removeEventListener('transitionend', onEnd);
+          el.style.height = '';
+          el.style.overflow = '';
+          el.style.transition = '';
+          if (done) done();
+        };
+        el.addEventListener('transitionend', onEnd);
+      }
+
+      function slideUp(el, done) {
+        el.style.overflow = 'hidden';
+        el.style.height = el.scrollHeight + 'px';
+        el.getBoundingClientRect(); // force layout
+        el.style.transition = 'height ' + DURATION + 'ms ease';
+        requestAnimationFrame(function () {
+          el.style.height = '0px';
+        });
+        var onEnd = function (e) {
+          if (e.target !== el || e.propertyName !== 'height') return;
+          el.removeEventListener('transitionend', onEnd);
+          el.style.display = '';
+          el.style.height = '';
+          el.style.overflow = '';
+          el.style.transition = '';
+          if (done) done();
+        };
+        el.addEventListener('transitionend', onEnd);
+      }
+
+      function addCloseButton(panel) {
+        if (panel.querySelector('.closeMe')) return;
+        var btn = document.createElement('a');
+        btn.className = 'closeMe';
+        btn.href = '#';
+        btn.setAttribute('aria-label', 'Close');
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          closePanel();
+        });
+        panel.appendChild(btn);
+      }
+
+      function closePanel(done) {
+        if (!openPanel || animating) return;
+        var panel = openPanel;
         openPanel = null;
+        animating = true;
+        slideUp(panel, function () {
+          var x = panel.querySelector('.closeMe');
+          if (x) x.remove();
+          animating = false;
+          if (done) done();
+        });
       }
 
       function openPanelEl(panel) {
+        if (animating) return;
         if (openPanel === panel) {
           closePanel();
           return;
         }
-        closePanel();
-        panel.style.display = 'block';
-        if (!panel.querySelector('.closeMe')) {
-          var btn = document.createElement('a');
-          btn.className = 'closeMe';
-          btn.href = '#';
-          btn.setAttribute('aria-label', 'Close');
-          btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            closePanel();
+        var go = function () {
+          animating = true;
+          slideDown(panel, function () {
+            addCloseButton(panel);
+            openPanel = panel;
+            animating = false;
           });
-          panel.appendChild(btn);
-        }
-        openPanel = panel;
-        // defer scroll so display:block takes effect first
-        requestAnimationFrame(function () {
-          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+        };
+        if (openPanel) closePanel(go);
+        else go();
       }
 
       document.querySelectorAll('a[data-panel-target]').forEach(function (a) {
