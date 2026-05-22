@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Card from '../components/Card.astro';
+import SectionLabel from '../components/SectionLabel.astro';
 import site from '../content/settings/site.json';
 
 const cards = [
@@ -15,45 +17,34 @@ const cards = [
   {
     title: 'Paying Subs',
     body: 'To pay your annual subs, please log into our Pitchero membership system.',
-    cta: { label: 'Pay subs', href: 'https://www.pitchero.com/clubs/littletonjuniorfc/payments' },
+    cta: {
+      label: 'Pay subs',
+      href: 'https://www.pitchero.com/clubs/littletonjuniorfc/payments',
+      blank: true,
+    },
     tag: 'PAY-SUBS',
   },
   {
     title: 'Your details',
     body: 'To make any changes to your account, please log into our Pitchero membership system.',
-    cta: { label: 'See your details', href: 'https://pitchero.com/clubs/littletonjuniorfc' },
+    cta: {
+      label: 'See your details',
+      href: 'https://pitchero.com/clubs/littletonjuniorfc',
+      blank: true,
+    },
     tag: 'See-Your-Details',
   },
 ];
 ---
 
 <BaseLayout title="Membership | Littleton Junior FC" active="membership">
-  <Hero
-    variant="image"
-    image="/images/heros/membership-hero.jpg"
-    title="Membership"
-  />
+  <Hero variant="image" image="/images/heros/membership-hero.jpg" title="Membership" />
 
   <div class="grey uk-section-default uk-section">
     <div class="uk-container">
       <div class="uk-grid-margin" uk-grid>
         <div class="uk-width-expand@m">
-          <div class="wellsafeimg uk-margin">
-            <div class="uk-child-width-1-1 uk-grid-match" uk-grid>
-              <div>
-                <div class="el-item uk-panel uk-margin-remove-first-child">
-                  <img
-                    class="el-image"
-                    alt=""
-                    data-src="/images/membership/membershipblock.jpg"
-                    data-width="1240"
-                    data-height="1240"
-                    uk-img
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <SectionLabel variant="wellsafeimg" image="/images/membership/membershipblock.jpg" />
         </div>
 
         <div class="uk-width-expand@m">
@@ -61,26 +52,12 @@ const cards = [
             <div class="uk-child-width-1-2 uk-grid-match" uk-grid>
               {
                 cards.map((card) => (
-                  <div data-tag={card.tag}>
-                    <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                      <div class="el-content uk-panel uk-margin-top">
-                        <h3>{card.title}</h3>
-                        <p set:html={card.body} />
-                      </div>
-                      {card.cta && (
-                        <div class="uk-margin-top">
-                          <a
-                            href={card.cta.href}
-                            target="_blank"
-                            rel="noopener"
-                            class="el-link uk-button uk-button-default"
-                          >
-                            {card.cta.label}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <Card
+                    title={card.title}
+                    body={card.body}
+                    cta={card.cta}
+                    dataTag={card.tag}
+                  />
                 ))
               }
             </div>

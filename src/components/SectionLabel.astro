@@ -12,7 +12,9 @@
  */
 
 export interface Props {
-  title: string; // set:html — callers can pass <br>
+  /** Optional — set:html so callers can pass <br>. wellsafeimg with no
+   *  title is valid (membership uses an image-only panel). */
+  title?: string;
   variant: 'wellsafeimg' | 'bluesquare' | 'greysquare';
   image?: string; // only used by wellsafeimg
 }
@@ -29,7 +31,7 @@ const { title, variant, image } = Astro.props;
             <img class="el-image" src={image} alt="" loading="lazy" />
           )
         }
-        <h3 class="el-title uk-margin-top uk-margin-remove-bottom" set:html={title} />
+        {title && <h3 class="el-title uk-margin-top uk-margin-remove-bottom" set:html={title} />}
       </div>
     </div>
   </div>
