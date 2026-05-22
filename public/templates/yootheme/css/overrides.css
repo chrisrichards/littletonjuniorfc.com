@@ -165,3 +165,42 @@
   right: 0;
   width: 100%;
 }
+
+/* ── Teams page ───────────────────────────────────────────────── */
+
+/* Square cards in each nav row (was an inline <style> per page id). */
+#alternates1 .uk-grid-match.uk-grid > div:after,
+#alternates2 .uk-grid-match.uk-grid > div:after,
+#alternates3 .uk-grid-match.uk-grid > div:after,
+#alternates4 .uk-grid-match.uk-grid > div:after {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+/* Remove the inter-row top padding so rows hug each other. */
+#alternates2,
+#alternates3,
+#alternates4 {
+  padding-top: 0;
+}
+
+/* Display typography on the age cards. */
+#u6-9 .el-content h2,
+#u10-13 .el-content h2,
+#u14-17 .el-content h2,
+#u18-pan .el-content h2 {
+  font-size: 110px;
+  margin: 0;
+  line-height: 110px;
+}
+#u6-9 .el-content p,
+#u10-13 .el-content p,
+#u14-17 .el-content p,
+#u18-pan .el-content p {
+  font-size: 24px;
+  margin: 0;
+  line-height: 24px;
+  font-family: 'BebasKai';
+  color: #fff;
+}
