@@ -23,12 +23,6 @@ for (let i = 0; i < 4; i++) {
   });
 }
 
-// For each team's hidden panel: pad squad-card-pairs to a multiple of 4 cards.
-function panelPad(squadCount: number): number {
-  const cards = squadCount * 2;
-  const mod = cards % 4;
-  return mod === 0 ? 0 : 4 - mod;
-}
 ---
 
 <BaseLayout title="Teams | Littleton Junior FC" active="teams">
@@ -79,42 +73,38 @@ function panelPad(squadCount: number): number {
             <div class="uk-container">
               <div class="info uk-grid-margin" uk-grid>
                 <div class="uk-width-1-1@m">
-                  <div class="uk-margin">
-                    <div class="uk-child-width-1-1 uk-child-width-1-4@m uk-grid-match" uk-grid>
-                      {t.data.squads.map((s) => (
-                        <>
-                          <div>
-                            <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                              <div class="el-content uk-panel uk-margin-top">
-                                <h2>{s.name}</h2>
-                              </div>
+                  {t.data.squads.map((s) => (
+                    <div class="uk-margin">
+                      <div class="uk-child-width-1-1 uk-child-width-1-4@m uk-grid-match" uk-grid>
+                        <div>
+                          <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
+                            <div class="el-content uk-panel uk-margin-top">
+                              <h2>{s.name}</h2>
                             </div>
                           </div>
-                          <div>
-                            <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                              <div class="el-content uk-panel uk-margin-top">
-                                <h4>Contact</h4>
-                                <p>{s.managerName}</p>
-                              </div>
-                              <div class="uk-margin-top">
-                                <a
-                                  href={`mailto:${s.managerEmail}`}
-                                  class="el-link uk-button uk-button-default"
-                                >
-                                  Email
-                                </a>
-                              </div>
+                        </div>
+                        <div>
+                          <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
+                            <div class="el-content uk-panel uk-margin-top">
+                              <h4>Contact</h4>
+                              <p>{s.managerName}</p>
+                            </div>
+                            <div class="uk-margin-top">
+                              <a
+                                href={`mailto:${s.managerEmail}`}
+                                class="el-link uk-button uk-button-default"
+                              >
+                                Email
+                              </a>
                             </div>
                           </div>
-                        </>
-                      ))}
-                      {Array.from({ length: panelPad(t.data.squads.length) }).map(() => (
+                        </div>
                         <div>
                           <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child" />
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -123,6 +113,28 @@ function panelPad(squadCount: number): number {
       </>
     ))
   }
+
+  <div class="quoteimage uk-section-default uk-section">
+    <div class="uk-container">
+      <div class="uk-grid-margin" uk-grid>
+        <div class="uk-width-1-1@m">
+          <div class="uk-margin">
+            <img
+              class="el-image"
+              src="/images/teams/teams-bottom.jpg"
+              alt=""
+              width="2400"
+              height="1134"
+              loading="lazy"
+            />
+          </div>
+          <blockquote class="quotes">
+            <span>&ldquo;</span>Joe is loving his football and has made loads of new friends at the club.<span>&rdquo;</span>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script is:inline>
     (function () {

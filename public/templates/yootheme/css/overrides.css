@@ -204,3 +204,10 @@
   font-family: 'BebasKai';
   color: #fff;
 }
+
+/* Anchor for the absolutely-positioned .quotes overlay on the
+   bottom image (teams + contact-us). */
+.quoteimage {
+  position: relative;
+  padding-top: 0;
+}
