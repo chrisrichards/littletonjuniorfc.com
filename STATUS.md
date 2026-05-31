@@ -10,8 +10,7 @@ Migration from Joomla to Astro on Cloudflare Pages. Visitor-facing site is **con
 
 ## 2026-05-31 — Optimisation & de-duplication pass (branch `optimise-dedupe`)
 
-Four staged commits, each verified pixel-identical (0/16 screenshot diffs vs the
-pre-refactor build at commit `2e9a12b`, desktop + mobile) and interaction-tested
+Staged commits on the branch (see git log), interaction-tested throughout
 (teams "More" panel, mobile off-canvas, counter animation):
 
 1. **De-dup** — home page (hero, counters, **squares**, sponsors) and all pages
@@ -22,12 +21,26 @@ pre-refactor build at commit `2e9a12b`, desktop + mobile) and interaction-tested
    UIkit/theme scripts.
 3. **CSS purge** — `scripts/purge-css.mjs` (PurgeCSS) wired into `npm run build`:
    theme.css 385→242KB (−37%), custom.css 39→32KB.
-4. **Images** — `scripts/optimise-images.mjs` (sharp) wired into build: in-place
-   re-encode of build JPEG/PNG at q82, 16.5→8.3MB (−49%). WebP/AVIF deferred
-   (needs `<picture>` markup with exact-match risk). Source images in `public/`
-   untouched; only `dist/` shrinks.
+4. **Images (in-place)** — `scripts/optimise-images.mjs` (sharp) wired into build:
+   in-place re-encode of build JPEG/PNG at q82, 16.5→8.3MB (−49%). Source images
+   in `public/` untouched; only `dist/` shrinks.
+5. **Images (astro:assets)** — full conversion: images moved to `src/assets`,
+   resolved from stored string paths via `src/lib/images.ts`, rendered through
+   `<Picture>`/`<Image>` (AVIF/WebP + responsive `srcset`); `uk-img` retired for
+   images; logo converted. `astro.config.mjs` set to `imageService: 'compile'`
+   so the Cloudflare adapter emits **static** `_astro/*` images at build (its
+   default on-demand `/_image` Worker produced no static files and 404'd on a
+   static host). Redundant `public/images/*` rasters + `templates/yootheme/cache`
+   deleted (`public/images/downloads` PDFs kept). Verified by reading screenshots
+   (modern-format re-encode means pixel-diff is not meaningful here) + the same
+   interaction tests.
 
-Not yet merged to `main`. Booking system (Phase 4) still the launch blocker.
+Stages 1–4(in-place) were verified pixel-identical (0/16). Stage 5 changes image
+bytes by design (AVIF/WebP), so it was verified by visual read + layout-dimension
+probe, not pixel-diff.
+
+Not yet merged to `main`. Booking system (Phase 4 of migration-plan) still the
+launch blocker.
 
 ## Phase progress against migration-plan.md
 
