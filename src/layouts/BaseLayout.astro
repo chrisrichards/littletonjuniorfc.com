@@ -39,12 +39,32 @@ const navRight = [
     <meta name="description" content={description} />
     <title>{title}</title>
 
+    {/* Preload the two self-hosted fonts so display text (BebasKai) and body
+        copy (TradeGothic) paint without a flash. Paired with font-display:swap
+        in custom.css. */}
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/templates/yootheme/fonts/3A11AF_0_0.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/templates/yootheme/fonts/TradeGothicLT.woff2"
+      crossorigin
+    />
+
     <link rel="stylesheet" href="/templates/yootheme/css/theme.css" id="theme-style-css" />
     <link rel="stylesheet" href="/templates/yootheme/css/custom.css" id="theme-custom-css" />
     <link rel="stylesheet" href="/templates/yootheme/css/overrides.css" id="theme-overrides-css" />
 
-    <script src="/templates/yootheme/vendor/assets/uikit/dist/js/uikit.min.js" is:inline></script>
-    <script src="/templates/yootheme/vendor/assets/uikit/dist/js/uikit-icons.min.js" is:inline></script>
+    {/* defer: parse-blocking removed; scripts still run in order before
+        DOMContentLoaded, which the counter/panel inline scripts wait for. */}
+    <script src="/templates/yootheme/vendor/assets/uikit/dist/js/uikit.min.js" is:inline defer></script>
+    <script src="/templates/yootheme/vendor/assets/uikit/dist/js/uikit-icons.min.js" is:inline defer></script>
   </head>
   <body class="">
     <div class="tm-page-container uk-clearfix">
@@ -172,7 +192,7 @@ const navRight = [
         and loaded via <link> above. Astro's <style is:global> in dev mode
         loads styles via Vite HMR which had timing/cache quirks. */}
 
-    <script src="/templates/yootheme/js/theme.js" is:inline></script>
+    <script src="/templates/yootheme/js/theme.js" is:inline defer></script>
     <script is:inline>
       // Counter animation lifted from the live site's inline JS.
       // Runs once on DOMContentLoaded. Looks for .counter[data-count].
