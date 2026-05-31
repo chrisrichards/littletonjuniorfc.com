@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/purge-css.mjs",
+    "build:nopurge": "astro build",
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types"
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "cheerio": "^1.2.0",
+    "purgecss": "^8.0.0",
     "turndown": "^7.2.4"
   }
 }
