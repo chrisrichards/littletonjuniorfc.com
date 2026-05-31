@@ -1,0 +1,55 @@
+/*
+ * Tailwind entry for the Littleton Junior FC site.
+ *
+ * NOTE — preflight is deliberately NOT imported during the UIkit→Tailwind
+ * migration. Tailwind's base reset would fight UIkit's own reset while both
+ * stylesheets coexist and cause visual diffs. We import only the `theme`
+ * (design tokens / @theme) and `utilities` layers. Once UIkit is fully
+ * removed (Stage 4) we re-evaluate whether a small base reset is needed.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* ── Design tokens (exact values lifted from the live YOOtheme styling) ── */
+@theme {
+  /* Palette */
+  --color-brand: #5da9dd; /* accent blue (uk-card-primary, links, buttons) */
+  --color-dark: #464547; /* dark grey (uk-card-secondary, footer) */
+  --color-dim: #808285; /* dimmed text/cards on the teams "More" panels */
+  /* Pitch colours — only used by the (unbuilt) schedule; parked here. */
+  --color-pitch-nursery: #ec008c;
+  --color-pitch-top: #5da9dd;
+  --color-pitch-middle: #a6ce39;
+  --color-pitch-bottom: #ebc900;
+
+  /* Fonts (licensed for this domain — see memory font-licensing.md) */
+  --font-display: 'BebasKai', sans-serif;
+  --font-body: 'TradeGothic', sans-serif;
+
+  /* Breakpoints — UIkit s/m/l plus the bespoke type breakpoints from
+     custom.css. min-width based; `max-*` variants reuse these values.
+     Defined explicitly so utilities switch at exactly the live widths. */
+  --breakpoint-xs: 376px;
+  --breakpoint-mob: 451px;
+  --breakpoint-sm: 641px; /* UIkit `s` ≈ 640 boundary */
+  --breakpoint-tab: 769px;
+  --breakpoint-md: 960px; /* UIkit `m` */
+  --breakpoint-lg: 1025px;
+  --breakpoint-xl: 1153px;
+  --breakpoint-2xl: 1200px; /* UIkit `l` */
+}
+
+/* ── Fonts ──
+ * @font-face is intentionally NOT declared here during the migration —
+ * custom.css still provides BebasKai + TradeGothic. A duplicate declaration
+ * is redundant while both stylesheets load; the @font-face blocks move here
+ * (verbatim, with font-display:swap) in Stage 4 when custom.css is deleted.
+ */
+
+/* ── Component layer ──
+ * Bespoke multi-breakpoint typography + pseudo-elements are added here in
+ * later stages (kept out of inline markup where they'd need 5–7 variants).
+ */
+@layer components {
+}
