@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import CardGrid from '../components/CardGrid.astro';
 import Card from '../components/Card.astro';
 import SectionLabel from '../components/SectionLabel.astro';
 import site from '../content/settings/site.json';
@@ -40,30 +42,19 @@ const cards = [
 <BaseLayout title="Membership | Littleton Junior FC" active="membership">
   <Hero variant="image" image="/images/heros/membership-hero.jpg" title="Membership" />
 
-  <div class="grey uk-section-default uk-section">
-    <div class="uk-container">
-      <div class="uk-grid-margin" uk-grid>
-        <div class="uk-width-expand@m">
-          <SectionLabel variant="wellsafeimg" image="/images/membership/membershipblock.jpg" />
-        </div>
-
-        <div class="uk-width-expand@m">
-          <div id="membership" class="offinfo4x4 alt membership uk-margin">
-            <div class="uk-child-width-1-2 uk-grid-match" uk-grid>
-              {
-                cards.map((card) => (
-                  <Card
-                    title={card.title}
-                    body={card.body}
-                    cta={card.cta}
-                    dataTag={card.tag}
-                  />
-                ))
-              }
-            </div>
-          </div>
-        </div>
-      </div>
+  <Section class="grey">
+    <div class="uk-width-expand@m">
+      <SectionLabel variant="wellsafeimg" image="/images/membership/membershipblock.jpg" />
     </div>
-  </div>
+
+    <div class="uk-width-expand@m">
+      <CardGrid id="membership" wrap="offinfo4x4 alt membership uk-margin" grid="uk-child-width-1-2">
+        {
+          cards.map((card) => (
+            <Card title={card.title} body={card.body} cta={card.cta} dataTag={card.tag} />
+          ))
+        }
+      </CardGrid>
+    </div>
+  </Section>
 </BaseLayout>

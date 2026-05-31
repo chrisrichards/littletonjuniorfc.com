@@ -34,12 +34,24 @@ export interface Props {
   subtitle?: string; // <h4>. set:html so callers can include <br>
   phone?: string; // dedicated <p>
   body?: string; // <p>. set:html so callers can include <em>/<br>
-  image?: string; // optional <img class="el-image"> above content
+  image?: string; // optional eager <img class="el-image"> above content
   imageAlt?: string;
+  /** Responsive UIkit lazy image (data-src/uk-img) above content — used by
+   *  the home squares + sponsors so they share this component while keeping
+   *  identical lazy-loading markup. Takes precedence over `image`. */
+  lazyImg?: {
+    src: string;
+    srcset?: string;
+    sizes?: string;
+    width: number;
+    height: number;
+  };
   // Action
   cta?: CardCta;
   // Visual
   colour?: 'primary' | 'secondary';
+  /** Adds `uk-scrollspy-class` to the el-item (home squares fade-in). */
+  scrollspyClass?: boolean;
   // Misc
   dataTag?: string;
   contentLabel?: 'Contact'; // adds <h4>Contact</h4> before subtitle/phone (squad cards)
@@ -53,8 +65,10 @@ const {
   body,
   image,
   imageAlt = '',
+  lazyImg,
   cta,
   colour = 'primary',
+  scrollspyClass = false,
   dataTag,
   contentLabel,
 } = Astro.props;
@@ -73,8 +87,23 @@ const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remo
 ---
 
 <div {...dataTag ? { 'data-tag': dataTag } : {}}>
-  <div class={cardClass}>
-    {image && <img class="el-image" src={image} alt={imageAlt} loading="lazy" />}
+  <div class={cardClass} {...scrollspyClass ? { 'uk-scrollspy-class': '' } : {}}>
+    {
+      lazyImg ? (
+        <img
+          class="el-image"
+          alt={imageAlt}
+          data-src={lazyImg.src}
+          data-srcset={lazyImg.srcset}
+          data-sizes={lazyImg.sizes}
+          data-width={lazyImg.width}
+          data-height={lazyImg.height}
+          uk-img
+        />
+      ) : (
+        image && <img class="el-image" src={image} alt={imageAlt} loading="lazy" />
+      )
+    }
     {
       hasContent && (
         <div class="el-content uk-panel uk-margin-top">

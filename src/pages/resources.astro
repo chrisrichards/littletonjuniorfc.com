@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import CardGrid from '../components/CardGrid.astro';
 import Card from '../components/Card.astro';
 import SectionLabel from '../components/SectionLabel.astro';
 import { chunk } from '../lib/chunk';
@@ -55,34 +57,29 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
   <Hero variant="image" image="/images/heros/resources-hero.jpg" title="Resources" />
 
   {/* Featured cards (Our Ethos + Player Development) */}
-  <div class="uk-section-default uk-section">
-    <div class="uk-container">
-      <div class="uk-grid-margin" uk-grid>
-        <div class="uk-width-1-1@m">
-          <div class="homesquares resources uk-margin uk-text-center">
-            <div class="uk-child-width-1-1 uk-child-width-1-2@s uk-grid-match" uk-grid>
-              {
-                featured.map((r) => (
-                  <Card
-                    colour="secondary"
-                    dataTag="Visit"
-                    image={featuredImages[r.id]}
-                    title={r.data.title}
-                    body={r.data.description}
-                    cta={{
-                      label: 'Visit',
-                      href: r.data.href,
-                      blank: r.data.action !== 'download',
-                    }}
-                  />
-                ))
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <Section width="full">
+    <CardGrid
+      wrap="homesquares resources uk-margin uk-text-center"
+      grid="uk-child-width-1-1 uk-child-width-1-2@s"
+    >
+      {
+        featured.map((r) => (
+          <Card
+            colour="secondary"
+            dataTag="Visit"
+            image={featuredImages[r.id]}
+            title={r.data.title}
+            body={r.data.description}
+            cta={{
+              label: 'Visit',
+              href: r.data.href,
+              blank: r.data.action !== 'download',
+            }}
+          />
+        ))
+      }
+    </CardGrid>
+  </Section>
 
   {/* Sectioned resource cards */}
   {
@@ -108,71 +105,60 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
         const padCount = (cols - (row.length % cols)) % cols;
         const useGb = !isGreyOnly || rowIdx > 0;
         const useSwap = rowIdx > 0 && !stays;
+        const wrap = [
+          'offinfo4x4',
+          useGb && 'gb',
+          'alternates',
+          'second',
+          modifier,
+          useSwap && 'swap',
+          'uk-margin',
+        ]
+          .filter(Boolean)
+          .join(' ');
         return (
-          <div
-            class:list={[
-              'offinfo4x4',
-              useGb && 'gb',
-              'alternates',
-              'second',
-              modifier,
-              useSwap && 'swap',
-              'uk-margin',
-            ]}
-          >
-            <div class:list={[childWidth, 'uk-grid-match']} uk-grid>
-              {row.map((r) => (
-                <Card
-                  colour={colour}
-                  dataTag={r.data.action === 'download' ? 'Download' : 'Visit'}
-                  title={r.data.title}
-                  body={r.data.description}
-                  cta={{
-                    label: buttonLabel(r.data.action),
-                    href: r.data.href,
-                    blank: r.data.action !== 'download',
-                  }}
-                />
-              ))}
-              {Array.from({ length: padCount }).map(() => (
-                <Card colour={colour} />
-              ))}
-            </div>
-          </div>
+          <CardGrid wrap={wrap} grid={childWidth}>
+            {row.map((r) => (
+              <Card
+                colour={colour}
+                dataTag={r.data.action === 'download' ? 'Download' : 'Visit'}
+                title={r.data.title}
+                body={r.data.description}
+                cta={{
+                  label: buttonLabel(r.data.action),
+                  href: r.data.href,
+                  blank: r.data.action !== 'download',
+                }}
+              />
+            ))}
+            {Array.from({ length: padCount }).map(() => (
+              <Card colour={colour} />
+            ))}
+          </CardGrid>
         );
       };
 
       return (
         <>
           {/* Section header: label LEFT + first row of cards RIGHT */}
-          <div class="uk-section-default uk-section">
-            <div class="uk-container">
-              <div class="uk-grid-margin" uk-grid>
-                <div class="uk-width-expand@m">
-                  <SectionLabel
-                    title={group.section}
-                    variant={group.colour === 'blue' ? 'bluesquare' : 'greysquare'}
-                  />
-                </div>
-                <div class="uk-width-expand@m">
-                  {rows[0] && renderRow(rows[0], 0)}
-                  {stays && rows.slice(1).map((row, i) => renderRow(row, i + 1))}
-                </div>
-              </div>
+          <Section>
+            <div class="uk-width-expand@m">
+              <SectionLabel
+                title={group.section}
+                variant={group.colour === 'blue' ? 'bluesquare' : 'greysquare'}
+              />
             </div>
-          </div>
+            <div class="uk-width-expand@m">
+              {rows[0] && renderRow(rows[0], 0)}
+              {stays && rows.slice(1).map((row, i) => renderRow(row, i + 1))}
+            </div>
+          </Section>
 
           {/* Subsequent rows: full-width, each its own uk-section
               (only for sections that don't stay in the right column) */}
           {!stays &&
             rows.slice(1).map((row, i) => (
-              <div class="uk-section-default uk-section">
-                <div class="uk-container">
-                  <div class="uk-grid-margin" uk-grid>
-                    <div class="uk-width-1-1@m">{renderRow(row, i + 1)}</div>
-                  </div>
-                </div>
-              </div>
+              <Section width="full">{renderRow(row, i + 1)}</Section>
             ))}
         </>
       );

@@ -1,0 +1,29 @@
+---
+/**
+ * Closing "quote image" band — a full-width image above a large blockquote.
+ * Duplicated verbatim on teams + contact-us, so extracted here.
+ */
+export interface Props {
+  image: string;
+  width: number;
+  height: number;
+  quote: string;
+}
+
+const { image, width, height, quote } = Astro.props;
+---
+
+<div class="quoteimage uk-section-default uk-section">
+  <div class="uk-container">
+    <div class="uk-grid-margin" uk-grid>
+      <div class="uk-width-1-1@m">
+        <div class="uk-margin">
+          <img class="el-image" src={image} alt="" width={width} height={height} loading="lazy" />
+        </div>
+        <blockquote class="quotes">
+          <span>&ldquo;</span>{quote}<span>&rdquo;</span>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</div>

@@ -14,9 +14,23 @@ interface Props {
   image?: string;
   title?: string;
   variant?: 'image' | 'banner' | 'plain';
+  /** Optional responsive overrides — the home banner ships a srcset and its
+   *  own intrinsic dimensions; inner-page heroes use the 2400×1701 defaults. */
+  srcset?: string;
+  sizes?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
-const { image, title, variant = 'image' } = Astro.props;
+const {
+  image,
+  title,
+  variant = 'image',
+  srcset,
+  sizes,
+  width = 2400,
+  height = 1701,
+} = Astro.props;
 ---
 
 <div
@@ -40,8 +54,10 @@ const { image, title, variant = 'image' } = Astro.props;
               class="el-image"
               alt=""
               data-src={image}
-              data-width="2400"
-              data-height="1701"
+              data-srcset={srcset}
+              data-sizes={sizes}
+              data-width={width}
+              data-height={height}
               uk-img
             />
           )
