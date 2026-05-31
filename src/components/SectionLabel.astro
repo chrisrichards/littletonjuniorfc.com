@@ -10,6 +10,8 @@
  * All three rely on existing CSS in custom.css + overrides.css to position
  * the title absolutely.
  */
+import { Picture } from 'astro:assets';
+import { asset } from '../lib/images';
 
 export interface Props {
   /** Optional — set:html so callers can pass <br>. wellsafeimg with no
@@ -20,6 +22,7 @@ export interface Props {
 }
 
 const { title, variant, image } = Astro.props;
+const src = variant === 'wellsafeimg' && image ? asset(image) : null;
 ---
 
 <div class:list={[variant, 'uk-margin']}>
@@ -27,8 +30,16 @@ const { title, variant, image } = Astro.props;
     <div>
       <div class="el-item uk-panel uk-margin-remove-first-child">
         {
-          variant === 'wellsafeimg' && image && (
-            <img class="el-image" src={image} alt="" loading="lazy" />
+          src && (
+            <Picture
+              src={src}
+              formats={['avif', 'webp']}
+              widths={[400, 640, 800]}
+              sizes="(min-width: 960px) 50vw, 100vw"
+              alt=""
+              loading="lazy"
+              class="el-image"
+            />
           )
         }
         {title && <h3 class="el-title uk-margin-top uk-margin-remove-bottom" set:html={title} />}

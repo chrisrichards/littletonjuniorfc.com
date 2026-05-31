@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import CardGrid from '../components/CardGrid.astro';
+import Card from '../components/Card.astro';
 import site from '../content/settings/site.json';
 
 const counters = [
@@ -9,199 +13,142 @@ const counters = [
   { count: site.counters.clubs, label: 'club' },
 ];
 
-const homesquares = [
+type Square =
+  | { kind: 'text'; heading: string; body: string; cta?: { label: string; href: string }; tag?: string }
+  | { kind: 'image'; src: string; width: number; height: number };
+
+const homesquares: Square[] = [
   { kind: 'text', heading: 'Origins', body: 'Littleton Junior Football Club was formed in 1974 by Les Elms for the Cubs of the 1st Winchester Scout Group. Today we provide coaching and competitive football for different age groups from under 6s to under 18s.' },
-  { kind: 'image', src: '/templates/yootheme/cache/origins-c6ea509c.jpeg', srcset: '/templates/yootheme/cache/origins-5dc82412.jpeg 768w, /templates/yootheme/cache/origins-2d30c126.jpeg 1024w, /templates/yootheme/cache/origins-c6ea509c.jpeg 1246w', width: 1246, height: 1240 },
-  { kind: 'image', src: '/templates/yootheme/cache/ethos-0643d1c8.jpeg', srcset: '/templates/yootheme/cache/ethos-8892a1a6.jpeg 768w, /templates/yootheme/cache/ethos-fa9fb7ba.jpeg 1024w, /templates/yootheme/cache/ethos-0643d1c8.jpeg 1246w', width: 1246, height: 1240 },
+  { kind: 'image', src: '/images/home/origins.jpg', width: 1246, height: 1240 },
+  { kind: 'image', src: '/images/home/ethos.jpg', width: 1246, height: 1240 },
   { kind: 'text', heading: 'Our Ethos', body: 'We believe that fun should always come first. If you’re enjoying football, then you’re going to be better at it. We are a club for children of all ages and abilities, where football is for everyone, not just the elite few. Download our ethos document to read more.', cta: { label: 'Download', href: '/images/downloads/Club_Ethos_2021_pb3.pdf' }, tag: 'Download' },
   { kind: 'text', heading: 'Coaching', body: 'We are run by FA qualified parent coaches and managers. But we are supplemented by weekly or fortnightly coaches from the Saints Foundation.' },
-  { kind: 'image', src: '/templates/yootheme/cache/coaching-aab6de8e.jpeg', srcset: '/templates/yootheme/cache/coaching-c5504ad7.jpeg 768w, /templates/yootheme/cache/coaching-c1e3a70e.jpeg 1024w, /templates/yootheme/cache/coaching-aab6de8e.jpeg 1246w', width: 1246, height: 1240 },
-  { kind: 'image', src: '/templates/yootheme/cache/location-49690ca3.jpeg', srcset: '/templates/yootheme/cache/location-aaaab6c0.jpeg 768w, /templates/yootheme/cache/location-f8a452af.jpeg 1024w, /templates/yootheme/cache/location-49690ca3.jpeg 1246w', width: 1246, height: 1240 },
+  { kind: 'image', src: '/images/home/coaching.jpg', width: 1246, height: 1240 },
+  { kind: 'image', src: '/images/home/location.jpg', width: 1246, height: 1240 },
   { kind: 'text', heading: 'Location', body: 'Our home is at Littleton Rec, just outside Winchester, UK. But the high demand for places in the club means we train at a range of different venues around the city.' },
 ];
 
-const sponsors = [
-  { src: '/templates/yootheme/cache/sponsor_saints-ef462d50.jpeg', srcset: '/templates/yootheme/cache/sponsor_saints-ef462d50.jpeg 400w', width: 400, height: 400, body: 'Official club partner', cta: { label: 'Visit', href: 'https://saintsfoundation.co.uk/' }, tag: 'Visit' },
-  { src: '/templates/yootheme/cache/grey_box-35466b14.jpeg', srcset: '/templates/yootheme/cache/grey_box-35466b14.jpeg 600w', width: 600, height: 600 },
-  { src: '/templates/yootheme/cache/grey_box-35466b14.jpeg', srcset: '/templates/yootheme/cache/grey_box-35466b14.jpeg 600w', width: 600, height: 600 },
-  { src: '/templates/yootheme/cache/grey_box-35466b14.jpeg', srcset: '/templates/yootheme/cache/grey_box-35466b14.jpeg 600w', width: 600, height: 600 },
+type Sponsor = {
+  src: string;
+  width: number;
+  height: number;
+  body?: string;
+  cta?: { label: string; href: string };
+  tag?: string;
+};
+
+const sponsors: Sponsor[] = [
+  { src: '/images/home/sponsors/sponsor_saints.jpeg', width: 400, height: 400, body: 'Official club partner', cta: { label: 'Visit', href: 'https://saintsfoundation.co.uk/' }, tag: 'Visit' },
+  { src: '/images/home/sponsors/grey_box.jpg', width: 600, height: 600 },
+  { src: '/images/home/sponsors/grey_box.jpg', width: 600, height: 600 },
+  { src: '/images/home/sponsors/grey_box.jpg', width: 600, height: 600 },
 ];
 ---
 
 <BaseLayout title="Littleton Junior FC - Home" active="home">
   {/* Hero band */}
-  <div
-    id="hero"
-    class="hero uk-section-default uk-section uk-padding-remove-top uk-padding-remove-bottom"
-  >
-    <div class="uk-margin-remove-vertical" uk-grid>
-      <div class="uk-width-1-1@m">
-        <div class="uk-margin-remove-vertical">
-          <img
-            class="el-image"
-            alt=""
-            data-src="/templates/yootheme/cache/Home_banner-85322cbf.jpeg"
-            data-srcset="/templates/yootheme/cache/Home_banner-7a967678.jpeg 768w, /templates/yootheme/cache/Home_banner-05c62116.jpeg 1024w, /templates/yootheme/cache/Home_banner-85322cbf.jpeg 1366w"
-            data-sizes="(min-width: 1366px) 1366px"
-            data-width="1366"
-            data-height="1102"
-            uk-img
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <Hero variant="plain" image="/images/home/Home_banner.jpg" />
 
   {/* Counters */}
-  <div id="counters" class="uk-section-default uk-section">
-    <div class="uk-container">
-      <div class="uk-grid-margin" uk-grid>
-        <div class="uk-width-1-1@m">
-          <div class="uk-margin uk-text-center">
-            <div
-              class="uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m uk-grid-match"
-              uk-grid
-            >
-              {
-                counters.map(({ count, label }) => (
-                  <div>
-                    <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                      <div class="el-content uk-panel uk-margin-top">
-                        <h3 class="counter" data-count={count}>0</h3>
-                        <p>{label}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <Section id="counters" width="full">
+    <CardGrid
+      wrap="uk-margin uk-text-center"
+      grid="uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m"
+    >
+      {
+        counters.map(({ count, label }) => (
+          <Card colour="primary">
+            <h3 class="counter" data-count={count}>
+              0
+            </h3>
+            <p>{label}</p>
+          </Card>
+        ))
+      }
+    </CardGrid>
+  </Section>
 
   {/* Homesquares (Origins / Ethos / Coaching / Location) */}
-  <div
+  <Section
     id="homesquares-section"
-    class="uk-section-default uk-section"
+    width="full"
     uk-scrollspy="target: [uk-scrollspy-class]; cls: uk-animation-fade; delay: false;"
   >
-    <div class="uk-container">
-      <div class="uk-grid-margin" uk-grid>
-        <div class="uk-width-1-1@m">
-          <div id="homesquares" uk-filter=".js-filter" class="homesquares uk-margin uk-text-center">
-            <ul class="el-nav uk-margin uk-tab">
-              <li class="uk-active" uk-filter-control><a href="#">All</a></li>
-              <li uk-filter-control="[data-tag~='Download']">
-                <a href="#">Download</a>
-              </li>
-            </ul>
+    <div id="homesquares" uk-filter=".js-filter" class="homesquares uk-margin uk-text-center">
+      <ul class="el-nav uk-margin uk-tab">
+        <li class="uk-active" uk-filter-control><a href="#">All</a></li>
+        <li uk-filter-control="[data-tag~='Download']">
+          <a href="#">Download</a>
+        </li>
+      </ul>
 
-            <div class="js-filter uk-child-width-1-2 uk-grid-match" uk-grid>
-              {
-                homesquares.map((card) =>
-                  card.kind === 'image' ? (
-                    <div>
-                      <div
-                        class="el-item uk-card uk-card-secondary uk-card-body uk-margin-remove-first-child"
-                        uk-scrollspy-class
-                      >
-                        <img
-                          class="el-image"
-                          alt=""
-                          data-src={card.src}
-                          data-srcset={card.srcset}
-                          data-sizes="(min-width: 1246px) 1246px"
-                          data-width={card.width}
-                          data-height={card.height}
-                          uk-img
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div data-tag={card.tag}>
-                      <div
-                        class="el-item uk-card uk-card-secondary uk-card-body uk-margin-remove-first-child"
-                        uk-scrollspy-class
-                      >
-                        <div class="el-content uk-panel uk-margin-top">
-                          <h2>{card.heading}</h2>
-                          <p>{card.body}</p>
-                        </div>
-                        {card.cta && (
-                          <div class="uk-margin-top">
-                            <a href={card.cta.href} class="el-link uk-button uk-button-default">
-                              {card.cta.label}
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                )
-              }
-            </div>
-          </div>
-        </div>
+      <div class="js-filter uk-child-width-1-2 uk-grid-match" uk-grid>
+        {
+          homesquares.map((card) =>
+            card.kind === 'image' ? (
+              <Card
+                colour="secondary"
+                scrollspyClass
+                lazyImg={{
+                  src: card.src,
+                  sizes: '(min-width: 1246px) 1246px',
+                  width: card.width,
+                  height: card.height,
+                }}
+              />
+            ) : (
+              <Card
+                colour="secondary"
+                scrollspyClass
+                dataTag={card.tag}
+                heading={card.heading}
+                body={card.body}
+                cta={card.cta}
+              />
+            )
+          )
+        }
       </div>
     </div>
-  </div>
+  </Section>
 
   {/* Sponsors */}
-  <div id="sponsors-section" class="uk-section-default uk-section">
-    <div class="uk-container">
-      <div class="uk-grid-margin" uk-grid>
-        <div class="uk-width-1-1@m">
-          <div id="sponsors" uk-filter=".js-filter" class="sponsors uk-margin uk-text-center">
-            <ul class="el-nav uk-margin uk-tab">
-              <li class="uk-active" uk-filter-control><a href="#">All</a></li>
-              <li uk-filter-control="[data-tag~='Visit']">
-                <a href="#">Visit</a>
-              </li>
-            </ul>
+  <Section id="sponsors-section" width="full">
+    <div id="sponsors" uk-filter=".js-filter" class="sponsors uk-margin uk-text-center">
+      <ul class="el-nav uk-margin uk-tab">
+        <li class="uk-active" uk-filter-control><a href="#">All</a></li>
+        <li uk-filter-control="[data-tag~='Visit']">
+          <a href="#">Visit</a>
+        </li>
+      </ul>
 
-            <div
-              class="js-filter uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m uk-grid-match"
-              uk-grid
-            >
-              {
-                sponsors.map((s) => (
-                  <div data-tag={s.tag}>
-                    <div class="el-item uk-card uk-card-primary uk-card-body uk-margin-remove-first-child">
-                      <img
-                        class="el-image"
-                        alt=""
-                        data-src={s.src}
-                        data-srcset={s.srcset}
-                        data-sizes={`(min-width: ${s.width}px) ${s.width}px`}
-                        data-width={s.width}
-                        data-height={s.height}
-                        uk-img
-                      />
-                      {s.body && <div class="el-content uk-panel uk-margin-top">{s.body}</div>}
-                      {s.cta && (
-                        <div class="uk-margin-top">
-                          <a
-                            href={s.cta.href}
-                            target="_blank"
-                            rel="noopener"
-                            class="el-link uk-button uk-button-default"
-                          >
-                            {s.cta.label}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
-        </div>
+      <div
+        class="js-filter uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m uk-grid-match"
+        uk-grid
+      >
+        {
+          sponsors.map((s) => {
+            const lazyImg = {
+              src: s.src,
+              sizes: `(min-width: ${s.width}px) ${s.width}px`,
+              width: s.width,
+              height: s.height,
+            };
+            const cta = s.cta ? { label: s.cta.label, href: s.cta.href, blank: true } : undefined;
+            // Only the populated sponsor has a body — placeholders are image-only,
+            // so don't pass a slot (which would emit an empty el-content div).
+            return s.body ? (
+              <Card colour="primary" dataTag={s.tag} lazyImg={lazyImg} cta={cta}>
+                {s.body}
+              </Card>
+            ) : (
+              <Card colour="primary" dataTag={s.tag} lazyImg={lazyImg} cta={cta} />
+            );
+          })
+        }
       </div>
     </div>
-  </div>
+  </Section>
 </BaseLayout>
 
 {/* Page-level overrides for #hero, #counters, #homesquares, #sponsors live

@@ -1,9 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import CardGrid from '../components/CardGrid.astro';
 import Card from '../components/Card.astro';
 import SectionLabel from '../components/SectionLabel.astro';
 import type { CardCta } from '../components/Card.astro';
+import { ctaBlank } from '../lib/cta';
 
 type Card = {
   title?: string;
@@ -121,8 +124,17 @@ const sections: Section[] = [
         card.cta && {
           label: card.cta.label,
           href: card.cta.href,
-          blank: card.cta.label !== 'Email' && card.cta.label !== 'Download',
+          blank: ctaBlank(card.cta.label),
         };
+
+      const compactWrap = [
+        'offinfo4x4',
+        section.alternates && 'alternates',
+        section.alternates && section.colour,
+        'uk-margin',
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       const introPadCount =
         section.layout === 'compact'
@@ -132,69 +144,30 @@ const sections: Section[] = [
         section.layout === 'split' ? (4 - (section.cards.length % 4)) % 4 : 0;
 
       return (
-        <div
-          id={section.htmlId ?? `section-${section.id}`}
-          class:list={[section.colour, 'uk-section-default', 'uk-section']}
-        >
-          <div class="uk-container">
-            <div class="uk-grid-margin" uk-grid>
-              <div class="uk-width-expand@m">
-                <SectionLabel variant="wellsafeimg" title={section.label} image={section.image} />
-              </div>
-
-              {/* Split layout: intro cards in their own column */}
-              {section.layout === 'split' && section.intro.length > 0 && (
-                <div class="uk-width-expand@m">
-                  <div class="offinfo4x4 uk-margin">
-                    <div class="uk-child-width-1-2 uk-grid-match" uk-grid>
-                      {section.intro.map((p) => (
-                        <Card title={p.title} body={p.body} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Compact layout: intro + action cards combined, 2-col grid */}
-              {section.layout === 'compact' && (
-                <div class="uk-width-expand@m">
-                  <div
-                    class:list={[
-                      'offinfo4x4',
-                      section.alternates && 'alternates',
-                      section.alternates && section.colour,
-                      'uk-margin',
-                    ]}
-                  >
-                    <div class="uk-child-width-1-2 uk-grid-match" uk-grid>
-                      {section.intro.map((p) => (
-                        <Card title={p.title} body={p.body} />
-                      ))}
-                      {section.cards.map((card) => (
-                        <Card
-                          dataTag={card.cta?.label}
-                          title={card.title}
-                          subtitle={card.subtitle}
-                          phone={card.phone}
-                          body={card.body}
-                          cta={cardCta(card)}
-                        />
-                      ))}
-                      {Array.from({ length: introPadCount }).map(() => (
-                        <Card />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
+        <Section id={section.htmlId ?? `section-${section.id}`} class={section.colour} noGrid>
+          <div class="uk-grid-margin" uk-grid>
+            <div class="uk-width-expand@m">
+              <SectionLabel variant="wellsafeimg" title={section.label} image={section.image} />
             </div>
 
-            {/* Split layout only: full-width action cards row */}
-            {section.layout === 'split' && (
-              <div
-                class:list={['alternates', 'first', section.colour, 'uk-margin', 'uk-text-left']}
-              >
-                <div class="uk-child-width-1-2 uk-child-width-1-4@m uk-grid-match" uk-grid>
+            {/* Split layout: intro cards in their own column */}
+            {section.layout === 'split' && section.intro.length > 0 && (
+              <div class="uk-width-expand@m">
+                <CardGrid wrap="offinfo4x4 uk-margin" grid="uk-child-width-1-2">
+                  {section.intro.map((p) => (
+                    <Card title={p.title} body={p.body} />
+                  ))}
+                </CardGrid>
+              </div>
+            )}
+
+            {/* Compact layout: intro + action cards combined, 2-col grid */}
+            {section.layout === 'compact' && (
+              <div class="uk-width-expand@m">
+                <CardGrid wrap={compactWrap} grid="uk-child-width-1-2">
+                  {section.intro.map((p) => (
+                    <Card title={p.title} body={p.body} />
+                  ))}
                   {section.cards.map((card) => (
                     <Card
                       dataTag={card.cta?.label}
@@ -205,14 +178,36 @@ const sections: Section[] = [
                       cta={cardCta(card)}
                     />
                   ))}
-                  {Array.from({ length: actionPadCount }).map(() => (
+                  {Array.from({ length: introPadCount }).map(() => (
                     <Card />
                   ))}
-                </div>
+                </CardGrid>
               </div>
             )}
           </div>
-        </div>
+
+          {/* Split layout only: full-width action cards row */}
+          {section.layout === 'split' && (
+            <CardGrid
+              wrap={`alternates first ${section.colour} uk-margin uk-text-left`}
+              grid="uk-child-width-1-2 uk-child-width-1-4@m"
+            >
+              {section.cards.map((card) => (
+                <Card
+                  dataTag={card.cta?.label}
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  phone={card.phone}
+                  body={card.body}
+                  cta={cardCta(card)}
+                />
+              ))}
+              {Array.from({ length: actionPadCount }).map(() => (
+                <Card />
+              ))}
+            </CardGrid>
+          )}
+        </Section>
       );
     })
   }

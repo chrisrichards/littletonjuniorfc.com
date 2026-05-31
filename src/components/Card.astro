@@ -17,6 +17,8 @@
  * For one-off content the default slot lets you write your own children
  * instead of using the typed props.
  */
+import { Picture } from 'astro:assets';
+import { asset } from '../lib/images';
 
 export type CardCta = {
   label: string;
@@ -34,12 +36,23 @@ export interface Props {
   subtitle?: string; // <h4>. set:html so callers can include <br>
   phone?: string; // dedicated <p>
   body?: string; // <p>. set:html so callers can include <em>/<br>
-  image?: string; // optional <img class="el-image"> above content
+  image?: string; // optional eager <img class="el-image"> above content
   imageAlt?: string;
+  /** Lazy responsive image above content — used by the home squares +
+   *  sponsors. `src` is a /images/... path resolved via astro:assets and
+   *  rendered as <Picture> (avif/webp). Takes precedence over `image`. */
+  lazyImg?: {
+    src: string;
+    sizes?: string;
+    width: number;
+    height: number;
+  };
   // Action
   cta?: CardCta;
   // Visual
   colour?: 'primary' | 'secondary';
+  /** Adds `uk-scrollspy-class` to the el-item (home squares fade-in). */
+  scrollspyClass?: boolean;
   // Misc
   dataTag?: string;
   contentLabel?: 'Contact'; // adds <h4>Contact</h4> before subtitle/phone (squad cards)
@@ -53,12 +66,16 @@ const {
   body,
   image,
   imageAlt = '',
+  lazyImg,
   cta,
   colour = 'primary',
+  scrollspyClass = false,
   dataTag,
   contentLabel,
 } = Astro.props;
 
+const eagerSrc = image ? asset(image) : null;
+const lazySrc = lazyImg ? asset(lazyImg.src) : null;
 const hasDefaultSlot = Astro.slots.has('default');
 const hasContent =
   hasDefaultSlot ||
@@ -73,8 +90,32 @@ const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remo
 ---
 
 <div {...dataTag ? { 'data-tag': dataTag } : {}}>
-  <div class={cardClass}>
-    {image && <img class="el-image" src={image} alt={imageAlt} loading="lazy" />}
+  <div class={cardClass} {...scrollspyClass ? { 'uk-scrollspy-class': '' } : {}}>
+    {
+      lazySrc ? (
+        <Picture
+          src={lazySrc}
+          formats={['avif', 'webp']}
+          widths={[400, 640, lazyImg!.width]}
+          sizes={lazyImg!.sizes ?? '(min-width: 960px) 50vw, 100vw'}
+          alt={imageAlt}
+          loading="lazy"
+          class="el-image"
+        />
+      ) : (
+        eagerSrc && (
+          <Picture
+            src={eagerSrc}
+            formats={['avif', 'webp']}
+            widths={[400, 640, 800]}
+            sizes="(min-width: 960px) 50vw, 100vw"
+            alt={imageAlt}
+            loading="lazy"
+            class="el-image"
+          />
+        )
+      )
+    }
     {
       hasContent && (
         <div class="el-content uk-panel uk-margin-top">

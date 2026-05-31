@@ -1,9 +1,11 @@
 @font-face {
+  font-display: swap;
 	font-family: 'BebasKai';
 	src: url('../fonts/3A11AF_0_0.eot.html');
 	src: url('../fonts/3A11AF_0_0.eot%3F.html') format('embedded-opentype'), url('../fonts/3A11AF_0_0.woff2') format('woff2'), url('../fonts/3A11AF_0_0.woff') format('woff'), url('../fonts/3A11AF_0_0.ttf.html') format('truetype'), url('../fonts/3A11AF_0_0.svg.html') format('svg');
 }
 @font-face {
+  font-display: swap;
 	font-family: 'TradeGothic';
 	src: url('../fonts/TradeGothicLT.woff2') format('woff2'), url('../fonts/TradeGothicLT.woff') format('woff');
 }

@@ -2,7 +2,10 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import CardGrid from '../components/CardGrid.astro';
 import Card from '../components/Card.astro';
+import QuoteImage from '../components/QuoteImage.astro';
 import { chunk } from '../lib/chunk';
 
 const teams = await getCollection('teams');
@@ -28,35 +31,28 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
     navRows.map((row, idx) => (
       <>
         {/* Age-group nav row: 4 cards, click "More" to slide open the panel */}
-        <div id={`alternates${idx + 1}`} class="uk-section-default uk-section">
-          <div class="uk-container">
-            <div class="uk-grid-margin" uk-grid>
-              <div class="uk-width-1-1@m">
-                <div
-                  id={row.id}
-                  class:list={['alternates', row.cls, 'uk-margin', 'uk-text-left']}
-                >
-                  <div class="uk-child-width-1-4 uk-grid-match" uk-grid>
-                    {row.teams.map((t) => (
-                      <Card
-                        heading={t.data.age}
-                        body={t.data.yearLabel.replace(' / ', '<br>')}
-                        cta={{
-                          label: 'More',
-                          href: `#${t.data.id}`,
-                          attrs: { 'data-panel-target': t.data.id },
-                        }}
-                      />
-                    ))}
-                    {Array.from({ length: row.padCount }).map(() => (
-                      <Card />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Section id={`alternates${idx + 1}`} width="full">
+          <CardGrid
+            id={row.id}
+            wrap={`alternates ${row.cls} uk-margin uk-text-left`}
+            grid="uk-child-width-1-4"
+          >
+            {row.teams.map((t) => (
+              <Card
+                heading={t.data.age}
+                body={t.data.yearLabel.replace(' / ', '<br>')}
+                cta={{
+                  label: 'More',
+                  href: `#${t.data.id}`,
+                  attrs: { 'data-panel-target': t.data.id },
+                }}
+              />
+            ))}
+            {Array.from({ length: row.padCount }).map(() => (
+              <Card />
+            ))}
+          </CardGrid>
+        </Section>
 
         {/* Hidden squad-detail panels for each age in this nav row */}
         {row.teams.map((t) => (
@@ -65,17 +61,15 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
               <div class="info uk-grid-margin" uk-grid>
                 <div class="uk-width-1-1@m">
                   {t.data.squads.map((s) => (
-                    <div class="uk-margin">
-                      <div class="uk-child-width-1-1 uk-child-width-1-4@m uk-grid-match" uk-grid>
-                        <Card heading={s.name} />
-                        <Card
-                          contentLabel="Contact"
-                          phone={s.managerName}
-                          cta={{ label: 'Email', href: `mailto:${s.managerEmail}` }}
-                        />
-                        <Card />
-                      </div>
-                    </div>
+                    <CardGrid wrap="uk-margin" grid="uk-child-width-1-1 uk-child-width-1-4@m">
+                      <Card heading={s.name} />
+                      <Card
+                        contentLabel="Contact"
+                        phone={s.managerName}
+                        cta={{ label: 'Email', href: `mailto:${s.managerEmail}` }}
+                      />
+                      <Card />
+                    </CardGrid>
                   ))}
                 </div>
               </div>
@@ -86,27 +80,12 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
     ))
   }
 
-  <div class="quoteimage uk-section-default uk-section">
-    <div class="uk-container">
-      <div class="uk-grid-margin" uk-grid>
-        <div class="uk-width-1-1@m">
-          <div class="uk-margin">
-            <img
-              class="el-image"
-              src="/images/teams/teams-bottom.jpg"
-              alt=""
-              width="2400"
-              height="1134"
-              loading="lazy"
-            />
-          </div>
-          <blockquote class="quotes">
-            <span>&ldquo;</span>Joe is loving his football and has made loads of new friends at the club.<span>&rdquo;</span>
-          </blockquote>
-        </div>
-      </div>
-    </div>
-  </div>
+  <QuoteImage
+    image="/images/teams/teams-bottom.jpg"
+    width={2400}
+    height={1134}
+    quote="Joe is loving his football and has made loads of new friends at the club."
+  />
 
   <script is:inline>
     (function () {

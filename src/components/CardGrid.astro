@@ -1,0 +1,32 @@
+---
+/**
+ * The card-grid wrapper repeated ~10× across pages:
+ *
+ *   <div [id] class="{wrapClass}">            ← outer, usually ends in uk-margin
+ *     <div class="{grid} uk-grid-match" uk-grid>
+ *       <slot />                               ← the <Card>s
+ *     </div>
+ *   </div>
+ *
+ * Callers pass the exact class strings so the rendered DOM (and therefore the
+ * CSS cascade) is unchanged — this only collapses the two-div boilerplate.
+ *
+ *   wrap  — full class string for the outer div (e.g. "alternates first grey uk-margin uk-text-left")
+ *   grid  — the uk-child-width-* string (uk-grid-match is appended automatically)
+ *   filter — prepend `js-filter` to the grid (contact-us / home filtered grids)
+ */
+export interface Props {
+  wrap: string;
+  grid: string;
+  filter?: boolean;
+  id?: string;
+}
+
+const { wrap, grid, filter = false, id } = Astro.props;
+---
+
+<div id={id} class={wrap}>
+  <div class:list={[filter && 'js-filter', grid, 'uk-grid-match']} uk-grid>
+    <slot />
+  </div>
+</div>

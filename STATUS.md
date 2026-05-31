@@ -8,6 +8,40 @@ Living document — update this when something material changes (phase completes
 
 Migration from Joomla to Astro on Cloudflare Pages. Visitor-facing site is **content-complete and deployable** to the `*.pages.dev` preview URL. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is unbuilt.
 
+## 2026-05-31 — Optimisation & de-duplication pass (branch `optimise-dedupe`)
+
+Staged commits on the branch (see git log), interaction-tested throughout
+(teams "More" panel, mobile off-canvas, counter animation):
+
+1. **De-dup** — home page (hero, counters, **squares**, sponsors) and all pages
+   migrated onto shared components. `Section.astro` is now actually used; new
+   `CardGrid.astro` + `QuoteImage.astro`; `Card.astro` extended for `uk-img`
+   lazy/responsive images; new `lib/cta.ts`.
+2. **Perf** — preload BebasKai/TradeGothic woff2, `font-display:swap`, `defer` on
+   UIkit/theme scripts.
+3. **CSS purge** — `scripts/purge-css.mjs` (PurgeCSS) wired into `npm run build`:
+   theme.css 385→242KB (−37%), custom.css 39→32KB.
+4. **Images (in-place)** — an interim sharp re-encode pass (−49%). **Superseded
+   and removed** by Stage 5 (astro:assets already optimises every image), so the
+   script no longer exists.
+5. **Images (astro:assets)** — full conversion: images moved to `src/assets`,
+   resolved from stored string paths via `src/lib/images.ts`, rendered through
+   `<Picture>`/`<Image>` (AVIF/WebP + responsive `srcset`); `uk-img` retired for
+   images; logo converted. `astro.config.mjs` set to `imageService: 'compile'`
+   so the Cloudflare adapter emits **static** `_astro/*` images at build (its
+   default on-demand `/_image` Worker produced no static files and 404'd on a
+   static host). Redundant `public/images/*` rasters + `templates/yootheme/cache`
+   deleted (`public/images/downloads` PDFs kept). Verified by reading screenshots
+   (modern-format re-encode means pixel-diff is not meaningful here) + the same
+   interaction tests.
+
+Stages 1–4(in-place) were verified pixel-identical (0/16). Stage 5 changes image
+bytes by design (AVIF/WebP), so it was verified by visual read + layout-dimension
+probe, not pixel-diff.
+
+Not yet merged to `main`. Booking system (Phase 4 of migration-plan) still the
+launch blocker.
+
 ## Phase progress against migration-plan.md
 
 | Phase | Status | Notes |

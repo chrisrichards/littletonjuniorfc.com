@@ -10,6 +10,9 @@
  * The hero uses a -246px top margin to tuck under the fixed-height header,
  * matching the live YOOtheme layout.
  */
+import { Picture } from 'astro:assets';
+import { asset } from '../lib/images';
+
 interface Props {
   image?: string;
   title?: string;
@@ -17,6 +20,8 @@ interface Props {
 }
 
 const { image, title, variant = 'image' } = Astro.props;
+const src = image ? asset(image) : null;
+const heroWidths = [768, 1024, 1366, 1920, 2400];
 ---
 
 <div
@@ -35,14 +40,16 @@ const { image, title, variant = 'image' } = Astro.props;
     <div class="uk-width-1-1@m">
       <div id="hero-bg" class="uk-margin-remove-vertical">
         {
-          image && (
-            <img
-              class="el-image"
+          src && (
+            <Picture
+              src={src}
+              formats={['avif', 'webp']}
+              widths={heroWidths}
+              sizes="100vw"
               alt=""
-              data-src={image}
-              data-width="2400"
-              data-height="1701"
-              uk-img
+              loading="eager"
+              fetchpriority="high"
+              class="el-image"
             />
           )
         }

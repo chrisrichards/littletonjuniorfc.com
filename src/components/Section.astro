@@ -1,38 +1,42 @@
 ---
 /**
- * The outermost wrapper repeated dozens of times across the site:
+ * The outermost section wrapper repeated on every page:
  *
- *   <div [id] class="[colour] uk-section-default uk-section">
+ *   <div [id] class="{class} uk-section-default uk-section" {...rest}>
  *     <div class="uk-container">
  *       <div class="uk-grid-margin" uk-grid>
- *         <slot />
+ *         {width === 'full' ? <div class="uk-width-1-1@m"><slot/></div> : <slot/>}
  *       </div>
  *     </div>
  *   </div>
  *
- * `colour` (blue | grey) lands on the outer element so the
- * `.grey .uk-card-primary { background: #464547 }` cascade fires.
+ *   class  — extra classes BEFORE `uk-section-default` (colour like grey/blue,
+ *            or band classes like quoteimage/hiddenbox). Optional.
+ *   width  — 'full' wraps the slot in `uk-width-1-1@m` (single-column pages).
+ *            Omit when the caller supplies its own width children
+ *            (e.g. official-info's label + content `uk-width-expand@m` columns).
+ *   noGrid — skip the uk-grid wrapper entirely (rare).
+ *   ...rest — passthrough attributes (e.g. uk-scrollspy on the home squares).
  */
-
 export interface Props {
   id?: string;
-  colour?: 'blue' | 'grey';
-  /** When true, skip the uk-grid wrapper (rare — pass true if children
-   *  need to be raw flow content, not grid items). */
+  class?: string;
+  width?: 'full';
   noGrid?: boolean;
+  [key: string]: unknown;
 }
 
-const { id, colour, noGrid = false } = Astro.props;
+const { id, class: className, width, noGrid = false, ...rest } = Astro.props;
 ---
 
-<div id={id} class:list={[colour, 'uk-section-default', 'uk-section']}>
+<div id={id} class:list={[className, 'uk-section-default', 'uk-section']} {...rest}>
   <div class="uk-container">
     {
       noGrid ? (
         <slot />
       ) : (
         <div class="uk-grid-margin" uk-grid>
-          <slot />
+          {width === 'full' ? <div class="uk-width-1-1@m"><slot /></div> : <slot />}
         </div>
       )
     }
