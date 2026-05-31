@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/ljfc-logo.png';
+
 interface Props {
   title: string;
   description?: string;
@@ -80,14 +83,7 @@ const navRight = [
               </div>
               <div class="uk-navbar-center">
                 <a class="uk-navbar-item uk-logo" href="/">
-                  <img
-                    alt=""
-                    src="/templates/yootheme/cache/ljfc-logo-34eb6b42.png"
-                    srcset="/templates/yootheme/cache/ljfc-logo-34eb6b42.png 424w"
-                    sizes="(min-width: 424px) 424px"
-                    width="424"
-                    height="414"
-                  />
+                  <Image src={logo} alt="" width={424} height={414} />
                 </a>
               </div>
             </nav>
@@ -139,14 +135,7 @@ const navRight = [
                   </div>
 
                   <a href="/" class="uk-navbar-item uk-logo">
-                    <img
-                      alt=""
-                      src="/templates/yootheme/cache/ljfc-logo-34eb6b42.png"
-                      srcset="/templates/yootheme/cache/ljfc-logo-34eb6b42.png 424w"
-                      sizes="(min-width: 424px) 424px"
-                      width="424"
-                      height="414"
-                    />
+                    <Image src={logo} alt="" width={424} height={414} />
                   </a>
 
                   <div class="uk-navbar-center-right uk-preserve-width">
