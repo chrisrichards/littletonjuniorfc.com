@@ -8,6 +8,27 @@ Living document — update this when something material changes (phase completes
 
 Migration from Joomla to Astro on Cloudflare Pages. Visitor-facing site is **content-complete and deployable** to the `*.pages.dev` preview URL. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is unbuilt.
 
+## 2026-05-31 — Optimisation & de-duplication pass (branch `optimise-dedupe`)
+
+Four staged commits, each verified pixel-identical (0/16 screenshot diffs vs the
+pre-refactor build at commit `2e9a12b`, desktop + mobile) and interaction-tested
+(teams "More" panel, mobile off-canvas, counter animation):
+
+1. **De-dup** — home page (hero, counters, **squares**, sponsors) and all pages
+   migrated onto shared components. `Section.astro` is now actually used; new
+   `CardGrid.astro` + `QuoteImage.astro`; `Card.astro` extended for `uk-img`
+   lazy/responsive images; new `lib/cta.ts`.
+2. **Perf** — preload BebasKai/TradeGothic woff2, `font-display:swap`, `defer` on
+   UIkit/theme scripts.
+3. **CSS purge** — `scripts/purge-css.mjs` (PurgeCSS) wired into `npm run build`:
+   theme.css 385→242KB (−37%), custom.css 39→32KB.
+4. **Images** — `scripts/optimise-images.mjs` (sharp) wired into build: in-place
+   re-encode of build JPEG/PNG at q82, 16.5→8.3MB (−49%). WebP/AVIF deferred
+   (needs `<picture>` markup with exact-match risk). Source images in `public/`
+   untouched; only `dist/` shrinks.
+
+Not yet merged to `main`. Booking system (Phase 4) still the launch blocker.
+
 ## Phase progress against migration-plan.md
 
 | Phase | Status | Notes |
