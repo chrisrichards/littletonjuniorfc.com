@@ -21,9 +21,9 @@ Staged commits on the branch (see git log), interaction-tested throughout
    UIkit/theme scripts.
 3. **CSS purge** — `scripts/purge-css.mjs` (PurgeCSS) wired into `npm run build`:
    theme.css 385→242KB (−37%), custom.css 39→32KB.
-4. **Images (in-place)** — `scripts/optimise-images.mjs` (sharp) wired into build:
-   in-place re-encode of build JPEG/PNG at q82, 16.5→8.3MB (−49%). Source images
-   in `public/` untouched; only `dist/` shrinks.
+4. **Images (in-place)** — an interim sharp re-encode pass (−49%). **Superseded
+   and removed** by Stage 5 (astro:assets already optimises every image), so the
+   script no longer exists.
 5. **Images (astro:assets)** — full conversion: images moved to `src/assets`,
    resolved from stored string paths via `src/lib/images.ts`, rendered through
    `<Picture>`/`<Image>` (AVIF/WebP + responsive `srcset`); `uk-img` retired for
