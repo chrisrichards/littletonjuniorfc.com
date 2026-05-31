@@ -3,6 +3,9 @@
  * Closing "quote image" band — a full-width image above a large blockquote.
  * Duplicated verbatim on teams + contact-us, so extracted here.
  */
+import { Picture } from 'astro:assets';
+import { asset } from '../lib/images';
+
 export interface Props {
   image: string;
   width: number;
@@ -11,6 +14,7 @@ export interface Props {
 }
 
 const { image, width, height, quote } = Astro.props;
+const src = asset(image);
 ---
 
 <div class="quoteimage uk-section-default uk-section">
@@ -18,7 +22,17 @@ const { image, width, height, quote } = Astro.props;
     <div class="uk-grid-margin" uk-grid>
       <div class="uk-width-1-1@m">
         <div class="uk-margin">
-          <img class="el-image" src={image} alt="" width={width} height={height} loading="lazy" />
+          <Picture
+            src={src}
+            formats={['avif', 'webp']}
+            width={width}
+            widths={[768, 1280, width]}
+            sizes="100vw"
+            alt=""
+            loading="lazy"
+            pictureAttributes={{ class: 'el-image-wrap' }}
+            class="el-image"
+          />
         </div>
         <blockquote class="quotes">
           <span>&ldquo;</span>{quote}<span>&rdquo;</span>
