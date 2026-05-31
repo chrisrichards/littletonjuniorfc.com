@@ -38,12 +38,11 @@ export interface Props {
   body?: string; // <p>. set:html so callers can include <em>/<br>
   image?: string; // optional eager <img class="el-image"> above content
   imageAlt?: string;
-  /** Responsive UIkit lazy image (data-src/uk-img) above content — used by
-   *  the home squares + sponsors so they share this component while keeping
-   *  identical lazy-loading markup. Takes precedence over `image`. */
+  /** Lazy responsive image above content — used by the home squares +
+   *  sponsors. `src` is a /images/... path resolved via astro:assets and
+   *  rendered as <Picture> (avif/webp). Takes precedence over `image`. */
   lazyImg?: {
     src: string;
-    srcset?: string;
     sizes?: string;
     width: number;
     height: number;
@@ -76,6 +75,7 @@ const {
 } = Astro.props;
 
 const eagerSrc = image ? asset(image) : null;
+const lazySrc = lazyImg ? asset(lazyImg.src) : null;
 const hasDefaultSlot = Astro.slots.has('default');
 const hasContent =
   hasDefaultSlot ||
@@ -92,16 +92,15 @@ const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remo
 <div {...dataTag ? { 'data-tag': dataTag } : {}}>
   <div class={cardClass} {...scrollspyClass ? { 'uk-scrollspy-class': '' } : {}}>
     {
-      lazyImg ? (
-        <img
-          class="el-image"
+      lazySrc ? (
+        <Picture
+          src={lazySrc}
+          formats={['avif', 'webp']}
+          widths={[400, 640, lazyImg!.width]}
+          sizes={lazyImg!.sizes ?? '(min-width: 960px) 50vw, 100vw'}
           alt={imageAlt}
-          data-src={lazyImg.src}
-          data-srcset={lazyImg.srcset}
-          data-sizes={lazyImg.sizes}
-          data-width={lazyImg.width}
-          data-height={lazyImg.height}
-          uk-img
+          loading="lazy"
+          class="el-image"
         />
       ) : (
         eagerSrc && (

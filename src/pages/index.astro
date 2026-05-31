@@ -15,22 +15,21 @@ const counters = [
 
 type Square =
   | { kind: 'text'; heading: string; body: string; cta?: { label: string; href: string }; tag?: string }
-  | { kind: 'image'; src: string; srcset: string; width: number; height: number };
+  | { kind: 'image'; src: string; width: number; height: number };
 
 const homesquares: Square[] = [
   { kind: 'text', heading: 'Origins', body: 'Littleton Junior Football Club was formed in 1974 by Les Elms for the Cubs of the 1st Winchester Scout Group. Today we provide coaching and competitive football for different age groups from under 6s to under 18s.' },
-  { kind: 'image', src: '/templates/yootheme/cache/origins-c6ea509c.jpeg', srcset: '/templates/yootheme/cache/origins-5dc82412.jpeg 768w, /templates/yootheme/cache/origins-2d30c126.jpeg 1024w, /templates/yootheme/cache/origins-c6ea509c.jpeg 1246w', width: 1246, height: 1240 },
-  { kind: 'image', src: '/templates/yootheme/cache/ethos-0643d1c8.jpeg', srcset: '/templates/yootheme/cache/ethos-8892a1a6.jpeg 768w, /templates/yootheme/cache/ethos-fa9fb7ba.jpeg 1024w, /templates/yootheme/cache/ethos-0643d1c8.jpeg 1246w', width: 1246, height: 1240 },
+  { kind: 'image', src: '/images/home/origins.jpg', width: 1246, height: 1240 },
+  { kind: 'image', src: '/images/home/ethos.jpg', width: 1246, height: 1240 },
   { kind: 'text', heading: 'Our Ethos', body: 'We believe that fun should always come first. If you’re enjoying football, then you’re going to be better at it. We are a club for children of all ages and abilities, where football is for everyone, not just the elite few. Download our ethos document to read more.', cta: { label: 'Download', href: '/images/downloads/Club_Ethos_2021_pb3.pdf' }, tag: 'Download' },
   { kind: 'text', heading: 'Coaching', body: 'We are run by FA qualified parent coaches and managers. But we are supplemented by weekly or fortnightly coaches from the Saints Foundation.' },
-  { kind: 'image', src: '/templates/yootheme/cache/coaching-aab6de8e.jpeg', srcset: '/templates/yootheme/cache/coaching-c5504ad7.jpeg 768w, /templates/yootheme/cache/coaching-c1e3a70e.jpeg 1024w, /templates/yootheme/cache/coaching-aab6de8e.jpeg 1246w', width: 1246, height: 1240 },
-  { kind: 'image', src: '/templates/yootheme/cache/location-49690ca3.jpeg', srcset: '/templates/yootheme/cache/location-aaaab6c0.jpeg 768w, /templates/yootheme/cache/location-f8a452af.jpeg 1024w, /templates/yootheme/cache/location-49690ca3.jpeg 1246w', width: 1246, height: 1240 },
+  { kind: 'image', src: '/images/home/coaching.jpg', width: 1246, height: 1240 },
+  { kind: 'image', src: '/images/home/location.jpg', width: 1246, height: 1240 },
   { kind: 'text', heading: 'Location', body: 'Our home is at Littleton Rec, just outside Winchester, UK. But the high demand for places in the club means we train at a range of different venues around the city.' },
 ];
 
 type Sponsor = {
   src: string;
-  srcset: string;
   width: number;
   height: number;
   body?: string;
@@ -39,23 +38,16 @@ type Sponsor = {
 };
 
 const sponsors: Sponsor[] = [
-  { src: '/templates/yootheme/cache/sponsor_saints-ef462d50.jpeg', srcset: '/templates/yootheme/cache/sponsor_saints-ef462d50.jpeg 400w', width: 400, height: 400, body: 'Official club partner', cta: { label: 'Visit', href: 'https://saintsfoundation.co.uk/' }, tag: 'Visit' },
-  { src: '/templates/yootheme/cache/grey_box-35466b14.jpeg', srcset: '/templates/yootheme/cache/grey_box-35466b14.jpeg 600w', width: 600, height: 600 },
-  { src: '/templates/yootheme/cache/grey_box-35466b14.jpeg', srcset: '/templates/yootheme/cache/grey_box-35466b14.jpeg 600w', width: 600, height: 600 },
-  { src: '/templates/yootheme/cache/grey_box-35466b14.jpeg', srcset: '/templates/yootheme/cache/grey_box-35466b14.jpeg 600w', width: 600, height: 600 },
+  { src: '/images/home/sponsors/sponsor_saints.jpeg', width: 400, height: 400, body: 'Official club partner', cta: { label: 'Visit', href: 'https://saintsfoundation.co.uk/' }, tag: 'Visit' },
+  { src: '/images/home/sponsors/grey_box.jpg', width: 600, height: 600 },
+  { src: '/images/home/sponsors/grey_box.jpg', width: 600, height: 600 },
+  { src: '/images/home/sponsors/grey_box.jpg', width: 600, height: 600 },
 ];
 ---
 
 <BaseLayout title="Littleton Junior FC - Home" active="home">
   {/* Hero band */}
-  <Hero
-    variant="plain"
-    image="/templates/yootheme/cache/Home_banner-85322cbf.jpeg"
-    srcset="/templates/yootheme/cache/Home_banner-7a967678.jpeg 768w, /templates/yootheme/cache/Home_banner-05c62116.jpeg 1024w, /templates/yootheme/cache/Home_banner-85322cbf.jpeg 1366w"
-    sizes="(min-width: 1366px) 1366px"
-    width={1366}
-    height={1102}
-  />
+  <Hero variant="plain" image="/images/home/Home_banner.jpg" />
 
   {/* Counters */}
   <Section id="counters" width="full">
@@ -99,7 +91,6 @@ const sponsors: Sponsor[] = [
                 scrollspyClass
                 lazyImg={{
                   src: card.src,
-                  srcset: card.srcset,
                   sizes: '(min-width: 1246px) 1246px',
                   width: card.width,
                   height: card.height,
@@ -139,7 +130,6 @@ const sponsors: Sponsor[] = [
           sponsors.map((s) => {
             const lazyImg = {
               src: s.src,
-              srcset: s.srcset,
               sizes: `(min-width: ${s.width}px) ${s.width}px`,
               width: s.width,
               height: s.height,
