@@ -17,6 +17,8 @@
  * For one-off content the default slot lets you write your own children
  * instead of using the typed props.
  */
+import { Picture } from 'astro:assets';
+import { asset } from '../lib/images';
 
 export type CardCta = {
   label: string;
@@ -73,6 +75,7 @@ const {
   contentLabel,
 } = Astro.props;
 
+const eagerSrc = image ? asset(image) : null;
 const hasDefaultSlot = Astro.slots.has('default');
 const hasContent =
   hasDefaultSlot ||
@@ -101,7 +104,17 @@ const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remo
           uk-img
         />
       ) : (
-        image && <img class="el-image" src={image} alt={imageAlt} loading="lazy" />
+        eagerSrc && (
+          <Picture
+            src={eagerSrc}
+            formats={['avif', 'webp']}
+            widths={[400, 640, 800]}
+            sizes="(min-width: 960px) 50vw, 100vw"
+            alt={imageAlt}
+            loading="lazy"
+            class="el-image"
+          />
+        )
       )
     }
     {
