@@ -230,6 +230,15 @@
   .uk-text-left { text-align: left; }
   .uk-margin { margin-bottom: 20px; }
   .uk-margin-top { margin-top: 20px; }
+  /* Once columns sit side-by-side (@m), a column's last child must not extend
+     the flex row with its bottom margin (legacy column height = content).
+     Below @m the columns stack, so that margin is the inter-column gap — keep it. */
+  @media (min-width: 960px) {
+    .uk-width-1-1\@m > :last-child,
+    .uk-width-expand\@m > :last-child {
+      margin-bottom: 0;
+    }
+  }
   .uk-margin-remove-bottom { margin-bottom: 0; }
   .uk-margin-remove-first-child > :first-child { margin-top: 0; }
 
@@ -704,6 +713,7 @@
   }
 
   @media (min-width: 641px) and (max-width: 768px) {
+    .hero { margin-top: -106px !important; }
     .contacts .uk-card-body { padding: 10%; }
     .alternates.contacts h3 { font-size: 24px; line-height: 24px; }
     .alternates.contacts h4 { font-size: 18px; line-height: 18px; }
