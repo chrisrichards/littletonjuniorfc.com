@@ -460,7 +460,7 @@
     z-index: 1;
   }
   .wellsafeimg .el-title {
-    margin-top: -7px;
+    margin-top: -7px !important; /* beats the .wellsafeimg h3.el-title{margin:0} above */
   }
   .wellsafeimg .el-image {
     position: absolute;
@@ -678,7 +678,7 @@
       font-size: 35px !important; line-height: 37px !important; top: 26px !important;
       left: 0 !important; max-width: 300px;
     }
-    .offinfo4x4 p { font-size: 12px; line-height: 13px; }
+    .offinfo4x4 p { font-size: 12px; line-height: 13px; margin: 5px 0; }
     .offinfo4x4 .el-item { padding: 8% 10%; }
     .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
       font-size: 18px; line-height: 18px;
