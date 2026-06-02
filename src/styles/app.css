@@ -287,7 +287,6 @@
 
   /* Square-aspect cells — UIkit padding-top:100% trick on grid children.
      Applied per-grid as the live custom.css/overrides.css did. */
-  .hiddenbox .uk-grid-match > div::after,
   #counters .uk-grid-match > div::after,
   #sponsors .uk-grid-match > div::after,
   .homesquares.resources .uk-grid-match > div::after,
@@ -412,6 +411,15 @@
   #homesquares .el-content h2 {
     font-size: 46px;
     color: var(--color-brand);
+  }
+  /* The image cells (2,3,6,7) + the featured resources cells fill the square —
+     no card padding (legacy custom.css). */
+  .homesquares .uk-child-width-1-2.uk-grid-match > div:nth-child(2) > div,
+  .homesquares .uk-child-width-1-2.uk-grid-match > div:nth-child(3) > div,
+  .homesquares .uk-child-width-1-2.uk-grid-match > div:nth-child(6) > div,
+  .homesquares .uk-child-width-1-2.uk-grid-match > div:nth-child(7) > div,
+  .homesquares.resources .uk-grid-match > div > div {
+    padding: 0;
   }
 
   /* ── Section-label panels (resources blue/grey, official-info image) ─ */

@@ -68,6 +68,9 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
                         phone={s.managerName}
                         cta={{ label: 'Email', href: `mailto:${s.managerEmail}` }}
                       />
+                      {/* Two empty cards pad the squad row to the full 4 columns
+                          (blue), so the open panel reads as a full-width band. */}
+                      <Card />
                       <Card />
                     </CardGrid>
                   ))}
