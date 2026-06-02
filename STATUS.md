@@ -1,12 +1,49 @@
 # Project status
 
-Last updated: 2026-05-21.
+Last updated: 2026-06-02.
 
 Living document — update this when something material changes (phase completes, decision made, blocker found). For the original detailed plan see [`migration-plan.md`](./migration-plan.md); for the page-by-page audit see [`inventory.md`](./inventory.md).
 
 ## TL;DR
 
 Migration from Joomla to Astro on Cloudflare Pages. Visitor-facing site is **content-complete and deployable** to the `*.pages.dev` preview URL. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is unbuilt.
+
+## 2026-06-02 — UIkit → Tailwind migration (branch `tailwind-migration`)
+
+**UIkit is fully removed (CSS + JS), replaced by Tailwind v4 + one hand-authored
+`src/styles/app.css`.** The site is visually within ~1% of the prior build at
+every page/width; no framework JS remains.
+
+Approach ("build the layer, then flip"): authored the complete replacement in
+`app.css` (a `@layer base` reset + `@layer components` holding the UIkit
+primitive subset reproduced 1:1, the bespoke responsive type/positioning
+transcribed from the old custom.css/overrides.css, and the navbar/off-canvas),
+keeping the old stylesheets linked + dormant; then one flip removed them and
+rebuilt the navbar + off-canvas in vanilla JS. Tooling: `scripts/visual/`
+(Playwright pixel-diff `shoot`/`diff` + `measure.mjs` computed-style dumper) vs
+a `main` baseline, plus a git-worktree copy of the last dormant commit served
+alongside for exact A/B measurement.
+
+- **Removed:** `theme.css` (385 KB) + `custom.css` (39 KB) + `overrides.css`,
+  `uikit.min.js` + `uikit-icons.min.js` (~200 KB), yootheme `theme.js`,
+  `scripts/purge-css.mjs` + the `purgecss` dep + the purge build step
+  (`build` is now plain `astro build`). **Net: ~292 KB dead CSS + ~256 KB dead
+  JS gone from the build output; the only stylesheet served is the ~32 KB
+  `app.css`.** Kept the licensed BebasKai/TradeGothic font files.
+- **Chrome rebuilt static:** centred-logo navbar (responsive 380→250px geometry
+  at the 960–1024 band), vanilla off-canvas drawer (~30 lines) + inline SVG
+  hamburger/close, footer. Decorative behaviour dropped per plan: the no-op
+  home/sponsor filter tabs and the scrollspy fade-in. Kept: teams "More" panel
+  JS, counter count-up.
+- **Visual regression (8 pages × 7 widths = 56):** 18 pixel-identical; the other
+  38 are all **< 1.1%** (mostly < 0.3%) — sub-pixel glyph/line-height and
+  5–12px margin nuances, treated as acceptable. Notable bugs found + fixed along
+  the way: a `background-color` transition rendering mid-animation during
+  capture (contact-us 38%→0.4%), a hero `z-index` regression that hid the navbar,
+  and several `!important`/responsive rules dropped in transcription.
+- **Known-acceptable residual micro-diffs:** teams@375 (~1.1%, footer sits ~12px
+  high); official-info@640 (0.6%); ~35 others < 0.3%; 4 SIZE diffs of +1…+10px
+  on membership/official-info @960/1024. None visible in normal use.
 
 ## 2026-05-31 — Optimisation & de-duplication pass (branch `optimise-dedupe`)
 
@@ -84,12 +121,9 @@ launch blocker.
 - `settings/site.json` — counters, fees, season, club info
 
 ### Vendored assets (under `public/`)
-- `templates/yootheme/css/theme.css` (393 KB, UIkit + YOOtheme)
-- `templates/yootheme/css/custom.css` (39 KB)
-- `templates/yootheme/css/overrides.css` — page-level rules we wrote
-- `templates/yootheme/fonts/` — BebasKai + TradeGothic LT (licensed for the domain — see `~/.claude/projects/.../memory/font-licensing.md`)
-- `templates/yootheme/vendor/.../uikit{,-icons}.min.js`
+- `templates/yootheme/fonts/` — BebasKai + TradeGothic LT only (licensed for the domain — see `~/.claude/projects/.../memory/font-licensing.md`). All styling now lives in `src/styles/app.css`.
 - `images/heros/`, `images/home/`, `images/contacts/`, etc.
+- _(removed in the Tailwind migration: theme/custom/overrides.css, uikit\*.js, yootheme theme.js.)_
 
 ## What's deferred / known issues
 
