@@ -41,15 +41,108 @@
 }
 
 /* ── Fonts ──
- * @font-face is intentionally NOT declared here during the migration —
- * custom.css still provides BebasKai + TradeGothic. A duplicate declaration
- * is redundant while both stylesheets load; the @font-face blocks move here
- * (verbatim, with font-display:swap) in Stage 4 when custom.css is deleted.
+ * Self-hosted, licensed for this domain (see memory font-licensing.md).
+ * Declared here so the flip can drop custom.css without losing the faces.
+ * During the migration custom.css also declares these — a duplicate
+ * @font-face is harmless (identical src), and the link to the fonts is
+ * unchanged so the preloads in <head> still match.
  */
+@font-face {
+  font-display: swap;
+  font-family: 'BebasKai';
+  src:
+    url('/templates/yootheme/fonts/3A11AF_0_0.woff2') format('woff2'),
+    url('/templates/yootheme/fonts/3A11AF_0_0.woff') format('woff');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'TradeGothic';
+  src:
+    url('/templates/yootheme/fonts/TradeGothicLT.woff2') format('woff2'),
+    url('/templates/yootheme/fonts/TradeGothicLT.woff') format('woff');
+}
+
+/* ── Base layer ──
+ * Replaces the global reset/typography UIkit's base provided (we don't load
+ * Tailwind preflight). Values lifted from the live computed styles. While the
+ * old stylesheets are still linked these are dormant (unlayered old CSS wins
+ * over anything @layer); they take over at the flip.
+ */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+  html {
+    background: #fff;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.7;
+    color: #717171;
+    overflow-x: hidden;
+  }
+  /* Display headings (BebasKai). Per-level line-heights match UIkit's base;
+     most contexts override the margin/size in the component layer. */
+  h1, h2, h3, h4 {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-weight: normal;
+    letter-spacing: -0.015em;
+    color: inherit;
+  }
+  h1 { line-height: 1.2; }
+  h2 { line-height: 1.3; }
+  h3, h4 { line-height: 1.4; }
+  p {
+    margin: 0 0 20px;
+    letter-spacing: -0.03em;
+  }
+  a {
+    color: var(--color-brand);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover {
+    color: #fff;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    border-style: none;
+  }
+  blockquote {
+    margin: 0;
+  }
+  ul {
+    padding: 0;
+  }
+}
 
 /* ── Component layer ──
- * Bespoke multi-breakpoint typography + pseudo-elements are added here in
- * later stages (kept out of inline markup where they'd need 5–7 variants).
+ * Structure/layout/colour/spacing live as Tailwind utilities in the markup.
+ * This layer holds (a) the few UIkit framework primitives still referenced
+ * by class in the markup, reproduced 1:1, and (b) the bespoke multi-breakpoint
+ * typography + pseudo-element bits that would be unreadable inline. Source
+ * order mirrors the old theme.css → custom.css → overrides.css cascade.
  */
 @layer components {
+  /* ── Page frame ───────────────────────────────────────────────── */
+  .tm-page-container {
+    background: #bababa;
+  }
+  .tm-page {
+    position: relative;
+    max-width: 1200px;
+    margin-inline: auto;
+    background: #fff;
+    box-shadow:
+      0 10px 20px rgba(0, 0, 0, 0.19),
+      0 6px 6px rgba(0, 0, 0, 0.23);
+  }
 }
