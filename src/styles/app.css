@@ -164,6 +164,11 @@
   .uk-section {
     padding: 5px 0;
   }
+  /* The hero is the positioned ancestor for its absolute headerText overlay.
+     (Scoped to .hero — making every section relative regresses other pages.) */
+  .hero {
+    position: relative;
+  }
   .uk-section.uk-section-default {
     background: #fff;
   }
@@ -730,6 +735,12 @@
     .alternates .el-item { padding: 15%; }
     .alternates .el-item p { font-size: 20px !important; line-height: 20px !important; }
     .alternates .el-item .uk-margin-top { margin-top: 0; line-height: 12px; }
+    .alternates .el-item a,
+    #membership > div > div:nth-child(3) .el-item a,
+    #membership > div > div:nth-child(4) .el-item a,
+    .sponsors .el-item a {
+      padding: 2px 5px 2px !important; font-size: 14px !important; line-height: 16px !important;
+    }
     .hero { margin-top: -106px !important; }
     #alternates1 .el-item, #alternates2 .el-item,
     #alternates3 .el-item, #alternates4 .el-item { padding: 10% 15%; }
@@ -874,7 +885,9 @@
   .sponsors .el-item > div:last-child { position: absolute; bottom: 0; }
   .homesquares.resources .el-item > div:last-child { margin-left: 36px; }
   .hiddenbox .el-item > div:not(.el-content):last-child { position: absolute; bottom: 0; }
-  .alternates .el-item { transition: background-color 0.5s ease; }
+  /* (Dropped `.alternates .el-item{transition:background-color .5s}` — it was
+     for the removed filter's hover animation, and it made the cards render
+     mid-transition during full-page screenshot capture.) */
 
   .hiddenbox .el-item > div:not(.el-content):last-child a,
   .hiddenbox .el-item > div:not(.el-content):last-child a:active,
