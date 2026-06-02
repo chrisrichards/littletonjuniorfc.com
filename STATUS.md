@@ -35,6 +35,15 @@ alongside for exact A/B measurement.
   hamburger/close, footer. Decorative behaviour dropped per plan: the no-op
   home/sponsor filter tabs and the scrollspy fade-in. Kept: teams "More" panel
   JS, counter count-up.
+  - **⚠ FOLLOW-UP WANTED (2026-06-02):** the on-scroll **image fade-in** (the old
+    UIkit `uk-scrollspy` / `uk-animation-fade` on the home squares) was dropped
+    here as decorative, but it IS wanted back. Re-implement with a small
+    `IntersectionObserver` + a CSS fade (no UIkit). The hooks still exist in the
+    markup: `Card.astro` emits `uk-scrollspy-class` on the el-item when
+    `scrollspyClass` is set (home squares), and `index.astro` still has the
+    `uk-scrollspy` attr on the squares `<Section>`. NB the visual-regression
+    `shoot.mjs` waits for load + settle, so a scroll fade won't show in the
+    pixel-diff — verify by eye / interaction.
 - **Visual regression (8 pages × 7 widths = 56):** 18 pixel-identical; the other
   38 are all **< 1.1%** (mostly < 0.3%) — sub-pixel glyph/line-height and
   5–12px margin nuances, treated as acceptable. Notable bugs found + fixed along
