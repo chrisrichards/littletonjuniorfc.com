@@ -571,6 +571,14 @@
     padding-top: 0;
     padding-bottom: 0;
   }
+  /* Squad row reads as one continuous full-width blue band — drop the 5px
+     column gutter so the cells touch (no white vertical lines). */
+  .hiddenbox [uk-grid] {
+    margin-left: 0;
+  }
+  .hiddenbox [uk-grid] > * {
+    padding-left: 0;
+  }
   .hiddenbox h2 {
     margin: 0;
     font-size: 64px;
