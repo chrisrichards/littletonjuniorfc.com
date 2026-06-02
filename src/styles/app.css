@@ -601,7 +601,8 @@
     #alternates1 .el-item, #alternates2 .el-item,
     #alternates3 .el-item, #alternates4 .el-item { padding: 8%; }
     .wellsafeimg .el-item h3 {
-      font-size: 35px; line-height: 37px; top: 26px; left: 0; max-width: 300px;
+      font-size: 35px !important; line-height: 37px !important; top: 26px !important;
+      left: 0 !important; max-width: 300px;
     }
     .offinfo4x4 p { font-size: 12px; line-height: 13px; }
     .offinfo4x4 .el-item { padding: 8% 10%; }
@@ -630,7 +631,10 @@
     #alternates1 .el-item, #alternates2 .el-item,
     #alternates3 .el-item, #alternates4 .el-item { padding: 8%; }
     .homesquares .el-content { margin: 0; }
-    .wellsafeimg .el-item h3 { font-size: 35px; line-height: 37px; top: 26px; max-width: 300px; }
+    .wellsafeimg .el-item h3 {
+      font-size: 35px !important; line-height: 37px !important; top: 26px !important;
+      max-width: 300px;
+    }
     .offinfo4x4 p { font-size: 14px; line-height: 16px; }
     .offinfo4x4 .el-item { padding: 8% 10%; }
     .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
@@ -688,7 +692,8 @@
     .homesquares.resources .el-content { width: 130px; }
     .offinfo4x4 .el-item { padding: 56px 33px 10px 36px; }
     .wellsafeimg .el-item h3 {
-      font-size: 35px; line-height: 37px; top: 26px; left: 25px; max-width: 300px;
+      font-size: 35px !important; line-height: 37px !important; top: 26px !important;
+      left: 25px !important; max-width: 300px;
     }
     .offinfo4x4 p { font-size: 20px; line-height: 24px; margin: 5px 0; }
     .quotes { top: 125px; right: 85px; font-size: 22px; line-height: 22px; width: 250px; }
@@ -735,7 +740,8 @@
     .homesquares.resources p { font-size: 15px; line-height: 15px; }
     .homesquares.resources .el-content { width: 130px; }
     .wellsafeimg .el-item h3 {
-      font-size: 50px; line-height: 50px; top: 26px; left: 25px; max-width: 300px;
+      font-size: 50px !important; line-height: 50px !important; top: 26px !important;
+      left: 25px !important; max-width: 300px;
     }
     .offinfo4x4 p { font-size: 16px; line-height: 19px; margin: 5px 0; }
     .offinfo4x4 .el-item { padding: 36px 27px 10px 30px; }
@@ -750,5 +756,216 @@
 
   @media (max-width: 960px) {
     .hiddenbox .uk-grid-match.uk-grid > div::after { padding-top: 0; }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Structural singletons + the action-card COLOUR matrix + CTA
+   * positioning. Faithful transcription (in original cascade order) of the
+   * live custom.css/overrides.css rules — copied so the result reproduces
+   * by construction; the dead Joomla `#page\#N`/.dim/.notdim selectors are
+   * dropped. Verified at the flip diff.
+   * ════════════════════════════════════════════════════════════════ */
+
+  /* Hero structural (overrides.css). */
+  #hero { margin-top: -246px; }
+  #hero[data-variant='banner'] #hero-bg { background-color: var(--color-dark); height: 300px; }
+
+  /* Footer (overrides.css). */
+  #footer-1 { padding-top: 0; padding-bottom: 0; }
+  #footer-4 { padding: 15px 38px; background-color: var(--color-dark); color: #fff; }
+  .footer a { color: var(--color-brand); }
+  .footer a:hover { color: #fff; }
+
+  /* Section padding tweaks (overrides.css). */
+  #homesquares-section { padding-top: 0; }
+  #sponsors-section { padding-top: 0; margin-bottom: 0 !important; }
+  #alternates2, #alternates3, #alternates4 { padding-top: 0; }
+
+  /* Teams age-card display type (overrides.css). */
+  #u6-9 .el-content h2, #u10-13 .el-content h2,
+  #u14-17 .el-content h2, #u18-pan .el-content h2 {
+    font-size: 110px; margin: 0; line-height: 110px;
+  }
+  #u6-9 .el-content p, #u10-13 .el-content p,
+  #u14-17 .el-content p, #u18-pan .el-content p {
+    font-size: 24px; margin: 0; line-height: 24px;
+    font-family: var(--font-display); color: #fff;
+  }
+  .alternates .el-content > p:last-of-type { border-bottom: 1px dashed #fff; }
+
+  /* Home squares CTA + sponsors image (overrides.css). */
+  #homesquares .el-item > .uk-margin-top a { background-color: var(--color-brand); color: #fff; }
+  #homesquares div[data-tag='Download'] .el-item > .uk-margin-top:last-of-type {
+    position: absolute; bottom: 0; text-align: center; margin: 0 auto; left: 0; right: 0;
+  }
+  #sponsors .el-image { position: absolute; top: 0; transform: none; left: 0; right: 0; width: 100%; }
+
+  /* Resources featured band overflow (overrides.css). */
+  .homesquares.resources .el-item { position: relative; overflow: hidden; }
+
+  /* ── CTA pinned to card bottom ──────────────────────────────────── */
+  .alternates .el-item > div:last-child,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child,
+  #membership > div > div:nth-child(3) .el-item > div:last-child,
+  #membership > div > div:nth-child(4) .el-item > div:last-child,
+  .homesquares.resources .el-item > div:last-child,
+  .sponsors .el-item > div:last-child { position: absolute; bottom: 0; }
+  .homesquares.resources .el-item > div:last-child { margin-left: 36px; }
+  .hiddenbox .el-item > div:not(.el-content):last-child { position: absolute; bottom: 0; }
+  .alternates .el-item { transition: background-color 0.5s ease; }
+
+  .hiddenbox .el-item > div:not(.el-content):last-child a,
+  .hiddenbox .el-item > div:not(.el-content):last-child a:active,
+  .hiddenbox .el-item > div:not(.el-content):last-child a:focus {
+    border: none; border-radius: 0; background: var(--color-dark);
+    padding: 0 10px 3px; font-size: 18px; line-height: 24px; color: #fff;
+  }
+
+  .alternates .el-item > div:last-child a,
+  .alternates .el-item > div:last-child a:active,
+  .alternates .el-item > div:last-child a:focus,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a,
+  #membership > div > div:nth-child(3) .el-item a,
+  #membership > div > div:nth-child(4) .el-item a,
+  .homesquares.resources .el-item > div:last-child a,
+  .sponsors .el-item > div:last-child a {
+    border: none; border-radius: 0; background: var(--color-dark);
+    padding: 0 10px 3px; font-size: 18px; line-height: 24px; color: #fff;
+    position: absolute; bottom: 0; white-space: nowrap;
+  }
+
+  /* ── CTA colour alternation ─────────────────────────────────────── */
+  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover { color: var(--color-brand); }
+  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
+  #membership > div > div:nth-child(3) .el-item a { background-color: #fff; color: var(--color-dark); }
+  #membership > div > div:nth-child(4) .el-item a:hover { background-color: #fff; color: var(--color-brand); }
+  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a,
+  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  #membership > div > div:nth-child(3) .el-item a,
+  .bluesquare { background-color: var(--color-brand); color: #fff; }
+  .alternates.second .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.second .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.second .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.fourth .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.fourth .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.fourth .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.second.gb .uk-grid-match > div:nth-child(2) .el-item,
+  .alternates.second.gb .uk-grid-match > div:nth-child(3) .el-item { background-color: var(--color-brand); color: #fff; }
+  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
+  #membership > div > div:nth-child(3) .el-item a:hover { background-color: #fff; color: var(--color-dark); }
+  .alternates.second .uk-grid-match > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.second .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.second .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  .alternates.fourth .uk-grid-match > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.fourth .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.fourth .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  .greysquare,
+  .alternates.second.gb .uk-grid-match > div:nth-child(1) .el-item,
+  .alternates.second .uk-grid-match > div:nth-child(4) .el-item,
+  .alternates.second.gb .uk-grid-match > div:nth-child(3) .el-item > div:last-child a { background-color: var(--color-dark); color: #fff; }
+  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a,
+  .homesquares.resources .el-item > div:last-child a { background-color: var(--color-dark); color: #fff; }
+  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:active,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:focus { background-color: var(--color-dark); color: var(--color-brand); }
+  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-brand); }
+  .alternates.grey .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.grey .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.grey .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.second.gb .uk-grid-match > div:nth-child(4) .el-item > div:last-child a,
+  .homesquares.resources .uk-grid-match > div:nth-child(2) .el-item > div:last-child a { background-color: var(--color-brand); color: #fff; }
+  .alternates.grey .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+
+  .grey .uk-card-primary { background-color: var(--color-dark) !important; }
+
+  /* Row margin tweaks (.blue/.grey stacks). */
+  .alternates.blue:nth-child(1) { margin-bottom: 0 !important; }
+  .alternates.blue:nth-child(2) { margin-top: 5px !important; }
+  .alternates.blue.two > div > div:nth-child(4) { padding-left: 0 !important; }
+  .alternates.grey:nth-child(1) { margin-bottom: 0 !important; }
+  .alternates.grey:nth-child(2) { margin-top: 5px !important; }
+  .alternates.grey.two > div > div:nth-child(4) { background-color: var(--color-dark) !important; }
+  .alternates.blue:nth-child(2), .alternates.blue:nth-child(3) { margin-bottom: 0 !important; }
+  .alternates.blue:nth-child(3) { margin-top: 5px !important; }
+
+  .alternates.second .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:hover,
+  .alternates.fourth .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+  .alternates.second .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates.fourth .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates.second.gb .uk-grid-match > div:nth-child(3) .el-item > div:last-child a:hover,
+  .homesquares.resources .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-brand); }
+  .alternates.second.gb .uk-grid-match > div:nth-child(4) .el-item > div:last-child a:hover,
+  .homesquares.resources .uk-grid-match > div:nth-child(2) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+
+  /* el-item colour alternation (teams 1×4 nav rows). */
+  .alternates .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary { background: var(--color-dark); }
+  .alternates.blue .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
+  .alternates.second .uk-child-width-1-4 > div:nth-child(odd) .uk-card-primary,
+  .alternates.fourth .uk-child-width-1-4 > div:nth-child(odd) .uk-card-primary { background: var(--color-dark); }
+  .alternates.second .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary,
+  .alternates.fourth .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
+
+  /* Sponsors. */
+  .sponsors .el-item { padding: 0; }
+  .sponsors .el-item .el-content {
+    text-align: left; margin: 0 20px; line-height: 18px; font-size: 16px; letter-spacing: -0.03em;
+  }
+
+  /* Teams u18 panel row. */
+  #u18-pan > div > div:nth-child(4) { padding-left: 0; }
+  #u18-pan > div > div:nth-child(3) .el-item,
+  #u18-pan > div > div:nth-child(4) .el-item { background-color: var(--color-dark) !important; }
+
+  /* Membership el-item colours (overrides.css — two blocks, order preserved). */
+  #membership > div > div:nth-child(1) .el-item { background-color: var(--color-dark) !important; }
+  #membership > div > div:nth-child(2) .el-item { background-color: var(--color-brand) !important; }
+  #membership > div > div:nth-child(1) .el-item, #membership > div > div:nth-child(4) .el-item { background-color: var(--color-brand) !important; }
+  #membership > div > div:nth-child(1) .el-item.uk-card-primary,
+  #membership > div > div:nth-child(4) .el-item.uk-card-primary { background-color: var(--color-brand) !important; }
+  #membership > div > div:nth-child(2) .el-item.uk-card-primary,
+  #membership > div > div:nth-child(3) .el-item.uk-card-primary { background-color: var(--color-dark) !important; }
+
+  /* Resources .second.gb.swap colour swap (≥961). */
+  @media (min-width: 961px) {
+    .alternates.second.gb.swap .uk-grid-match > div:nth-child(3) .el-item,
+    .alternates.second.gb.swap .uk-grid-match > div:nth-child(4) .el-item > div:last-child a { background-color: var(--color-dark) !important; }
+    .alternates.second.gb.swap .uk-grid-match > div:nth-child(4) .el-item,
+    .alternates.second.gb.swap .uk-grid-match > div:nth-child(3) .el-item > div:last-child a { background-color: var(--color-brand) !important; }
+    .alternates.second.gb.swap .uk-grid-match > div:nth-child(3) .el-item > div:last-child a:hover { background-color: #fff !important; color: var(--color-dark) !important; }
+    .alternates.second.gb.swap .uk-grid-match > div:nth-child(4) .el-item > div:last-child a:hover { background-color: #fff !important; color: var(--color-brand) !important; }
+  }
+
+  /* Contact-us js-filter colour alternation. */
+  .contactus .alternates.first .js-filter > div:nth-of-type(even) > div { background-color: var(--color-dark) !important; }
+  .contactus .alternates.first .js-filter > div:nth-of-type(odd) > div { background-color: var(--color-brand) !important; }
+  .contactus .alternates.second .js-filter > div:nth-of-type(odd) > div { background-color: var(--color-dark) !important; }
+  .contactus .alternates.second .js-filter > div:nth-of-type(even) > div { background-color: var(--color-brand) !important; }
+
+  @media (max-width: 639px) {
+    .contactus .alternates.first .js-filter > div:nth-of-type(1) > div, .contactus .alternates.first .js-filter > div:nth-of-type(4) > div { background-color: var(--color-brand) !important; }
+    .contactus .alternates.first .js-filter > div:nth-of-type(2) > div, .contactus .alternates.first .js-filter > div:nth-of-type(3) > div { background-color: var(--color-dark) !important; }
+    .contactus .alternates.second .js-filter > div:nth-of-type(1) > div, .contactus .alternates.first .js-filter > div:nth-of-type(4) > div { background-color: var(--color-brand) !important; }
+    .contactus .alternates.second .js-filter > div:nth-of-type(2) > div, .contactus .alternates.first .js-filter > div:nth-of-type(3) > div { background-color: var(--color-dark) !important; }
+    #charter h3, #membership h3 { font-size: 18px; line-height: 18px; margin: 0 0 5px; }
+    #charter .offinfo4x4 .el-item { padding: 8%; }
+    .el-title { left: 0 !important; padding-left: 5% !important; font-size: 40px !important; line-height: 35px !important; }
+    .homesquares.resources .el-content { left: 0 !important; padding-left: 6% !important; }
+    .alternates .el-item > div:last-child a,
+    .alternates .el-item > div:last-child a:active,
+    .alternates .el-item > div:last-child a:focus,
+    #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a,
+    #membership > div > div:nth-child(3) .el-item a,
+    #membership > div > div:nth-child(4) .el-item a,
+    .homesquares.resources .el-item > div:last-child a,
+    .sponsors .el-item > div:last-child a {
+      padding: 2px 7px 2px !important; font-size: 15px !important; line-height: 21px !important;
+    }
+    #membership > div > div:nth-child(3) .el-item a { background: var(--color-brand); }
   }
 }
