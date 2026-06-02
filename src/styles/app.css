@@ -630,7 +630,7 @@
     .homesquares.resources h3 { font-size: 30px; line-height: 30px; }
     .homesquares.resources p { font-size: 14px; line-height: 16px; }
     .homesquares.resources .el-content { width: 130px; }
-    .homesquares .el-content { margin: 0 5%; }
+    .homesquares .el-content { margin: 0 5% !important; }
     #alternates1 .el-item, #alternates2 .el-item,
     #alternates3 .el-item, #alternates4 .el-item { padding: 8%; }
     .wellsafeimg .el-item h3 {
@@ -646,12 +646,12 @@
     .quotes span:nth-child(1) { margin-left: -6px; }
     .headerText { top: 80px; left: 25px; font-size: 40px; line-height: 35px; }
     .hero { margin-top: -106px !important; }
-    .homesquares .el-content { margin: 0; }
-    .homesquares .el-content p { font-size: 11px; line-height: 12px; margin-top: 0; }
-    .homesquares .el-content h2 { font-size: 20px; line-height: 22px; margin-bottom: 5px; }
+    .homesquares .el-content { margin: 0 !important; }
+    .homesquares .el-content p { font-size: 11px !important; line-height: 12px !important; margin-top: 0 !important; }
+    .homesquares .el-content h2 { font-size: 20px !important; line-height: 22px !important; margin-bottom: 5px !important; }
     .footer { padding: 10px 20px; font-size: 12px; }
-    .alternates h2 { font-size: 25px; line-height: 25px; }
-    .alternates .el-item p { font-size: 12px; line-height: 13px; }
+    .alternates h2 { font-size: 25px !important; line-height: 25px !important; }
+    .alternates .el-item p { font-size: 12px !important; line-height: 13px !important; }
   }
 
   @media (min-width: 376px) and (max-width: 450px) {
@@ -663,7 +663,7 @@
     .homesquares.resources .el-content { width: 130px; }
     #alternates1 .el-item, #alternates2 .el-item,
     #alternates3 .el-item, #alternates4 .el-item { padding: 8%; }
-    .homesquares .el-content { margin: 0; }
+    .homesquares .el-content { margin: 0 !important; }
     .wellsafeimg .el-item h3 {
       font-size: 35px !important; line-height: 37px !important; top: 26px !important;
       max-width: 300px;
@@ -678,11 +678,11 @@
     .quotes span:nth-child(1) { margin-left: -6px; }
     .headerText { top: 80px; left: 5%; font-size: 40px; line-height: 35px; }
     .hero { margin-top: -106px !important; }
-    .homesquares .el-content p { font-size: 11px; line-height: 12px; margin-top: 0; }
-    .homesquares .el-content h2 { font-size: 20px; line-height: 22px; margin-bottom: 5px; }
+    .homesquares .el-content p { font-size: 11px !important; line-height: 12px !important; margin-top: 0 !important; }
+    .homesquares .el-content h2 { font-size: 20px !important; line-height: 22px !important; margin-bottom: 5px !important; }
     .footer { padding: 10px 20px; font-size: 12px; }
-    .alternates h2 { font-size: 25px; line-height: 25px; }
-    .alternates .el-item p { font-size: 15px; line-height: 15px; }
+    .alternates h2 { font-size: 25px !important; line-height: 25px !important; }
+    .alternates .el-item p { font-size: 15px !important; line-height: 15px !important; }
   }
 
   @media (min-width: 451px) and (max-width: 640px) {
@@ -695,12 +695,12 @@
     .homesquares.resources .el-content { width: 180px; }
     .quotes { top: 70px; right: 45px; font-size: 20px; line-height: 20px; width: 200px; }
     .quotes span:nth-child(1) { margin-left: -7px; }
-    .homesquares .el-content p { font-size: 14px; line-height: 16px; margin-top: 0; }
-    .homesquares .el-content { margin: 0 5%; }
+    .homesquares .el-content p { font-size: 14px !important; line-height: 16px !important; margin-top: 0 !important; }
+    .homesquares .el-content { margin: 0 5% !important; }
     .headerText { top: 180px; left: 38px; font-size: 80px; line-height: 70px; }
-    .alternates h2 { font-size: 30px; line-height: 30px; }
+    .alternates h2 { font-size: 30px !important; line-height: 30px !important; }
     .alternates .el-item { padding: 15%; }
-    .alternates .el-item p { font-size: 20px; line-height: 20px; }
+    .alternates .el-item p { font-size: 20px !important; line-height: 20px !important; }
     .alternates .el-item .uk-margin-top { margin-top: 0; line-height: 12px; }
     .hero { margin-top: -106px !important; }
     #alternates1 .el-item, #alternates2 .el-item,
@@ -732,10 +732,10 @@
     .offinfo4x4 p { font-size: 20px; line-height: 24px; margin: 5px 0; }
     .quotes { top: 125px; right: 85px; font-size: 22px; line-height: 22px; width: 250px; }
     .quotes span:nth-child(1) { margin-left: -8px; }
-    .homesquares .el-content { margin: 0 10%; }
+    .homesquares .el-content { margin: 0 10% !important; }
     .headerText { top: 220px; left: 38px; font-size: 80px; line-height: 70px; }
-    .homesquares .el-content h2 { margin-bottom: 10px; }
-    .alternates h2 { font-size: 60px; line-height: 60px; }
+    .homesquares .el-content h2 { margin-bottom: 10px !important; }
+    .alternates h2 { font-size: 60px !important; line-height: 60px !important; }
     .hiddenbox .uk-grid-match > div::after { padding-top: 0; display: none; }
     .hiddenbox h2 { font-size: 35px; margin: 0; line-height: 35px; }
     .hiddenbox .el-item { padding: 15px; }
