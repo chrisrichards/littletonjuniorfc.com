@@ -673,7 +673,7 @@
     .homesquares .el-content { margin: 0 !important; }
     .homesquares .el-content p { font-size: 11px !important; line-height: 12px !important; margin-top: 0 !important; }
     .homesquares .el-content h2 { font-size: 20px !important; line-height: 22px !important; margin-bottom: 5px !important; }
-    .footer { padding: 10px 20px; font-size: 12px; }
+    .footer { padding: 10px 20px !important; font-size: 12px; }
     .alternates h2 { font-size: 25px !important; line-height: 25px !important; }
     .alternates .el-item p { font-size: 12px !important; line-height: 13px !important; }
   }
@@ -704,7 +704,7 @@
     .hero { margin-top: -106px !important; }
     .homesquares .el-content p { font-size: 11px !important; line-height: 12px !important; margin-top: 0 !important; }
     .homesquares .el-content h2 { font-size: 20px !important; line-height: 22px !important; margin-bottom: 5px !important; }
-    .footer { padding: 10px 20px; font-size: 12px; }
+    .footer { padding: 10px 20px !important; font-size: 12px; }
     .alternates h2 { font-size: 25px !important; line-height: 25px !important; }
     .alternates .el-item p { font-size: 15px !important; line-height: 15px !important; }
   }
