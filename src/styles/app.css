@@ -143,6 +143,8 @@
   }
   .tm-page {
     position: relative;
+    z-index: 0; /* stacking context so the hero's z-index:-1 stays within the
+                   page (behind the navbar, in front of the page background) */
     max-width: 1200px;
     margin-inline: auto;
     background: #fff;
@@ -168,6 +170,7 @@
      (Scoped to .hero — making every section relative regresses other pages.) */
   .hero {
     position: relative;
+    z-index: -1; /* sits behind the navbar (which overlays the hero) */
   }
   .uk-section.uk-section-default {
     background: #fff;
