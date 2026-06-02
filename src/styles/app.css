@@ -1099,6 +1099,16 @@
   .nav-group--left::before { right: 9px; }
   .nav-group--right::before { left: 9px; }
 
+  /* 960-1024: the logo shrinks to 250px (legacy `.uk-logo{width:250px;
+     padding:0 50px}`), so the nav groups sit ±125px from centre. This also
+     stops the underline overshooting the page edge (it ended past 1112 with
+     the 380px geometry; now ends at the legacy 1047/1015). */
+  @media (min-width: 960px) and (max-width: 1024px) {
+    .site-logo { width: 250px; padding: 0 50px; }
+    .nav-group--left { right: calc(50% + 125px); }
+    .nav-group--right { left: calc(50% + 125px); }
+  }
+
   /* Mobile header: toggle (left) + centred logo. */
   .mobile-nav { position: relative; display: flex; align-items: center; height: 80px; padding-left: 5%; }
   .nav-toggle {
