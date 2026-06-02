@@ -147,6 +147,150 @@
   }
 
   /* ════════════════════════════════════════════════════════════════
+   * Layout primitives — the UIkit subset still referenced by class in the
+   * markup, reproduced 1:1 from the live computed styles. (`uk-grid` is an
+   * ATTRIBUTE UIkit JS turns into the .uk-grid class + .uk-first-column on
+   * the first cell; post-flip there's no JS, so we style the attribute
+   * selector directly and let every cell carry the 5px left padding — the
+   * container's -5px left margin cancels the first cell's, matching the
+   * legacy alignment.)
+   * ════════════════════════════════════════════════════════════════ */
+
+  .uk-section {
+    padding: 5px 0;
+  }
+  .uk-section.uk-section-default {
+    background: #fff;
+  }
+  .uk-padding-remove-top { padding-top: 0; }
+  .uk-padding-remove-bottom { padding-bottom: 0; }
+  .uk-margin-remove-vertical { margin-top: 0; margin-bottom: 0; }
+
+  .uk-container {
+    max-width: 1360px;
+    margin-inline: auto;
+  }
+
+  /* Grid: 5px gutter via UIkit's negative-margin technique. */
+  [uk-grid],
+  .uk-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -5px;
+  }
+  [uk-grid] > *,
+  .uk-grid > * {
+    padding-left: 5px;
+  }
+  /* Stacked grids/rows: 5px top gutter on all but the first. */
+  * + .uk-grid-margin {
+    margin-top: 5px;
+  }
+
+  /* Equal-height (uk-grid-match): cells stretch, inner element fills. */
+  .uk-grid-match > * {
+    display: flex;
+  }
+  .uk-grid-match > * > * {
+    width: 100%;
+  }
+
+  /* Child widths (UIkit s=640, m=960 breakpoints). */
+  .uk-child-width-1-1 > * { width: 100%; }
+  .uk-child-width-1-2 > * { width: 50%; }
+  .uk-child-width-1-4 > * { width: 25%; }
+  @media (min-width: 640px) {
+    .uk-child-width-1-2\@s > * { width: 50%; }
+  }
+  @media (min-width: 960px) {
+    .uk-child-width-1-1\@m > * { width: 100%; }
+    .uk-child-width-1-2\@m > * { width: 50%; }
+    .uk-child-width-1-4\@m > * { width: 25%; }
+  }
+
+  /* Element widths. */
+  @media (min-width: 960px) {
+    .uk-width-1-1\@m { width: 100%; }
+    .uk-width-expand\@m {
+      flex: 1;
+      min-width: 1px;
+      max-width: 100%;
+    }
+  }
+
+  /* Text + spacing helpers. */
+  .uk-text-center { text-align: center; }
+  .uk-text-left { text-align: left; }
+  .uk-margin { margin-bottom: 20px; }
+  .uk-margin-top { margin-top: 20px; }
+  .uk-margin-remove-bottom { margin-bottom: 0; }
+  .uk-margin-remove-first-child > :first-child { margin-top: 0; }
+
+  /* Cards. */
+  .uk-card-body {
+    position: relative;
+    padding: 40px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .uk-card-primary {
+    background: var(--color-brand);
+  }
+  .uk-card-secondary {
+    background: var(--color-dark);
+  }
+  .uk-card-primary > :not([class*='uk-card-media']),
+  .uk-card-secondary > :not([class*='uk-card-media']) {
+    color: #fff;
+  }
+
+  /* Images fill their column by default (custom.css `.uk-section img`). */
+  .uk-section img,
+  .el-image {
+    width: 100%;
+  }
+
+  /* Buttons (CTA links). */
+  .uk-button {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 0 20px;
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 44px;
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+  .uk-button-default {
+    background-color: var(--color-brand);
+    color: #fff;
+  }
+
+  /* Square-aspect cells — UIkit padding-top:100% trick on grid children.
+     Applied per-grid as the live custom.css/overrides.css did. */
+  .hiddenbox .uk-grid-match.uk-grid > div::after,
+  #counters .uk-grid-match.uk-grid > div::after,
+  #sponsors .uk-grid-match.uk-grid > div::after,
+  .homesquares.resources .uk-grid-match.uk-grid > div::after,
+  .offinfo4x4 > div > div::after,
+  .wellsafeimg > div > div::after,
+  .bluesquare > div > div::after,
+  .greysquare > div > div::after,
+  .alternates.second.blue > div > div::after,
+  #alternates1 .uk-grid-match.uk-grid > div::after,
+  #alternates2 .uk-grid-match.uk-grid > div::after,
+  #alternates3 .uk-grid-match.uk-grid > div::after,
+  #alternates4 .uk-grid-match.uk-grid > div::after,
+  .alternates.first.blue .uk-grid-match.uk-grid > div::after,
+  .alternates.first.grey .uk-grid-match.uk-grid > div::after,
+  .alternates.first.contacts .uk-grid-match.uk-grid > div::after,
+  .alternates.second.contacts .uk-grid-match.uk-grid > div::after {
+    content: '';
+    display: block;
+    padding-top: 100%;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
    * Bespoke type + positioning. Kept-class selectors (these classes are
    * already semantic — .headerText, .quotes, .alternates, …); values are
    * transcribed verbatim from the live custom.css/overrides.css, with the
@@ -437,5 +581,174 @@
     margin-bottom: 1px;
     padding: 20px 0;
     letter-spacing: -0.03em;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Responsive type — transcribed verbatim from custom.css's @media
+   * blocks (exact legacy breakpoints: 480 / 376-450 / 451-640 / 641-768 /
+   * 769-959 / 960-1024 / 1025-1152). Chrome (logo/toggle) and the
+   * .alternates colour matrix are NOT here (they land with the flip).
+   * ════════════════════════════════════════════════════════════════ */
+
+  @media (max-width: 480px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 17px; line-height: 17px; }
+    .alternates.contacts h4 { font-size: 17px; line-height: 17px; }
+    .homesquares.resources h3 { font-size: 30px; line-height: 30px; }
+    .homesquares.resources p { font-size: 14px; line-height: 16px; }
+    .homesquares.resources .el-content { width: 130px; }
+    .homesquares .el-content { margin: 0 5%; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 8%; }
+    .wellsafeimg .el-item h3 {
+      font-size: 35px; line-height: 37px; top: 26px; left: 0; max-width: 300px;
+    }
+    .offinfo4x4 p { font-size: 12px; line-height: 13px; }
+    .offinfo4x4 .el-item { padding: 8% 10%; }
+    .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
+      font-size: 18px; line-height: 18px;
+    }
+    .quotes { top: 45px; right: 35px; font-size: 15px; line-height: 15px; width: 120px; }
+    .quotes span:nth-child(1) { margin-left: -6px; }
+    .headerText { top: 80px; left: 25px; font-size: 40px; line-height: 35px; }
+    .hero { margin-top: -106px; }
+    .homesquares .el-content { margin: 0; }
+    .homesquares .el-content p { font-size: 11px; line-height: 12px; margin-top: 0; }
+    .homesquares .el-content h2 { font-size: 20px; line-height: 22px; margin-bottom: 5px; }
+    .footer { padding: 10px 20px; font-size: 12px; }
+    .alternates h2 { font-size: 25px; line-height: 25px; }
+    .alternates .el-item p { font-size: 12px; line-height: 13px; }
+  }
+
+  @media (min-width: 376px) and (max-width: 450px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 22px; line-height: 20px; }
+    .alternates.contacts h4 { font-size: 22px; line-height: 20px; }
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 130px; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 8%; }
+    .homesquares .el-content { margin: 0; }
+    .wellsafeimg .el-item h3 { font-size: 35px; line-height: 37px; top: 26px; max-width: 300px; }
+    .offinfo4x4 p { font-size: 14px; line-height: 16px; }
+    .offinfo4x4 .el-item { padding: 8% 10%; }
+    .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
+      font-size: 22px; line-height: 20px;
+    }
+    .alternates.blue h4, .alternates.grey h4 { font-size: 18px; line-height: 18px; }
+    .quotes { top: 45px; right: 35px; font-size: 15px; line-height: 15px; width: 120px; }
+    .quotes span:nth-child(1) { margin-left: -6px; }
+    .headerText { top: 80px; left: 5%; font-size: 40px; line-height: 35px; }
+    .hero { margin-top: -106px; }
+    .homesquares .el-content p { font-size: 11px; line-height: 12px; margin-top: 0; }
+    .homesquares .el-content h2 { font-size: 20px; line-height: 22px; margin-bottom: 5px; }
+    .footer { padding: 10px 20px; font-size: 12px; }
+    .alternates h2 { font-size: 25px; line-height: 25px; }
+    .alternates .el-item p { font-size: 15px; line-height: 15px; }
+  }
+
+  @media (min-width: 451px) and (max-width: 640px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 17px; line-height: 17px; }
+    .alternates.contacts h4 { font-size: 14px; line-height: 14px; }
+    .alternates.contacts .el-item p { font-size: 11px; line-height: 11px; }
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 180px; }
+    .quotes { top: 70px; right: 45px; font-size: 20px; line-height: 20px; width: 200px; }
+    .quotes span:nth-child(1) { margin-left: -7px; }
+    .homesquares .el-content p { font-size: 14px; line-height: 16px; margin-top: 0; }
+    .homesquares .el-content { margin: 0 5%; }
+    .headerText { top: 180px; left: 38px; font-size: 80px; line-height: 70px; }
+    .alternates h2 { font-size: 30px; line-height: 30px; }
+    .alternates .el-item { padding: 15%; }
+    .alternates .el-item p { font-size: 20px; line-height: 20px; }
+    .alternates .el-item .uk-margin-top { margin-top: 0; line-height: 12px; }
+    .hero { margin-top: -106px; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 10% 15%; }
+    .offinfo4x4 p { font-size: 14px; line-height: 16px; }
+    .offinfo4x4 .el-item, .alternates.blue .el-item, .alternates.grey .el-item {
+      padding: 8% 10%;
+    }
+    .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
+      font-size: 25px; line-height: 23px;
+    }
+    .alternates.blue h4, .alternates.grey h4 { font-size: 20px; line-height: 20px; }
+  }
+
+  @media (min-width: 641px) and (max-width: 768px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 24px; line-height: 24px; }
+    .alternates.contacts h4 { font-size: 18px; line-height: 18px; }
+    .alternates.contacts .el-item p { font-size: 14px; line-height: 14px; }
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 130px; }
+    .offinfo4x4 .el-item { padding: 56px 33px 10px 36px; }
+    .wellsafeimg .el-item h3 {
+      font-size: 35px; line-height: 37px; top: 26px; left: 25px; max-width: 300px;
+    }
+    .offinfo4x4 p { font-size: 20px; line-height: 24px; margin: 5px 0; }
+    .quotes { top: 125px; right: 85px; font-size: 22px; line-height: 22px; width: 250px; }
+    .quotes span:nth-child(1) { margin-left: -8px; }
+    .homesquares .el-content { margin: 0 10%; }
+    .headerText { top: 220px; left: 38px; font-size: 80px; line-height: 70px; }
+    .homesquares .el-content h2 { margin-bottom: 10px; }
+    .alternates h2 { font-size: 60px; line-height: 60px; }
+    .hiddenbox .uk-grid-match.uk-grid > div::after { padding-top: 0; display: none; }
+    .hiddenbox h2 { font-size: 35px; margin: 0; line-height: 35px; }
+    .hiddenbox .el-item { padding: 15px; }
+    .hiddenbox .el-item > div:not(.el-content):last-child { bottom: -20px; }
+    .hiddenbox .uk-grid-stack > div:nth-child(2) { padding-bottom: 30px; }
+    .closeMe {
+      width: 16px; height: 16px; top: 15px; right: 15px; background-size: 16px 16px;
+    }
+    .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
+      font-size: 25px; line-height: 23px;
+    }
+    .alternates.blue h4, .alternates.grey h4 { font-size: 20px; line-height: 20px; }
+    .alternates.blue p, .alternates.contacts p, .homesquares.resources p, .alternates.grey p {
+      font-size: 14px; line-height: 16px;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 959px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 34px; line-height: 34px; }
+    .alternates.contacts h4 { font-size: 20px; line-height: 20px; }
+    .alternates.contacts .el-item p { font-size: 16px; line-height: 16px; }
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 130px; }
+    .hero { margin-top: -106px; }
+    .headerText { top: 220px; left: 38px; font-size: 80px; line-height: 70px; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 0 15%; }
+    .quotes { top: 105px; right: 75px; font-size: 30px; line-height: 30px; width: 250px; }
+    .quotes span:nth-child(1) { margin-left: -11px; }
+  }
+
+  @media (min-width: 960px) and (max-width: 1024px) {
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 130px; }
+    .wellsafeimg .el-item h3 {
+      font-size: 50px; line-height: 50px; top: 26px; left: 25px; max-width: 300px;
+    }
+    .offinfo4x4 p { font-size: 16px; line-height: 19px; margin: 5px 0; }
+    .offinfo4x4 .el-item { padding: 36px 27px 10px 30px; }
+    .headerText { top: 220px; left: 48px; font-size: 110px; line-height: 95px; }
+    .quotes { top: 165px; right: 115px; font-size: 40px; line-height: 40px; width: 350px; }
+    .quotes span:nth-child(1) { margin-left: -16px; }
+  }
+
+  @media (min-width: 1025px) and (max-width: 1152px) {
+    .offinfo4x4 p { font-size: 16px; line-height: 18px; }
+  }
+
+  @media (max-width: 960px) {
+    .hiddenbox .uk-grid-match.uk-grid > div::after { padding-top: 0; }
   }
 }
