@@ -145,4 +145,297 @@
       0 10px 20px rgba(0, 0, 0, 0.19),
       0 6px 6px rgba(0, 0, 0, 0.23);
   }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Bespoke type + positioning. Kept-class selectors (these classes are
+   * already semantic — .headerText, .quotes, .alternates, …); values are
+   * transcribed verbatim from the live custom.css/overrides.css, with the
+   * dead Joomla/schedule/login rules dropped and #fff/#5da9dd/#464547/
+   * #808285 mapped to theme vars. Raw @media keeps the exact legacy
+   * breakpoints so the responsive type switches at identical widths.
+   *
+   * NOTE — the .alternates nth-child COLOUR-alternation matrix and the
+   * navbar/off-canvas chrome are intentionally NOT here yet; they are
+   * authored with the flip (when they can be diffed against pixels).
+   * ════════════════════════════════════════════════════════════════ */
+
+  /* ── Hero overlay title + privacy/terms banner variant ──────────── */
+  .headerText {
+    position: absolute;
+    top: 265px;
+    left: 58px;
+    margin-top: 0;
+    font-size: 130px;
+    line-height: 110px;
+    color: #fff;
+  }
+  .privacysect .headerText {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 58px;
+    line-height: normal;
+    background-color: var(--color-dark);
+  }
+  .privacysect .el-image {
+    pointer-events: none;
+  }
+
+  /* ── Closing quote band ─────────────────────────────────────────── */
+  .quoteimage {
+    position: relative;
+    padding-top: 0;
+  }
+  .quoteimage .uk-first-column > .uk-margin {
+    margin-bottom: 0;
+  }
+  .quotes {
+    position: absolute;
+    top: 165px;
+    right: 115px;
+    width: 388px;
+    margin-top: 0;
+    font-family: var(--font-display);
+    font-size: 50px;
+    line-height: 50px;
+    font-style: normal;
+    font-weight: normal;
+    letter-spacing: -0.015em;
+    color: #fff;
+  }
+  .quotes span:nth-child(1) {
+    margin-left: -18px;
+  }
+
+  /* ── Home counters ──────────────────────────────────────────────── */
+  #counters .el-content {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    left: 15px;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-size: 20px;
+  }
+  #counters .el-content h3 {
+    margin: -15px 0 0;
+    font-size: 110px;
+    line-height: 110px;
+  }
+  #counters .el-content p {
+    margin: 0;
+    line-height: 20px;
+  }
+
+  /* ── Home squares ───────────────────────────────────────────────── */
+  .homesquares h2,
+  .homesquares p {
+    margin: 0;
+  }
+  #homesquares .el-content {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    left: 15px;
+    margin: 0 25%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #fff;
+  }
+  #homesquares .el-content h2 {
+    font-size: 46px;
+    color: var(--color-brand);
+  }
+
+  /* ── Section-label panels (resources blue/grey, official-info image) ─ */
+  .bluesquare .el-item,
+  .greysquare .el-item,
+  .wellsafeimg .el-item {
+    position: relative;
+  }
+  .bluesquare .el-title,
+  .greysquare .el-title,
+  .wellsafeimg h3.el-title,
+  #charter .wellsafeimg h3.el-title {
+    position: absolute;
+    top: 56px;
+    left: 36px;
+    margin: 0;
+    font-size: 64px;
+    line-height: 58px;
+    color: #fff;
+    z-index: 1;
+  }
+  .wellsafeimg .el-title {
+    margin-top: -7px;
+  }
+  .wellsafeimg .el-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .bluesquare {
+    background-color: var(--color-brand);
+    color: #fff;
+  }
+  .greysquare {
+    background-color: var(--color-dark);
+    color: #fff;
+  }
+
+  /* ── Featured resource band (homesquares.resources) ─────────────── */
+  .homesquares.resources .el-content {
+    position: absolute;
+    top: 56px;
+    left: 36px;
+    width: 212px;
+    margin: 0;
+    transform: none;
+    text-align: left;
+    font-size: 18px;
+    line-height: 21px;
+    font-weight: 400;
+    color: #fff;
+  }
+  .homesquares.resources .el-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .homesquares.resources h3 {
+    margin: 0 0 10px;
+    font-size: 46px;
+    line-height: 40px;
+  }
+  .homesquares.resources h4 {
+    margin: -6px 0 5px;
+    font-size: 24px;
+    line-height: 26px;
+  }
+  .homesquares.resources p {
+    margin: 0;
+    padding: 3px 0;
+    border-top: 1px dashed #fff;
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  /* ── Action-card type scales (.alternates / .offinfo4x4 / contacts) ─ */
+  .alternates.blue h3,
+  .alternates.contacts h3,
+  .homesquares.resources h3,
+  .alternates.grey h3,
+  #charter h3,
+  #membership h3 {
+    margin: 0 0 10px;
+    font-size: 46px;
+    line-height: 40px;
+  }
+  .alternates.blue h4,
+  .alternates.contacts h4,
+  .alternates.grey h4 {
+    margin: -6px 0 5px;
+    font-size: 24px;
+    line-height: 26px;
+  }
+  .alternates.blue p,
+  .alternates.contacts p,
+  .alternates.grey p {
+    margin: 0;
+    padding: 3px 0;
+    border-top: 1px dashed #fff;
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  /* ── Official-info 4×4 intro/action cards ───────────────────────── */
+  .offinfo4x4 .el-item {
+    padding: 56px 33px 10px 36px;
+  }
+  .offinfo4x4 h3 {
+    margin: 0 0 5px;
+    font-size: 24px;
+    line-height: 23px;
+  }
+  .offinfo4x4 p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+  }
+  #charter .offinfo4x4 .el-item {
+    padding: 40px;
+  }
+
+  /* ── Teams "More" detail panels (.hiddenbox) ────────────────────── */
+  .hiddenbox {
+    position: relative;
+  }
+  .hiddenbox h2 {
+    margin: 0;
+    font-size: 64px;
+    line-height: 45px;
+    color: #fff;
+  }
+  .hiddenbox h4 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    line-height: 24px;
+    color: var(--color-dark);
+  }
+  .hiddenbox p {
+    margin: 0;
+    padding: 3px 0;
+    border-top: 1px dashed #fff;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+  .closeMe {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 22px;
+    height: 22px;
+    background-image: url(/images/close.png);
+    background-size: 22px 22px;
+  }
+
+  /* ── Privacy / terms / schedule prose block ─────────────────────── */
+  .privacy {
+    margin-top: -10px;
+    padding: 50px 58px 20px;
+    background-color: var(--color-dark);
+    color: #fff;
+  }
+  .privacy h5 {
+    margin: 10px 0;
+    font-family: var(--font-body);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-brand);
+  }
+  .privacy p {
+    margin-top: -20px;
+    margin-bottom: 1px;
+    padding: 20px 0;
+    letter-spacing: -0.03em;
+  }
 }
