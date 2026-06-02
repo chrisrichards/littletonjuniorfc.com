@@ -112,6 +112,7 @@
     color: #fff;
   }
   img {
+    display: block; /* kills the inline-image descender gap (UIkit's base did this) */
     max-width: 100%;
     height: auto;
     border-style: none;
@@ -437,6 +438,15 @@
   .greysquare {
     background-color: var(--color-dark);
     color: #fff;
+  }
+  /* Below 960 the resources blue/grey label panels are a short 12em bar,
+     not a full-width square (legacy `.uk-first-column:after{padding-top:12em}`
+     in the max-959 @media blocks). */
+  @media (max-width: 959px) {
+    .bluesquare > div > div::after,
+    .greysquare > div > div::after {
+      padding-top: 12em;
+    }
   }
 
   /* ── Featured resource band (homesquares.resources) ─────────────── */
