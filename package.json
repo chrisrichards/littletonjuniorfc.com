@@ -25,6 +25,9 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",
     "cheerio": "^1.2.0",
+    "pixelmatch": "^7.2.0",
+    "playwright": "^1.60.0",
+    "pngjs": "^7.0.0",
     "purgecss": "^8.0.0",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.3.0",
