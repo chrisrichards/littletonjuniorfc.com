@@ -783,6 +783,14 @@
     .headerText { top: 220px; left: 38px; font-size: 80px; line-height: 70px; }
     .homesquares .el-content h2 { margin-bottom: 10px !important; }
     .alternates h2 { font-size: 60px !important; line-height: 60px !important; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 10%; }
+    .alternates .el-item a,
+    #membership > div > div:nth-child(3) .el-item a,
+    #membership > div > div:nth-child(4) .el-item a,
+    .sponsors .el-item a {
+      padding: 2px 5px 2px !important; font-size: 16px !important; line-height: 18px !important;
+    }
     .hiddenbox .uk-grid-match > div::after { padding-top: 0; display: none; }
     .hiddenbox h2 { font-size: 35px; margin: 0; line-height: 35px; }
     .hiddenbox .el-item { padding: 15px; }
