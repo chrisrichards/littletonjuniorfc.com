@@ -61,102 +61,96 @@ const navRight = [
       crossorigin
     />
 
-    <link rel="stylesheet" href="/templates/yootheme/css/theme.css" id="theme-style-css" />
-    <link rel="stylesheet" href="/templates/yootheme/css/custom.css" id="theme-custom-css" />
-    <link rel="stylesheet" href="/templates/yootheme/css/overrides.css" id="theme-overrides-css" />
-
-    {/* defer: parse-blocking removed; scripts still run in order before
-        DOMContentLoaded, which the counter/panel inline scripts wait for. */}
-    <script src="/templates/yootheme/vendor/assets/uikit/dist/js/uikit.min.js" is:inline defer></script>
-    <script src="/templates/yootheme/vendor/assets/uikit/dist/js/uikit-icons.min.js" is:inline defer></script>
   </head>
   <body class="">
     <div class="tm-page-container uk-clearfix">
       <div class="tm-page uk-margin-auto">
         {/* Mobile header */}
-        <div class="tm-header-mobile uk-hidden@m">
-          <div class="uk-navbar-container">
-            <nav uk-navbar>
-              <div class="uk-navbar-left">
-                <a class="uk-navbar-toggle" href="#tm-mobile" uk-toggle>
-                  <div uk-navbar-toggle-icon></div>
-                </a>
-              </div>
-              <div class="uk-navbar-center">
-                <a class="uk-navbar-item uk-logo" href="/">
-                  <Image src={logo} alt="" width={424} height={414} />
-                </a>
-              </div>
-            </nav>
-          </div>
+        <div class="tm-header-mobile mobile-header">
+          <nav class="mobile-nav">
+            <button
+              class="nav-toggle"
+              type="button"
+              aria-label="Open menu"
+              aria-expanded="false"
+              aria-controls="mobile-drawer"
+              data-drawer-open
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+                <rect y="3" width="20" height="2"></rect>
+                <rect y="9" width="20" height="2"></rect>
+                <rect y="15" width="20" height="2"></rect>
+              </svg>
+            </button>
+            <a class="mobile-logo" href="/">
+              <Image src={logo} alt="" width={424} height={414} />
+            </a>
+          </nav>
+        </div>
 
-          <div id="tm-mobile" uk-offcanvas="mode: reveal; overlay: true">
-            <div class="uk-offcanvas-bar">
-              <button class="uk-offcanvas-close" type="button" uk-close></button>
-              <div class="uk-child-width-1-1" uk-grid>
-                <div>
-                  <div class="uk-panel">
-                    <ul class="uk-nav uk-nav-default">
-                      {
-                        [...navLeft, ...navRight].map((item) => (
-                          <li class={active === item.key ? 'uk-active' : ''}>
-                            <a href={item.href} set:html={item.label} />
-                          </li>
-                        ))
-                      }
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
+        {/* Mobile off-canvas drawer (vanilla JS, replaces UIkit offcanvas) */}
+        <div class="drawer" id="mobile-drawer" hidden>
+          <div class="drawer__overlay" data-drawer-close></div>
+          <div class="drawer__bar">
+            <button class="drawer__close" type="button" aria-label="Close menu" data-drawer-close>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                aria-hidden="true"
+                stroke="currentColor"
+                stroke-width="1.1"
+              >
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+              </svg>
+            </button>
+            <ul class="drawer__nav">
+              {
+                [...navLeft, ...navRight].map((item) => (
+                  <li class={active === item.key ? 'active' : ''}>
+                    <a href={item.href} set:html={item.label} />
+                  </li>
+                ))
+              }
+            </ul>
           </div>
         </div>
 
         {/* Desktop header */}
-        <div class="tm-header uk-visible@m" uk-header>
-          <div class="uk-navbar-container">
-            <div class="uk-container">
-              <nav
-                class="uk-navbar"
-                uk-navbar='{"align":"left","boundary":"!.uk-navbar-container"}'
-              >
-                <div class="uk-navbar-center">
-                  <div class="uk-navbar-center-left uk-preserve-width">
-                    <div>
-                      <ul class="uk-navbar-nav">
-                        {
-                          navLeft.map((item) => (
-                            <li class={active === item.key ? 'uk-active' : ''}>
-                              <a href={item.href} set:html={item.label} />
-                            </li>
-                          ))
-                        }
-                      </ul>
-                    </div>
-                  </div>
+        <header class="tm-header site-header">
+          <div class="uk-container">
+            <div class="site-header__inner">
+              <nav class="nav-group nav-group--left" aria-label="Primary">
+                <ul>
+                  {
+                    navLeft.map((item) => (
+                      <li class={active === item.key ? 'active' : ''}>
+                        <a href={item.href} set:html={item.label} />
+                      </li>
+                    ))
+                  }
+                </ul>
+              </nav>
 
-                  <a href="/" class="uk-navbar-item uk-logo">
-                    <Image src={logo} alt="" width={424} height={414} />
-                  </a>
+              <a href="/" class="site-logo">
+                <Image src={logo} alt="" width={424} height={414} />
+              </a>
 
-                  <div class="uk-navbar-center-right uk-preserve-width">
-                    <div>
-                      <ul class="uk-navbar-nav">
-                        {
-                          navRight.map((item) => (
-                            <li class={active === item.key ? 'uk-active' : ''}>
-                              <a href={item.href} set:html={item.label} />
-                            </li>
-                          ))
-                        }
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+              <nav class="nav-group nav-group--right" aria-label="Primary">
+                <ul>
+                  {
+                    navRight.map((item) => (
+                      <li class={active === item.key ? 'active' : ''}>
+                        <a href={item.href} set:html={item.label} />
+                      </li>
+                    ))
+                  }
+                </ul>
               </nav>
             </div>
           </div>
-        </div>
+        </header>
 
         <slot />
 
@@ -165,7 +159,7 @@ const navRight = [
           <div class="uk-container">
             <div class="uk-grid-margin" uk-grid>
               <div class="uk-width-1-1@m">
-                <div class="footer uk-margin" id="footer-4">
+                <div class="footer" id="footer-4">
                   <p>
                     © Littleton Junior Football Club | <a href="/privacy-policy">Privacy</a> |
                     <a href="/terms-conditions">Terms</a>
@@ -182,7 +176,42 @@ const navRight = [
         and loaded via <link> above. Astro's <style is:global> in dev mode
         loads styles via Vite HMR which had timing/cache quirks. */}
 
-    <script src="/templates/yootheme/js/theme.js" is:inline defer></script>
+    <script is:inline>
+      // Mobile off-canvas drawer — tiny vanilla replacement for UIkit's
+      // offcanvas. Slide-in via the .is-open class + a CSS transform.
+      (function () {
+        var drawer = document.getElementById('mobile-drawer');
+        if (!drawer) return;
+        var bar = drawer.querySelector('.drawer__bar');
+        var toggles = document.querySelectorAll('[data-drawer-open]');
+        function open() {
+          drawer.hidden = false;
+          drawer.getBoundingClientRect(); // force reflow so the transition runs
+          drawer.classList.add('is-open');
+          toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'true'); });
+          document.documentElement.style.overflow = 'hidden';
+        }
+        function close() {
+          if (!drawer.classList.contains('is-open')) return;
+          drawer.classList.remove('is-open');
+          toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
+          document.documentElement.style.overflow = '';
+          var onEnd = function (e) {
+            if (e.target !== bar) return;
+            bar.removeEventListener('transitionend', onEnd);
+            drawer.hidden = true;
+          };
+          bar.addEventListener('transitionend', onEnd);
+        }
+        toggles.forEach(function (t) { t.addEventListener('click', open); });
+        document.querySelectorAll('[data-drawer-close]').forEach(function (b) {
+          b.addEventListener('click', close);
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') close();
+        });
+      })();
+    </script>
     <script is:inline>
       // Counter animation lifted from the live site's inline JS.
       // Runs once on DOMContentLoaded. Looks for .counter[data-count].

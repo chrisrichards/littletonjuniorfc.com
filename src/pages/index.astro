@@ -74,14 +74,7 @@ const sponsors: Sponsor[] = [
     width="full"
     uk-scrollspy="target: [uk-scrollspy-class]; cls: uk-animation-fade; delay: false;"
   >
-    <div id="homesquares" uk-filter=".js-filter" class="homesquares uk-margin uk-text-center">
-      <ul class="el-nav uk-margin uk-tab">
-        <li class="uk-active" uk-filter-control><a href="#">All</a></li>
-        <li uk-filter-control="[data-tag~='Download']">
-          <a href="#">Download</a>
-        </li>
-      </ul>
-
+    <div id="homesquares" class="homesquares uk-margin uk-text-center">
       <div class="js-filter uk-child-width-1-2 uk-grid-match" uk-grid>
         {
           homesquares.map((card) =>
@@ -114,14 +107,7 @@ const sponsors: Sponsor[] = [
 
   {/* Sponsors */}
   <Section id="sponsors-section" width="full">
-    <div id="sponsors" uk-filter=".js-filter" class="sponsors uk-margin uk-text-center">
-      <ul class="el-nav uk-margin uk-tab">
-        <li class="uk-active" uk-filter-control><a href="#">All</a></li>
-        <li uk-filter-control="[data-tag~='Visit']">
-          <a href="#">Visit</a>
-        </li>
-      </ul>
-
+    <div id="sponsors" class="sponsors uk-margin uk-text-center">
       <div
         class="js-filter uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m uk-grid-match"
         uk-grid

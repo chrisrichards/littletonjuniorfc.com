@@ -120,6 +120,7 @@
     margin: 0;
   }
   ul {
+    margin: 0;
     padding: 0;
   }
 }
@@ -208,11 +209,16 @@
     .uk-child-width-1-4\@m > * { width: 25%; }
   }
 
-  /* Element widths. */
+  /* Element widths. Below @m (960) the columns stack full-width; at @m the
+     expand columns share the row (flex:1). */
+  .uk-width-1-1\@m,
+  .uk-width-expand\@m {
+    width: 100%;
+  }
   @media (min-width: 960px) {
-    .uk-width-1-1\@m { width: 100%; }
     .uk-width-expand\@m {
       flex: 1;
+      width: auto;
       min-width: 1px;
       max-width: 100%;
     }
@@ -268,23 +274,23 @@
 
   /* Square-aspect cells — UIkit padding-top:100% trick on grid children.
      Applied per-grid as the live custom.css/overrides.css did. */
-  .hiddenbox .uk-grid-match.uk-grid > div::after,
-  #counters .uk-grid-match.uk-grid > div::after,
-  #sponsors .uk-grid-match.uk-grid > div::after,
-  .homesquares.resources .uk-grid-match.uk-grid > div::after,
+  .hiddenbox .uk-grid-match > div::after,
+  #counters .uk-grid-match > div::after,
+  #sponsors .uk-grid-match > div::after,
+  .homesquares.resources .uk-grid-match > div::after,
   .offinfo4x4 > div > div::after,
   .wellsafeimg > div > div::after,
   .bluesquare > div > div::after,
   .greysquare > div > div::after,
   .alternates.second.blue > div > div::after,
-  #alternates1 .uk-grid-match.uk-grid > div::after,
-  #alternates2 .uk-grid-match.uk-grid > div::after,
-  #alternates3 .uk-grid-match.uk-grid > div::after,
-  #alternates4 .uk-grid-match.uk-grid > div::after,
-  .alternates.first.blue .uk-grid-match.uk-grid > div::after,
-  .alternates.first.grey .uk-grid-match.uk-grid > div::after,
-  .alternates.first.contacts .uk-grid-match.uk-grid > div::after,
-  .alternates.second.contacts .uk-grid-match.uk-grid > div::after {
+  #alternates1 .uk-grid-match > div::after,
+  #alternates2 .uk-grid-match > div::after,
+  #alternates3 .uk-grid-match > div::after,
+  #alternates4 .uk-grid-match > div::after,
+  .alternates.first.blue .uk-grid-match > div::after,
+  .alternates.first.grey .uk-grid-match > div::after,
+  .alternates.first.contacts .uk-grid-match > div::after,
+  .alternates.second.contacts .uk-grid-match > div::after {
     content: '';
     display: block;
     padding-top: 100%;
@@ -526,8 +532,13 @@
   }
 
   /* ── Teams "More" detail panels (.hiddenbox) ────────────────────── */
+  /* Hidden by default (the live site hid the #u6…#pan ids); the teams.astro
+     slide JS sets inline display:block to open and reverts to '' on close. */
   .hiddenbox {
     position: relative;
+    display: none;
+    padding-top: 0;
+    padding-bottom: 0;
   }
   .hiddenbox h2 {
     margin: 0;
@@ -612,7 +623,7 @@
     .quotes { top: 45px; right: 35px; font-size: 15px; line-height: 15px; width: 120px; }
     .quotes span:nth-child(1) { margin-left: -6px; }
     .headerText { top: 80px; left: 25px; font-size: 40px; line-height: 35px; }
-    .hero { margin-top: -106px; }
+    .hero { margin-top: -106px !important; }
     .homesquares .el-content { margin: 0; }
     .homesquares .el-content p { font-size: 11px; line-height: 12px; margin-top: 0; }
     .homesquares .el-content h2 { font-size: 20px; line-height: 22px; margin-bottom: 5px; }
@@ -644,7 +655,7 @@
     .quotes { top: 45px; right: 35px; font-size: 15px; line-height: 15px; width: 120px; }
     .quotes span:nth-child(1) { margin-left: -6px; }
     .headerText { top: 80px; left: 5%; font-size: 40px; line-height: 35px; }
-    .hero { margin-top: -106px; }
+    .hero { margin-top: -106px !important; }
     .homesquares .el-content p { font-size: 11px; line-height: 12px; margin-top: 0; }
     .homesquares .el-content h2 { font-size: 20px; line-height: 22px; margin-bottom: 5px; }
     .footer { padding: 10px 20px; font-size: 12px; }
@@ -669,7 +680,7 @@
     .alternates .el-item { padding: 15%; }
     .alternates .el-item p { font-size: 20px; line-height: 20px; }
     .alternates .el-item .uk-margin-top { margin-top: 0; line-height: 12px; }
-    .hero { margin-top: -106px; }
+    .hero { margin-top: -106px !important; }
     #alternates1 .el-item, #alternates2 .el-item,
     #alternates3 .el-item, #alternates4 .el-item { padding: 10% 15%; }
     .offinfo4x4 p { font-size: 14px; line-height: 16px; }
@@ -702,7 +713,7 @@
     .headerText { top: 220px; left: 38px; font-size: 80px; line-height: 70px; }
     .homesquares .el-content h2 { margin-bottom: 10px; }
     .alternates h2 { font-size: 60px; line-height: 60px; }
-    .hiddenbox .uk-grid-match.uk-grid > div::after { padding-top: 0; display: none; }
+    .hiddenbox .uk-grid-match > div::after { padding-top: 0; display: none; }
     .hiddenbox h2 { font-size: 35px; margin: 0; line-height: 35px; }
     .hiddenbox .el-item { padding: 15px; }
     .hiddenbox .el-item > div:not(.el-content):last-child { bottom: -20px; }
@@ -727,7 +738,7 @@
     .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
     .homesquares.resources p { font-size: 15px; line-height: 15px; }
     .homesquares.resources .el-content { width: 130px; }
-    .hero { margin-top: -106px; }
+    .hero { margin-top: -106px !important; }
     .headerText { top: 220px; left: 38px; font-size: 80px; line-height: 70px; }
     #alternates1 .el-item, #alternates2 .el-item,
     #alternates3 .el-item, #alternates4 .el-item { padding: 0 15%; }
@@ -755,7 +766,7 @@
   }
 
   @media (max-width: 960px) {
-    .hiddenbox .uk-grid-match.uk-grid > div::after { padding-top: 0; }
+    .hiddenbox .uk-grid-match > div::after { padding-top: 0; }
   }
 
   /* ════════════════════════════════════════════════════════════════
@@ -968,4 +979,82 @@
     }
     #membership > div > div:nth-child(3) .el-item a { background: var(--color-brand); }
   }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Chrome — header / nav / off-canvas, rebuilt static (no UIkit JS).
+   * New class names (no old rule competes), so these apply as soon as the
+   * markup is rewritten, even before the old CSS links are removed.
+   * Geometry from the live computed styles (see plan PROGRESS notes).
+   * ════════════════════════════════════════════════════════════════ */
+
+  .site-header { display: none; position: relative; }
+  .mobile-header { display: block; }
+  @media (min-width: 960px) {
+    .site-header { display: block; }
+    .mobile-header { display: none; }
+  }
+
+  /* Desktop: centred logo flanked by two absolutely-positioned nav groups. */
+  .site-header__inner { position: relative; padding-top: 48px; }
+  .site-logo {
+    display: flex; justify-content: center; align-items: center;
+    width: 380px; margin-inline: auto; padding: 0 90px; min-height: 80px;
+  }
+  .site-logo img { width: 100%; }
+  .nav-group { position: absolute; top: 108px; display: flex; }
+  .nav-group--left { right: calc(50% + 190px); }
+  .nav-group--right { left: calc(50% + 190px); }
+  .nav-group ul { display: flex; margin: 0; padding: 0; list-style: none; }
+  .nav-group a {
+    display: flex; box-sizing: border-box; min-height: 80px; padding: 26px 26px 0;
+    font-family: var(--font-display); font-size: 20px; line-height: 20px;
+    text-align: center; text-transform: uppercase; color: #fff;
+    justify-content: center; align-items: flex-start;
+  }
+  .nav-group a:hover { color: #fff; }
+  .nav-group li.active a { color: var(--color-brand); }
+  .nav-group::before {
+    content: ''; position: absolute; top: 15px; width: 401px; border-top: 2px solid #fff;
+  }
+  .nav-group--left::before { right: 9px; }
+  .nav-group--right::before { left: 9px; }
+
+  /* Mobile header: toggle (left) + centred logo. */
+  .mobile-nav { position: relative; display: flex; align-items: center; height: 80px; padding-left: 5%; }
+  .nav-toggle {
+    display: flex; align-items: center; justify-content: center;
+    width: 45px; min-height: 80px; padding: 0 25px 0 0;
+    background: none; border: none; color: #fff; cursor: pointer;
+  }
+  .mobile-logo {
+    position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+    display: flex; align-items: center; justify-content: center;
+    width: 100px; height: 80px; padding: 5px 15px 0;
+  }
+  .mobile-logo img { width: 100%; }
+
+  /* Off-canvas drawer (closed in screenshots, so not in the pixel diff;
+     styled to match the legacy UIkit off-canvas + custom.css). */
+  .drawer { position: fixed; inset: 0; z-index: 1000; }
+  .drawer[hidden] { display: none; }
+  .drawer__overlay {
+    position: absolute; inset: 0; background: rgba(0, 0, 0, 0.1);
+    opacity: 0; transition: opacity 0.3s ease;
+  }
+  .drawer.is-open .drawer__overlay { opacity: 1; }
+  .drawer__bar {
+    position: absolute; top: 0; left: 0; bottom: 0; width: 270px;
+    background: var(--color-dark); padding: 20px 20px 40px;
+    transform: translateX(-100%); transition: transform 0.3s ease; overflow-y: auto;
+  }
+  .drawer.is-open .drawer__bar { transform: translateX(0); }
+  .drawer__close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none; color: #fff; cursor: pointer; padding: 0;
+  }
+  .drawer__close:hover { color: var(--color-brand); }
+  .drawer__nav { list-style: none; margin: 0; padding: 30px 0 0; }
+  .drawer__nav a { display: block; color: #fff; font-size: 20px; }
+  .drawer__nav a:hover { color: var(--color-brand); }
+  .drawer__nav li.active a { color: var(--color-brand); }
 }
