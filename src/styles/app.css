@@ -257,8 +257,13 @@
   /* Cards. */
   .uk-card-body {
     position: relative;
-    padding: 40px;
+    padding: 30px; /* UIkit: 30px, → 40px at the @l (1200) breakpoint */
     color: rgba(255, 255, 255, 0.7);
+  }
+  @media (min-width: 1200px) {
+    .uk-card-body {
+      padding: 40px;
+    }
   }
   .uk-card-primary {
     background: var(--color-brand);
