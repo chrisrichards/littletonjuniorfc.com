@@ -579,6 +579,13 @@
   .hiddenbox [uk-grid] > * {
     padding-left: 0;
   }
+  /* Each squad row has a 5px bottom gap (incl. the last), giving the thin
+     white separator lines between squads (legacy custom.css set this on the
+     squad CardGrid wrappers). Beats the column last-child margin reset. */
+  .hiddenbox > div > div > div > .uk-margin {
+    margin: 0 0 5px;
+    background-color: var(--color-brand);
+  }
   .hiddenbox h2 {
     margin: 0;
     font-size: 64px;
