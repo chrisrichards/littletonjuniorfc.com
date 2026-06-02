@@ -175,6 +175,10 @@
     max-width: 1360px;
     margin-inline: auto;
   }
+  /* UIkit base: the last child of a container has no bottom margin. */
+  .uk-container > :last-child {
+    margin-bottom: 0;
+  }
 
   /* Grid: 5px gutter via UIkit's negative-margin technique. */
   [uk-grid],
