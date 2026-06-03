@@ -28,7 +28,7 @@ const src = variant === 'wellsafeimg' && image ? asset(image) : null;
 <div class:list={[variant, 'uk-margin']}>
   <div class="card-grid grid grid-cols-1">
     <div>
-      <div class="el-item uk-panel [&>*:first-child]:mt-0">
+      <div class="el-item [&>*:first-child]:mt-0">
         {
           src && (
             <Picture

@@ -4,8 +4,8 @@
  * resources / contact-us. Renders the standard YOOtheme structure:
  *
  *   <div data-tag=…>
- *     <div class="el-item uk-card uk-card-{primary|secondary} uk-card-body [&>*:first-child]:mt-0">
- *       <div class="el-content uk-panel uk-margin-top">
+ *     <div class="el-item uk-card-{primary|secondary} uk-card-body [&>*:first-child]:mt-0">
+ *       <div class="el-content uk-margin-top">
  *         {h2|h3 + h4 + p…}
  *       </div>
  *       {cta && <div class="uk-margin-top"><a class="el-link uk-button uk-button-default">…</a></div>}
@@ -90,7 +90,7 @@ const hasContent =
   body ||
   image ||
   contentLabel;
-const cardClass = `el-item uk-card uk-card-${colour} uk-card-body [&>*:first-child]:mt-0`;
+const cardClass = `el-item uk-card-${colour} uk-card-body [&>*:first-child]:mt-0`;
 ---
 
 <div {...dataTag ? { 'data-tag': dataTag } : {}}>
@@ -122,7 +122,7 @@ const cardClass = `el-item uk-card uk-card-${colour} uk-card-body [&>*:first-chi
     }
     {
       hasContent && (
-        <div class="el-content uk-panel uk-margin-top">
+        <div class="el-content uk-margin-top">
           {hasDefaultSlot ? (
             <slot />
           ) : (
