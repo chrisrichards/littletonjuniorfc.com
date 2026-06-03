@@ -8,6 +8,47 @@ Living document — update this when something material changes (phase completes
 
 Migration from Joomla to Astro on Cloudflare Pages. Visitor-facing site is **content-complete and deployable** to the `*.pages.dev` preview URL. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is unbuilt.
 
+## 2026-06-03 — uk-* markup → Tailwind grid + utilities (branch `tailwind-migration`)
+
+Follow-on to the UIkit→Tailwind migration: converted the `uk-*` class names
+still in the markup over to native CSS grid + Tailwind utilities, gated at every
+step by the pixel-diff harness against `fbcec00` (pre-conversion). **Final state:
+0/56 — pixel-identical at all 8 pages × 7 widths.**
+
+- **Grids → native CSS grid.** Every `uk-grid` / `uk-child-width-*` /
+  `uk-grid-match` became `grid grid-cols-N` (responsive `md:`=960 via the
+  `@theme` breakpoints; the one `@s`=640 case uses `min-[640px]:`). A reusable
+  `.card-grid` marker replaces `uk-grid-match`'s inner-fill **and reproduces
+  UIkit's asymmetric negative-margin gutter exactly** — CSS `gap` is symmetric
+  and silently shifted square cards 1.25px/cell (only visible where it compounds:
+  the teams nav, 4 square rows). `CardGrid.astro` gained a transitional `tw`
+  flag. Bespoke selectors were dual-hooked `:is(.uk-grid-match, .card-grid)` so
+  conversion was pure markup; the teams nav colour matrix repointed to the
+  teams-only plain `.grid-cols-4` class.
+- **Presentational helpers → utilities.** `uk-text-center/-left`,
+  `uk-padding-remove-*`, `uk-margin-remove-*` → `text-center`/`pt-0`/`mb-0`/
+  `[&>*:first-child]:mt-0` etc. (these correctly override component defaults
+  because `@layer utilities` sits above `@layer components`).
+- **Dead UIkit classes removed:** `uk-card`, `uk-panel`, `uk-clearfix`,
+  `uk-margin-auto` (present in markup but never reproduced in app.css).
+- **Harness:** `shoot.mjs` now uses `reducedMotion: 'reduce'` so the on-scroll
+  scrollspy fade can't be caught mid-animation (was a flaky teams@1024 diff).
+
+**Deliberately NOT converted (decision 2026-06-03):** the remaining `uk-*` are
+the **component layer** — `uk-section(-default)`, `uk-container`, `uk-card-body`,
+`uk-card-primary/secondary`, `uk-width-1-1@m`/`uk-width-expand@m`, the `uk-grid`
+attribute (74 CSS refs), `uk-grid-margin`, `uk-margin`/`uk-margin-top`. They
+**can't be utilities** — bespoke rules must override them, which a higher-layer
+utility forbids. The UIkit framework (CSS+JS) is fully gone; only these class
+*names* keep the `uk-` prefix. A cosmetic de-`uk-` rename was offered and
+declined (pure churn, no visual/payload change). Idiomatic to keep a named
+component layer.
+
+_Optional future cleanup (left in place, harmless): the now-dead non-`tw` branch
+of `CardGrid.astro`, the dead `.uk-child-width-*` primitive defs, and collapsing
+`:is(.uk-grid-match, .card-grid)` → `.card-grid` (uk-grid-match is gone from the
+live markup)._
+
 ## 2026-06-02 — UIkit → Tailwind migration (branch `tailwind-migration`)
 
 **UIkit is fully removed (CSS + JS), replaced by Tailwind v4 + one hand-authored
