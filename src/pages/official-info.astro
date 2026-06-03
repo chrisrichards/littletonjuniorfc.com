@@ -153,7 +153,7 @@ const sections: Section[] = [
             {/* Split layout: intro cards in their own column */}
             {section.layout === 'split' && section.intro.length > 0 && (
               <div class="uk-width-expand@m">
-                <CardGrid wrap="offinfo4x4 uk-margin" grid="uk-child-width-1-2">
+                <CardGrid tw wrap="offinfo4x4 uk-margin" grid="grid grid-cols-2 gap-[5px]">
                   {section.intro.map((p) => (
                     <Card title={p.title} body={p.body} />
                   ))}
@@ -164,7 +164,7 @@ const sections: Section[] = [
             {/* Compact layout: intro + action cards combined, 2-col grid */}
             {section.layout === 'compact' && (
               <div class="uk-width-expand@m">
-                <CardGrid wrap={compactWrap} grid="uk-child-width-1-2">
+                <CardGrid tw wrap={compactWrap} grid="grid grid-cols-2 gap-[5px]">
                   {section.intro.map((p) => (
                     <Card title={p.title} body={p.body} />
                   ))}
@@ -189,8 +189,9 @@ const sections: Section[] = [
           {/* Split layout only: full-width action cards row */}
           {section.layout === 'split' && (
             <CardGrid
+              tw
               wrap={`alternates first ${section.colour} uk-margin uk-text-left`}
-              grid="uk-child-width-1-2 uk-child-width-1-4@m"
+              grid="grid grid-cols-2 md:grid-cols-4 gap-[5px]"
             >
               {section.cards.map((card) => (
                 <Card

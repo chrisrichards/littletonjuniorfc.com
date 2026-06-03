@@ -206,23 +206,16 @@
     margin-top: 5px;
   }
 
-  /* Equal-height (uk-grid-match): cells stretch, inner element fills. */
-  .uk-grid-match > * {
+  /* Equal-height inner-fill, shared by the legacy flex grids (uk-grid-match)
+     and their Tailwind CSS-grid replacement (.card-grid, applied via
+     `grid grid-cols-* gap-[5px]`): the cell becomes flex so the inner .el-item
+     fills the (grid- or flex-) stretched height. Every bespoke square/colour/
+     positioning rule is dual-hooked `:is(.uk-grid-match, .card-grid)` so it
+     matches both during the conversion; collapses to `.card-grid` once done. */
+  :is(.uk-grid-match, .card-grid) > * {
     display: flex;
   }
-  .uk-grid-match > * > * {
-    width: 100%;
-  }
-
-  /* CSS-grid card grids (the Tailwind replacement for uk-grid + uk-grid-match):
-     `grid grid-cols-* gap-[5px]` on the container does the columns/gutter/
-     equal-height-rows; CSS grid stretches the grid ITEM, and this makes the
-     inner .el-item fill it — exactly what uk-grid-match did, so the bespoke
-     square/colour/positioning rules keep working unchanged. */
-  .card-grid > * {
-    display: flex;
-  }
-  .card-grid > * > .el-item {
+  :is(.uk-grid-match, .card-grid) > * > * {
     width: 100%;
   }
 
@@ -316,23 +309,23 @@
 
   /* Square-aspect cells — UIkit padding-top:100% trick on grid children.
      Applied per-grid as the live custom.css/overrides.css did. */
-  .hiddenbox .uk-grid-match > div::after,
+  .hiddenbox :is(.uk-grid-match, .card-grid) > div::after,
   #counters .card-grid > div::after,
   #sponsors .card-grid > div::after,
-  .homesquares.resources .uk-grid-match > div::after,
+  .homesquares.resources :is(.uk-grid-match, .card-grid) > div::after,
   .offinfo4x4 > div > div::after,
   .wellsafeimg > div > div::after,
   .bluesquare > div > div::after,
   .greysquare > div > div::after,
   .alternates.second.blue > div > div::after,
-  #alternates1 .uk-grid-match > div::after,
-  #alternates2 .uk-grid-match > div::after,
-  #alternates3 .uk-grid-match > div::after,
-  #alternates4 .uk-grid-match > div::after,
-  .alternates.first.blue .uk-grid-match > div::after,
-  .alternates.first.grey .uk-grid-match > div::after,
-  .alternates.first.contacts .uk-grid-match > div::after,
-  .alternates.second.contacts .uk-grid-match > div::after {
+  #alternates1 :is(.uk-grid-match, .card-grid) > div::after,
+  #alternates2 :is(.uk-grid-match, .card-grid) > div::after,
+  #alternates3 :is(.uk-grid-match, .card-grid) > div::after,
+  #alternates4 :is(.uk-grid-match, .card-grid) > div::after,
+  .alternates.first.blue :is(.uk-grid-match, .card-grid) > div::after,
+  .alternates.first.grey :is(.uk-grid-match, .card-grid) > div::after,
+  .alternates.first.contacts :is(.uk-grid-match, .card-grid) > div::after,
+  .alternates.second.contacts :is(.uk-grid-match, .card-grid) > div::after {
     content: '';
     display: block;
     padding-top: 100%;
@@ -448,7 +441,7 @@
   .homesquares .card-grid > div:nth-child(3) > div,
   .homesquares .card-grid > div:nth-child(6) > div,
   .homesquares .card-grid > div:nth-child(7) > div,
-  .homesquares.resources .uk-grid-match > div > div {
+  .homesquares.resources :is(.uk-grid-match, .card-grid) > div > div {
     padding: 0;
   }
 
@@ -803,7 +796,7 @@
     .sponsors .el-item a {
       padding: 2px 5px 2px !important; font-size: 16px !important; line-height: 18px !important;
     }
-    .hiddenbox .uk-grid-match > div::after { padding-top: 0; display: none; }
+    .hiddenbox :is(.uk-grid-match, .card-grid) > div::after { padding-top: 0; display: none; }
     .hiddenbox h2 { font-size: 35px; margin: 0; line-height: 35px; }
     .hiddenbox .el-item { padding: 15px; }
     .hiddenbox .el-item > div:not(.el-content):last-child { bottom: -20px; }
@@ -856,7 +849,7 @@
   }
 
   @media (max-width: 960px) {
-    .hiddenbox .uk-grid-match > div::after { padding-top: 0; }
+    .hiddenbox :is(.uk-grid-match, .card-grid) > div::after { padding-top: 0; }
   }
 
   /* ════════════════════════════════════════════════════════════════
@@ -939,52 +932,52 @@
   }
 
   /* ── CTA colour alternation ─────────────────────────────────────── */
-  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover { color: var(--color-brand); }
-  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover { color: var(--color-brand); }
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
   #membership > div > div:nth-child(3) .el-item a { background-color: #fff; color: var(--color-dark); }
   #membership > div > div:nth-child(4) .el-item a:hover { background-color: #fff; color: var(--color-brand); }
-  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a,
-  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
-  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a,
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
   #membership > div > div:nth-child(3) .el-item a,
   .bluesquare { background-color: var(--color-brand); color: #fff; }
-  .alternates.second .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a,
-  .alternates.second .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:active,
-  .alternates.second .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:focus,
-  .alternates.fourth .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a,
-  .alternates.fourth .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:active,
-  .alternates.fourth .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:focus,
-  .alternates.second.gb .uk-grid-match > div:nth-child(2) .el-item,
-  .alternates.second.gb .uk-grid-match > div:nth-child(3) .el-item { background-color: var(--color-brand); color: #fff; }
-  .alternates .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(2) .el-item,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item { background-color: var(--color-brand); color: #fff; }
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
   #membership > div > div:nth-child(3) .el-item a:hover { background-color: #fff; color: var(--color-dark); }
-  .alternates.second .uk-grid-match > div:nth-child(even) .el-item > div:last-child a,
-  .alternates.second .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
-  .alternates.second .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
-  .alternates.fourth .uk-grid-match > div:nth-child(even) .el-item > div:last-child a,
-  .alternates.fourth .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
-  .alternates.fourth .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
   .greysquare,
-  .alternates.second.gb .uk-grid-match > div:nth-child(1) .el-item,
-  .alternates.second .uk-grid-match > div:nth-child(4) .el-item,
-  .alternates.second.gb .uk-grid-match > div:nth-child(3) .el-item > div:last-child a { background-color: var(--color-dark); color: #fff; }
-  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a,
-  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
-  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(1) .el-item,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item > div:last-child a { background-color: var(--color-dark); color: #fff; }
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
   #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a,
   .homesquares.resources .el-item > div:last-child a { background-color: var(--color-dark); color: #fff; }
-  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:active,
-  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:focus,
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
   #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:active,
   #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:focus { background-color: var(--color-dark); color: var(--color-brand); }
-  .alternates.blue .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
   #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-brand); }
-  .alternates.grey .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a,
-  .alternates.grey .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:active,
-  .alternates.grey .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:focus,
-  .alternates.second.gb .uk-grid-match > div:nth-child(4) .el-item > div:last-child a,
-  .homesquares.resources .uk-grid-match > div:nth-child(2) .el-item > div:last-child a { background-color: var(--color-brand); color: #fff; }
-  .alternates.grey .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+  .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item > div:last-child a,
+  .homesquares.resources :is(.uk-grid-match, .card-grid) > div:nth-child(2) .el-item > div:last-child a { background-color: var(--color-brand); color: #fff; }
+  .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
 
   .grey .uk-card-primary { background-color: var(--color-dark) !important; }
 
@@ -998,14 +991,14 @@
   .alternates.blue:nth-child(2), .alternates.blue:nth-child(3) { margin-bottom: 0 !important; }
   .alternates.blue:nth-child(3) { margin-top: 5px !important; }
 
-  .alternates.second .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:hover,
-  .alternates.fourth .uk-grid-match > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
-  .alternates.second .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
-  .alternates.fourth .uk-grid-match > div:nth-child(even) .el-item > div:last-child a:hover,
-  .alternates.second.gb .uk-grid-match > div:nth-child(3) .el-item > div:last-child a:hover,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:hover,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item > div:last-child a:hover,
   .homesquares.resources .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-brand); }
-  .alternates.second.gb .uk-grid-match > div:nth-child(4) .el-item > div:last-child a:hover,
-  .homesquares.resources .uk-grid-match > div:nth-child(2) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item > div:last-child a:hover,
+  .homesquares.resources :is(.uk-grid-match, .card-grid) > div:nth-child(2) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
 
   /* el-item colour alternation (teams 1×4 nav rows). */
   .alternates .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary { background: var(--color-dark); }
@@ -1049,12 +1042,12 @@
 
   /* Resources .second.gb.swap colour swap (≥961). */
   @media (min-width: 961px) {
-    .alternates.second.gb.swap .uk-grid-match > div:nth-child(3) .el-item,
-    .alternates.second.gb.swap .uk-grid-match > div:nth-child(4) .el-item > div:last-child a { background-color: var(--color-dark) !important; }
-    .alternates.second.gb.swap .uk-grid-match > div:nth-child(4) .el-item,
-    .alternates.second.gb.swap .uk-grid-match > div:nth-child(3) .el-item > div:last-child a { background-color: var(--color-brand) !important; }
-    .alternates.second.gb.swap .uk-grid-match > div:nth-child(3) .el-item > div:last-child a:hover { background-color: #fff !important; color: var(--color-dark) !important; }
-    .alternates.second.gb.swap .uk-grid-match > div:nth-child(4) .el-item > div:last-child a:hover { background-color: #fff !important; color: var(--color-brand) !important; }
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item,
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item > div:last-child a { background-color: var(--color-dark) !important; }
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item,
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item > div:last-child a { background-color: var(--color-brand) !important; }
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item > div:last-child a:hover { background-color: #fff !important; color: var(--color-dark) !important; }
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item > div:last-child a:hover { background-color: #fff !important; color: var(--color-brand) !important; }
   }
 
   /* Contact-us js-filter colour alternation. */
