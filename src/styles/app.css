@@ -430,12 +430,17 @@
     font-size: 46px;
     color: var(--color-brand);
   }
+  /* Equal-height cells (replaces uk-grid-match for the CSS-grid home squares):
+     CSS grid stretches the grid item; this makes the inner .el-item fill it so
+     the text cells' absolutely-centred .el-content centres in the square. */
+  #homesquares .grid > div { display: flex; }
+  #homesquares .grid > div > .el-item { width: 100%; }
   /* The image cells (2,3,6,7) + the featured resources cells fill the square —
      no card padding (legacy custom.css). */
-  .homesquares .uk-child-width-1-2.uk-grid-match > div:nth-child(2) > div,
-  .homesquares .uk-child-width-1-2.uk-grid-match > div:nth-child(3) > div,
-  .homesquares .uk-child-width-1-2.uk-grid-match > div:nth-child(6) > div,
-  .homesquares .uk-child-width-1-2.uk-grid-match > div:nth-child(7) > div,
+  .homesquares .grid > div:nth-child(2) > div,
+  .homesquares .grid > div:nth-child(3) > div,
+  .homesquares .grid > div:nth-child(6) > div,
+  .homesquares .grid > div:nth-child(7) > div,
   .homesquares.resources .uk-grid-match > div > div {
     padding: 0;
   }
