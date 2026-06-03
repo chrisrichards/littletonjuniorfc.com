@@ -175,9 +175,6 @@
   .uk-section.uk-section-default {
     background: #fff;
   }
-  .uk-padding-remove-top { padding-top: 0; }
-  .uk-padding-remove-bottom { padding-bottom: 0; }
-  .uk-margin-remove-vertical { margin-top: 0; margin-bottom: 0; }
 
   .uk-container {
     max-width: 1360px;
@@ -262,9 +259,11 @@
     }
   }
 
-  /* Text + spacing helpers. */
-  .uk-text-center { text-align: center; }
-  .uk-text-left { text-align: left; }
+  /* Spacing helpers still referenced by bespoke hooks (the squad band, the
+     quoteimage band, the alternates/homesquares CTA wrappers) — kept as
+     component classes because those hooks must OVERRIDE them, which a utility
+     (higher layer) wouldn't allow. The unhooked text/padding/margin-remove
+     helpers became Tailwind utilities in the markup. */
   .uk-margin { margin-bottom: 20px; }
   .uk-margin-top { margin-top: 20px; }
   /* A grid column's last child never extends the row with its bottom margin —
@@ -274,8 +273,6 @@
   .uk-width-expand\@m > :last-child {
     margin-bottom: 0;
   }
-  .uk-margin-remove-bottom { margin-bottom: 0; }
-  .uk-margin-remove-first-child > :first-child { margin-top: 0; }
 
   /* Cards. */
   .uk-card-body {

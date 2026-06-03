@@ -4,7 +4,7 @@
  * resources / contact-us. Renders the standard YOOtheme structure:
  *
  *   <div data-tag=…>
- *     <div class="el-item uk-card uk-card-{primary|secondary} uk-card-body uk-margin-remove-first-child">
+ *     <div class="el-item uk-card uk-card-{primary|secondary} uk-card-body [&>*:first-child]:mt-0">
  *       <div class="el-content uk-panel uk-margin-top">
  *         {h2|h3 + h4 + p…}
  *       </div>
@@ -90,7 +90,7 @@ const hasContent =
   body ||
   image ||
   contentLabel;
-const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remove-first-child`;
+const cardClass = `el-item uk-card uk-card-${colour} uk-card-body [&>*:first-child]:mt-0`;
 ---
 
 <div {...dataTag ? { 'data-tag': dataTag } : {}}>

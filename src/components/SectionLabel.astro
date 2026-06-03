@@ -28,7 +28,7 @@ const src = variant === 'wellsafeimg' && image ? asset(image) : null;
 <div class:list={[variant, 'uk-margin']}>
   <div class="card-grid grid grid-cols-1">
     <div>
-      <div class="el-item uk-panel uk-margin-remove-first-child">
+      <div class="el-item uk-panel [&>*:first-child]:mt-0">
         {
           src && (
             <Picture
@@ -42,7 +42,7 @@ const src = variant === 'wellsafeimg' && image ? asset(image) : null;
             />
           )
         }
-        {title && <h3 class="el-title uk-margin-top uk-margin-remove-bottom" set:html={title} />}
+        {title && <h3 class="el-title uk-margin-top mb-0" set:html={title} />}
       </div>
     </div>
   </div>
