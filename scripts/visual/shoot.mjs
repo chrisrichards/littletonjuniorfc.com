@@ -52,7 +52,14 @@ async function autoScroll(page) {
 }
 
 for (const w of WIDTHS) {
-  const ctx = await browser.newContext({ viewport: { width: w, height: 900 }, deviceScaleFactor: 1 });
+  // reducedMotion trips the on-scroll scrollspy gate so cards render in their
+  // final fully-visible state — deterministic layout shots (no fade caught
+  // mid-animation, which otherwise makes card pages flaky e.g. teams@1024).
+  const ctx = await browser.newContext({
+    viewport: { width: w, height: 900 },
+    deviceScaleFactor: 1,
+    reducedMotion: 'reduce',
+  });
   const page = await ctx.newPage();
   for (const [name, path] of PAGES) {
     const file = `${OUT}/${name}__${w}.png`;
