@@ -214,6 +214,18 @@
     width: 100%;
   }
 
+  /* CSS-grid card grids (the Tailwind replacement for uk-grid + uk-grid-match):
+     `grid grid-cols-* gap-[5px]` on the container does the columns/gutter/
+     equal-height-rows; CSS grid stretches the grid ITEM, and this makes the
+     inner .el-item fill it — exactly what uk-grid-match did, so the bespoke
+     square/colour/positioning rules keep working unchanged. */
+  .card-grid > * {
+    display: flex;
+  }
+  .card-grid > * > .el-item {
+    width: 100%;
+  }
+
   /* Child widths (UIkit s=640, m=960 breakpoints). */
   .uk-child-width-1-1 > * { width: 100%; }
   .uk-child-width-1-2 > * { width: 50%; }
@@ -305,8 +317,8 @@
   /* Square-aspect cells — UIkit padding-top:100% trick on grid children.
      Applied per-grid as the live custom.css/overrides.css did. */
   .hiddenbox .uk-grid-match > div::after,
-  #counters .uk-grid-match > div::after,
-  #sponsors .uk-grid-match > div::after,
+  #counters .card-grid > div::after,
+  #sponsors .card-grid > div::after,
   .homesquares.resources .uk-grid-match > div::after,
   .offinfo4x4 > div > div::after,
   .wellsafeimg > div > div::after,
@@ -430,17 +442,12 @@
     font-size: 46px;
     color: var(--color-brand);
   }
-  /* Equal-height cells (replaces uk-grid-match for the CSS-grid home squares):
-     CSS grid stretches the grid item; this makes the inner .el-item fill it so
-     the text cells' absolutely-centred .el-content centres in the square. */
-  #homesquares .grid > div { display: flex; }
-  #homesquares .grid > div > .el-item { width: 100%; }
   /* The image cells (2,3,6,7) + the featured resources cells fill the square —
-     no card padding (legacy custom.css). */
-  .homesquares .grid > div:nth-child(2) > div,
-  .homesquares .grid > div:nth-child(3) > div,
-  .homesquares .grid > div:nth-child(6) > div,
-  .homesquares .grid > div:nth-child(7) > div,
+     no card padding (legacy custom.css). (Equal-height handled by .card-grid.) */
+  .homesquares .card-grid > div:nth-child(2) > div,
+  .homesquares .card-grid > div:nth-child(3) > div,
+  .homesquares .card-grid > div:nth-child(6) > div,
+  .homesquares .card-grid > div:nth-child(7) > div,
   .homesquares.resources .uk-grid-match > div > div {
     padding: 0;
   }

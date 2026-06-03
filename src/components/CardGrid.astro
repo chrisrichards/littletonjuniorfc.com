@@ -20,13 +20,25 @@ export interface Props {
   grid: string;
   filter?: boolean;
   id?: string;
+  /** Tailwind mode: `grid` carries `grid grid-cols-* gap-*` utilities and the
+   *  inner div gets the `card-grid` marker (no uk-grid attr / uk-grid-match).
+   *  Transitional flag for the uk-* → Tailwind grid conversion. */
+  tw?: boolean;
 }
 
-const { wrap, grid, filter = false, id } = Astro.props;
+const { wrap, grid, filter = false, id, tw = false } = Astro.props;
 ---
 
 <div id={id} class={wrap}>
-  <div class:list={[filter && 'js-filter', grid, 'uk-grid-match']} uk-grid>
-    <slot />
-  </div>
+  {
+    tw ? (
+      <div class:list={[filter && 'js-filter', grid, 'card-grid']}>
+        <slot />
+      </div>
+    ) : (
+      <div class:list={[filter && 'js-filter', grid, 'uk-grid-match']} uk-grid>
+        <slot />
+      </div>
+    )
+  }
 </div>

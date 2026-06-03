@@ -52,8 +52,9 @@ const sponsors: Sponsor[] = [
   {/* Counters */}
   <Section id="counters" width="full">
     <CardGrid
+      tw
       wrap="uk-margin uk-text-center"
-      grid="uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m"
+      grid="grid grid-cols-2 md:grid-cols-4 gap-[5px]"
     >
       {
         counters.map(({ count, label }) => (
@@ -72,7 +73,7 @@ const sponsors: Sponsor[] = [
       scroll (Card emits uk-scrollspy-class by default). */}
   <Section id="homesquares-section" width="full">
     <div id="homesquares" class="homesquares uk-margin uk-text-center">
-      <div class="js-filter grid grid-cols-2 gap-[5px]">
+      <div class="js-filter card-grid grid grid-cols-2 gap-[5px]">
         {
           homesquares.map((card) =>
             card.kind === 'image' ? (
@@ -103,10 +104,7 @@ const sponsors: Sponsor[] = [
   {/* Sponsors */}
   <Section id="sponsors-section" width="full">
     <div id="sponsors" class="sponsors uk-margin uk-text-center">
-      <div
-        class="js-filter uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m uk-grid-match"
-        uk-grid
-      >
+      <div class="js-filter card-grid grid grid-cols-2 md:grid-cols-4 gap-[5px]">
         {
           sponsors.map((s) => {
             const lazyImg = {
