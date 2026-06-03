@@ -141,6 +141,30 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
         el.addEventListener('transitionend', onEnd);
       }
 
+      // Dim the other year-group nav cards while one panel is open: the open
+      // card gets .notdim (stays blue, hides its own "More" button), every
+      // other nav card gets .dim (disabled dark-grey look). Matches the live
+      // site's dimAlternates/openClose behaviour.
+      function navCells() {
+        return document.querySelectorAll('.alternates > div > div');
+      }
+      function clearDim() {
+        navCells().forEach(function (c) { c.classList.remove('dim', 'notdim'); });
+      }
+      function applyDim(panel) {
+        var btn = document.querySelector('a[data-panel-target="' + panel.id + '"]');
+        var open = btn ? btn.closest('.alternates > div > div') : null;
+        navCells().forEach(function (c) {
+          if (c === open) {
+            c.classList.add('notdim');
+            c.classList.remove('dim');
+          } else {
+            c.classList.add('dim');
+            c.classList.remove('notdim');
+          }
+        });
+      }
+
       function addCloseButton(panel) {
         if (panel.querySelector('.closeMe')) return;
         var btn = document.createElement('a');
@@ -159,6 +183,7 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
         var panel = openPanel;
         openPanel = null;
         animating = true;
+        clearDim();
         slideUp(panel, function () {
           var x = panel.querySelector('.closeMe');
           if (x) x.remove();
@@ -175,8 +200,9 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
         }
         var go = function () {
           animating = true;
+          applyDim(panel);
+          addCloseButton(panel);
           slideDown(panel, function () {
-            addCloseButton(panel);
             openPanel = panel;
             animating = false;
           });

@@ -851,8 +851,9 @@
    * Structural singletons + the action-card COLOUR matrix + CTA
    * positioning. Faithful transcription (in original cascade order) of the
    * live custom.css/overrides.css rules — copied so the result reproduces
-   * by construction; the dead Joomla `#page\#N`/.dim/.notdim selectors are
-   * dropped. Verified at the flip diff.
+   * by construction; the dead Joomla `#page\#N` selectors are dropped.
+   * (The `.dim`/`.notdim` teams open-state rules were later re-added — see
+   * the "Teams More open state" block below.) Verified at the flip diff.
    * ════════════════════════════════════════════════════════════════ */
 
   /* Hero structural (overrides.css). */
@@ -1001,6 +1002,18 @@
   .alternates.fourth .uk-child-width-1-4 > div:nth-child(odd) .uk-card-primary { background: var(--color-dark); }
   .alternates.second .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary,
   .alternates.fourth .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
+
+  /* Teams "More" open state (transcribed from custom.css): when a year group
+     is expanded, the teams.astro panel JS marks the open nav card `.notdim`
+     and every other nav card `.dim`. The dim cards read as disabled (dark
+     grey, greyed text + button); the open card stays blue and hides its own
+     "More" button (.notdim a). */
+  .alternates .notdim .el-item { background-color: var(--color-brand) !important; }
+  .alternates .dim .el-item { background-color: #464547 !important; }
+  .alternates .dim .el-item a { background-color: #808285 !important; color: #464547 !important; }
+  .alternates .dim .el-content h2,
+  .alternates .dim .el-content p { color: #808285 !important; }
+  .notdim a { display: none; }
 
   /* Sponsors. */
   .sponsors .el-item { padding: 0; }

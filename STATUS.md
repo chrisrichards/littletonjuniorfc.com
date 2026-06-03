@@ -158,7 +158,13 @@ launch blocker.
 
 ### Visual nits to polish (not blocking)
 1. **Resources page** has a vertical gap in the Forms & Guides section between row 2 (Littleton Rec / Other Pitch Bookings) and row 3 (Incident Form / Expense Claims). Likely a `uk-grid-match` row-matching artifact.
-2. **Teams page** omits the collapsible squad-detail panels from the live site — all squads render inline, "More" buttons anchor-scroll. Functional but visually denser than live.
+2. ~~**Teams page** omits the collapsible squad-detail panels.~~ **Resolved
+   (2026-06-03):** the `.hiddenbox` squad panels are collapsible (slide
+   open/close via the teams.astro inline JS), and the live-site open state is
+   now reproduced — opening a year group dims the other nav cards (disabled
+   dark-grey, `.dim`), marks the open card `.notdim` (stays blue, hides its
+   own "More" button), and shows a `.closeMe` × button top-right of the panel
+   (`/images/close.png`). CSS in `app.css` ("Teams More open state").
 3. **Contact-us page** omits the closing testimonial blockquote + bottom image present on the live site.
 4. **Mobile breakpoints unverified** — CSS has them via `@media` but I haven't visually tested the ported pages on narrow widths.
 5. **Resources featured cards** (Our Ethos + Player Development) use `uk-img` lazy loading. Visible in real browsers; headless screenshots may show blank cards.
