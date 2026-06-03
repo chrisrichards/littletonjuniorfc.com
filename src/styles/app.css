@@ -208,15 +208,30 @@
 
   /* Equal-height inner-fill, shared by the legacy flex grids (uk-grid-match)
      and their Tailwind CSS-grid replacement (.card-grid, applied via
-     `grid grid-cols-* gap-[5px]`): the cell becomes flex so the inner .el-item
-     fills the (grid- or flex-) stretched height. Every bespoke square/colour/
-     positioning rule is dual-hooked `:is(.uk-grid-match, .card-grid)` so it
-     matches both during the conversion; collapses to `.card-grid` once done. */
+     `grid grid-cols-*`): the cell becomes flex so the inner .el-item fills the
+     (grid- or flex-) stretched height. Every bespoke square/colour/positioning
+     rule is dual-hooked `:is(.uk-grid-match, .card-grid)` so it matches both
+     during the conversion; collapses to `.card-grid` once done. */
   :is(.uk-grid-match, .card-grid) > * {
     display: flex;
   }
   :is(.uk-grid-match, .card-grid) > * > * {
     width: 100%;
+  }
+  /* Gutter: reproduce UIkit's negative-margin technique EXACTLY rather than use
+     CSS `gap`. `gap` is symmetric (columns = (w − gap·(n−1))/n, flush both
+     edges); UIkit insets each cell 5px-left under a -5px container margin, so
+     cells are w/n wide, flush-left, with a 5px overhang on the right. The
+     difference is a fixed 1.25px/cell — invisible on content-height cards but
+     it compounds on square cards (teams nav: 4 rows → ~5px + visible mis-
+     alignment). Columns still come from `grid grid-cols-N` in the markup; this
+     supplies the horizontal gutter + the 5px stacked-row gap. */
+  .card-grid {
+    margin-left: -5px;
+    row-gap: 5px;
+  }
+  .card-grid > * {
+    padding-left: 5px;
   }
 
   /* Child widths (UIkit s=640, m=960 breakpoints). */
@@ -595,10 +610,10 @@
   }
   /* Squad row reads as one continuous full-width blue band — drop the 5px
      column gutter so the cells touch (no white vertical lines). */
-  .hiddenbox [uk-grid] {
+  .hiddenbox :is([uk-grid], .card-grid) {
     margin-left: 0;
   }
-  .hiddenbox [uk-grid] > * {
+  .hiddenbox :is([uk-grid], .card-grid) > * {
     padding-left: 0;
   }
   /* Each squad row has a 5px bottom gap (incl. the last), giving the thin
@@ -1001,12 +1016,12 @@
   .homesquares.resources :is(.uk-grid-match, .card-grid) > div:nth-child(2) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
 
   /* el-item colour alternation (teams 1×4 nav rows). */
-  .alternates .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary { background: var(--color-dark); }
-  .alternates.blue .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
-  .alternates.second .uk-child-width-1-4 > div:nth-child(odd) .uk-card-primary,
-  .alternates.fourth .uk-child-width-1-4 > div:nth-child(odd) .uk-card-primary { background: var(--color-dark); }
-  .alternates.second .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary,
-  .alternates.fourth .uk-child-width-1-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
+  .alternates .grid-cols-4 > div:nth-child(even) .uk-card-primary { background: var(--color-dark); }
+  .alternates.blue .grid-cols-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
+  .alternates.second .grid-cols-4 > div:nth-child(odd) .uk-card-primary,
+  .alternates.fourth .grid-cols-4 > div:nth-child(odd) .uk-card-primary { background: var(--color-dark); }
+  .alternates.second .grid-cols-4 > div:nth-child(even) .uk-card-primary,
+  .alternates.fourth .grid-cols-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
 
   /* Teams "More" open state (transcribed from custom.css): when a year group
      is expanded, the teams.astro panel JS marks the open nav card `.notdim`

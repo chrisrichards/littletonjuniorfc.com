@@ -48,7 +48,7 @@ const cards = [
     </div>
 
     <div class="uk-width-expand@m">
-      <CardGrid id="membership" tw wrap="offinfo4x4 alt membership uk-margin" grid="grid grid-cols-2 gap-[5px]">
+      <CardGrid id="membership" tw wrap="offinfo4x4 alt membership uk-margin" grid="grid grid-cols-2">
         {
           cards.map((card) => (
             <Card title={card.title} body={card.body} cta={card.cta} dataTag={card.tag} />

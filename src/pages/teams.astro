@@ -34,8 +34,9 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
         <Section id={`alternates${idx + 1}`} width="full">
           <CardGrid
             id={row.id}
+            tw
             wrap={`alternates ${row.cls} uk-margin uk-text-left`}
-            grid="uk-child-width-1-4"
+            grid="grid grid-cols-4"
           >
             {row.teams.map((t) => (
               <Card
@@ -64,7 +65,7 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
                     // Squad-detail cards live in the collapsible .hiddenbox
                     // panels — the live site did not fade these (only the nav
                     // grid faded), so opt them out of the scrollspy.
-                    <CardGrid wrap="uk-margin" grid="uk-child-width-1-1 uk-child-width-1-4@m">
+                    <CardGrid tw wrap="uk-margin" grid="grid grid-cols-1 md:grid-cols-4">
                       <Card heading={s.name} scrollspyClass={false} />
                       <Card
                         contentLabel="Contact"

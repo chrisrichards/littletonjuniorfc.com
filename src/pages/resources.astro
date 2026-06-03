@@ -61,7 +61,7 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
     <CardGrid
       tw
       wrap="homesquares resources uk-margin uk-text-center"
-      grid="grid grid-cols-1 min-[640px]:grid-cols-2 gap-[5px]"
+      grid="grid grid-cols-1 min-[640px]:grid-cols-2"
     >
       {
         featured.map((r) => (
@@ -100,8 +100,8 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
         // is 4-col when it breaks out; sections that stay use 2-col.
         const twoCol = rowIdx === 0 || stays;
         const childWidth = twoCol
-          ? 'grid grid-cols-2 gap-[5px]'
-          : 'grid grid-cols-2 md:grid-cols-4 gap-[5px]';
+          ? 'grid grid-cols-2'
+          : 'grid grid-cols-2 md:grid-cols-4';
         const cols = twoCol ? 2 : 4;
         const padCount = (cols - (row.length % cols)) % cols;
         const useGb = !isGreyOnly || rowIdx > 0;
