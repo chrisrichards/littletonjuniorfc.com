@@ -4,8 +4,8 @@
  * resources / contact-us. Renders the standard YOOtheme structure:
  *
  *   <div data-tag=…>
- *     <div class="el-item uk-card uk-card-{primary|secondary} uk-card-body uk-margin-remove-first-child">
- *       <div class="el-content uk-panel uk-margin-top">
+ *     <div class="el-item uk-card-{primary|secondary} uk-card-body [&>*:first-child]:mt-0">
+ *       <div class="el-content uk-margin-top">
  *         {h2|h3 + h4 + p…}
  *       </div>
  *       {cta && <div class="uk-margin-top"><a class="el-link uk-button uk-button-default">…</a></div>}
@@ -51,7 +51,11 @@ export interface Props {
   cta?: CardCta;
   // Visual
   colour?: 'primary' | 'secondary';
-  /** Adds `uk-scrollspy-class` to the el-item (home squares fade-in). */
+  /** Emits `uk-scrollspy-class` on the el-item, which drives the on-scroll
+   *  fade-in (see BaseLayout's IntersectionObserver + app.css). Defaults to
+   *  `true` because the live site fades in essentially every card; set
+   *  `false` to opt out — used for the home counters + sponsors, which never
+   *  faded on the live site. */
   scrollspyClass?: boolean;
   // Misc
   dataTag?: string;
@@ -69,7 +73,7 @@ const {
   lazyImg,
   cta,
   colour = 'primary',
-  scrollspyClass = false,
+  scrollspyClass = true,
   dataTag,
   contentLabel,
 } = Astro.props;
@@ -86,7 +90,7 @@ const hasContent =
   body ||
   image ||
   contentLabel;
-const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remove-first-child`;
+const cardClass = `el-item uk-card-${colour} uk-card-body [&>*:first-child]:mt-0`;
 ---
 
 <div {...dataTag ? { 'data-tag': dataTag } : {}}>
@@ -118,7 +122,7 @@ const cardClass = `el-item uk-card uk-card-${colour} uk-card-body uk-margin-remo
     }
     {
       hasContent && (
-        <div class="el-content uk-panel uk-margin-top">
+        <div class="el-content uk-margin-top">
           {hasDefaultSlot ? (
             <slot />
           ) : (

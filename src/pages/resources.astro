@@ -59,8 +59,9 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
   {/* Featured cards (Our Ethos + Player Development) */}
   <Section width="full">
     <CardGrid
-      wrap="homesquares resources uk-margin uk-text-center"
-      grid="uk-child-width-1-1 uk-child-width-1-2@s"
+      tw
+      wrap="homesquares resources uk-margin text-center"
+      grid="grid grid-cols-1 min-[640px]:grid-cols-2"
     >
       {
         featured.map((r) => (
@@ -99,8 +100,8 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
         // is 4-col when it breaks out; sections that stay use 2-col.
         const twoCol = rowIdx === 0 || stays;
         const childWidth = twoCol
-          ? 'uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-2@m'
-          : 'uk-child-width-1-2 uk-child-width-1-4@m';
+          ? 'grid grid-cols-2'
+          : 'grid grid-cols-2 md:grid-cols-4';
         const cols = twoCol ? 2 : 4;
         const padCount = (cols - (row.length % cols)) % cols;
         const useGb = !isGreyOnly || rowIdx > 0;
@@ -117,7 +118,7 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
           .filter(Boolean)
           .join(' ');
         return (
-          <CardGrid wrap={wrap} grid={childWidth}>
+          <CardGrid tw wrap={wrap} grid={childWidth}>
             {row.map((r) => (
               <Card
                 colour={colour}

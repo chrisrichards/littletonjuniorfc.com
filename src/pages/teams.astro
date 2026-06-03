@@ -34,8 +34,9 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
         <Section id={`alternates${idx + 1}`} width="full">
           <CardGrid
             id={row.id}
-            wrap={`alternates ${row.cls} uk-margin uk-text-left`}
-            grid="uk-child-width-1-4"
+            tw
+            wrap={`alternates ${row.cls} uk-margin text-left`}
+            grid="grid grid-cols-4"
           >
             {row.teams.map((t) => (
               <Card
@@ -61,14 +62,21 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
               <div class="info uk-grid-margin" uk-grid>
                 <div class="uk-width-1-1@m">
                   {t.data.squads.map((s) => (
-                    <CardGrid wrap="uk-margin" grid="uk-child-width-1-1 uk-child-width-1-4@m">
-                      <Card heading={s.name} />
+                    // Squad-detail cards live in the collapsible .hiddenbox
+                    // panels — the live site did not fade these (only the nav
+                    // grid faded), so opt them out of the scrollspy.
+                    <CardGrid tw wrap="uk-margin" grid="grid grid-cols-1 md:grid-cols-4">
+                      <Card heading={s.name} scrollspyClass={false} />
                       <Card
                         contentLabel="Contact"
                         phone={s.managerName}
                         cta={{ label: 'Email', href: `mailto:${s.managerEmail}` }}
+                        scrollspyClass={false}
                       />
-                      <Card />
+                      {/* Two empty cards pad the squad row to the full 4 columns
+                          (blue), so the open panel reads as a full-width band. */}
+                      <Card scrollspyClass={false} />
+                      <Card scrollspyClass={false} />
                     </CardGrid>
                   ))}
                 </div>
@@ -134,6 +142,30 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
         el.addEventListener('transitionend', onEnd);
       }
 
+      // Dim the other year-group nav cards while one panel is open: the open
+      // card gets .notdim (stays blue, hides its own "More" button), every
+      // other nav card gets .dim (disabled dark-grey look). Matches the live
+      // site's dimAlternates/openClose behaviour.
+      function navCells() {
+        return document.querySelectorAll('.alternates > div > div');
+      }
+      function clearDim() {
+        navCells().forEach(function (c) { c.classList.remove('dim', 'notdim'); });
+      }
+      function applyDim(panel) {
+        var btn = document.querySelector('a[data-panel-target="' + panel.id + '"]');
+        var open = btn ? btn.closest('.alternates > div > div') : null;
+        navCells().forEach(function (c) {
+          if (c === open) {
+            c.classList.add('notdim');
+            c.classList.remove('dim');
+          } else {
+            c.classList.add('dim');
+            c.classList.remove('notdim');
+          }
+        });
+      }
+
       function addCloseButton(panel) {
         if (panel.querySelector('.closeMe')) return;
         var btn = document.createElement('a');
@@ -152,6 +184,7 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
         var panel = openPanel;
         openPanel = null;
         animating = true;
+        clearDim();
         slideUp(panel, function () {
           var x = panel.querySelector('.closeMe');
           if (x) x.remove();
@@ -168,8 +201,9 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
         }
         var go = function () {
           animating = true;
+          applyDim(panel);
+          addCloseButton(panel);
           slideDown(panel, function () {
-            addCloseButton(panel);
             openPanel = panel;
             animating = false;
           });

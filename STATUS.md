@@ -1,12 +1,114 @@
 # Project status
 
-Last updated: 2026-05-21.
+Last updated: 2026-06-03.
 
 Living document — update this when something material changes (phase completes, decision made, blocker found). For the original detailed plan see [`migration-plan.md`](./migration-plan.md); for the page-by-page audit see [`inventory.md`](./inventory.md).
 
 ## TL;DR
 
 Migration from Joomla to Astro on Cloudflare Pages. Visitor-facing site is **content-complete and deployable** to the `*.pages.dev` preview URL. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is unbuilt.
+
+## 2026-06-03 — uk-* markup → Tailwind grid + utilities (branch `tailwind-migration`)
+
+Follow-on to the UIkit→Tailwind migration: converted the `uk-*` class names
+still in the markup over to native CSS grid + Tailwind utilities, gated at every
+step by the pixel-diff harness against `fbcec00` (pre-conversion). **Final state:
+0/56 — pixel-identical at all 8 pages × 7 widths.**
+
+- **Grids → native CSS grid.** Every `uk-grid` / `uk-child-width-*` /
+  `uk-grid-match` became `grid grid-cols-N` (responsive `md:`=960 via the
+  `@theme` breakpoints; the one `@s`=640 case uses `min-[640px]:`). A reusable
+  `.card-grid` marker replaces `uk-grid-match`'s inner-fill **and reproduces
+  UIkit's asymmetric negative-margin gutter exactly** — CSS `gap` is symmetric
+  and silently shifted square cards 1.25px/cell (only visible where it compounds:
+  the teams nav, 4 square rows). `CardGrid.astro` gained a transitional `tw`
+  flag. Bespoke selectors were dual-hooked `:is(.uk-grid-match, .card-grid)` so
+  conversion was pure markup; the teams nav colour matrix repointed to the
+  teams-only plain `.grid-cols-4` class.
+- **Presentational helpers → utilities.** `uk-text-center/-left`,
+  `uk-padding-remove-*`, `uk-margin-remove-*` → `text-center`/`pt-0`/`mb-0`/
+  `[&>*:first-child]:mt-0` etc. (these correctly override component defaults
+  because `@layer utilities` sits above `@layer components`).
+- **Dead UIkit classes removed:** `uk-card`, `uk-panel`, `uk-clearfix`,
+  `uk-margin-auto` (present in markup but never reproduced in app.css).
+- **Harness:** `shoot.mjs` now uses `reducedMotion: 'reduce'` so the on-scroll
+  scrollspy fade can't be caught mid-animation (was a flaky teams@1024 diff).
+
+**Deliberately NOT converted (decision 2026-06-03):** the remaining `uk-*` are
+the **component layer** — `uk-section(-default)`, `uk-container`, `uk-card-body`,
+`uk-card-primary/secondary`, `uk-width-1-1@m`/`uk-width-expand@m`, the `uk-grid`
+attribute (74 CSS refs), `uk-grid-margin`, `uk-margin`/`uk-margin-top`. They
+**can't be utilities** — bespoke rules must override them, which a higher-layer
+utility forbids. The UIkit framework (CSS+JS) is fully gone; only these class
+*names* keep the `uk-` prefix. A cosmetic de-`uk-` rename was offered and
+declined (pure churn, no visual/payload change). Idiomatic to keep a named
+component layer.
+
+_Optional future cleanup (left in place, harmless): the now-dead non-`tw` branch
+of `CardGrid.astro`, the dead `.uk-child-width-*` primitive defs, and collapsing
+`:is(.uk-grid-match, .card-grid)` → `.card-grid` (uk-grid-match is gone from the
+live markup)._
+
+## 2026-06-02 — UIkit → Tailwind migration (branch `tailwind-migration`)
+
+**UIkit is fully removed (CSS + JS), replaced by Tailwind v4 + one hand-authored
+`src/styles/app.css`.** The site is visually within ~1% of the prior build at
+every page/width; no framework JS remains.
+
+Approach ("build the layer, then flip"): authored the complete replacement in
+`app.css` (a `@layer base` reset + `@layer components` holding the UIkit
+primitive subset reproduced 1:1, the bespoke responsive type/positioning
+transcribed from the old custom.css/overrides.css, and the navbar/off-canvas),
+keeping the old stylesheets linked + dormant; then one flip removed them and
+rebuilt the navbar + off-canvas in vanilla JS. Tooling: `scripts/visual/`
+(Playwright pixel-diff `shoot`/`diff` + `measure.mjs` computed-style dumper) vs
+a `main` baseline, plus a git-worktree copy of the last dormant commit served
+alongside for exact A/B measurement.
+
+- **Removed:** `theme.css` (385 KB) + `custom.css` (39 KB) + `overrides.css`,
+  `uikit.min.js` + `uikit-icons.min.js` (~200 KB), yootheme `theme.js`,
+  `scripts/purge-css.mjs` + the `purgecss` dep + the purge build step
+  (`build` is now plain `astro build`). **Net: ~292 KB dead CSS + ~256 KB dead
+  JS gone from the build output; the only stylesheet served is the ~32 KB
+  `app.css`.** Kept the licensed BebasKai/TradeGothic font files.
+- **Chrome rebuilt static:** centred-logo navbar (responsive 380→250px geometry
+  at the 960–1024 band), vanilla off-canvas drawer (~30 lines) + inline SVG
+  hamburger/close, footer. Decorative behaviour dropped per plan: the no-op
+  home/sponsor filter tabs. Kept: teams "More" panel
+  JS, counter count-up. (The scrollspy fade-in was dropped then re-added —
+  see the 2026-06-03 follow-up below.)
+  - **✅ DONE (2026-06-03):** the on-scroll **card fade-in** is re-added as a
+    vanilla `IntersectionObserver` + CSS fade (no UIkit). Cards carrying
+    `uk-scrollspy-class` (Card.astro) start `opacity:0` and fade in over 0.8s
+    (matching UIkit's `uk-fade`) as their top edge enters the viewport — the
+    observer in `BaseLayout.astro` adds `.uk-scrollspy-inview` (no `rootMargin`,
+    so a card peeking at the bottom is already fading rather than sitting
+    blank). The `opacity:0` is gated behind `.scrollspy-enabled` on `<html>`,
+    set synchronously by an inline `<head>` script only when JS +
+    `IntersectionObserver` are present and motion isn't reduced — so cards stay
+    visible with no JS / reduced motion, and the gate lands before first paint
+    (no flash). CSS lives in `app.css` (`@layer components`).
+    - **Scope matches the live site, not just home.** `Card.astro` now emits
+      `uk-scrollspy-class` **by default** (opt out with `scrollspyClass={false}`),
+      because the live site faded essentially every card. Faded-card counts per
+      page vs. the live mirror: home 8/8, teams 16/16, contact-us 20/20,
+      official-info 32/36, membership 4/5, resources 44/46 (the small shortfalls
+      are non-`Card` elements — section wrappers + `QuoteImage` image/featured
+      cards — that the live site faded only subtly). **Opt-outs:** the home
+      counters + sponsors (never faded live) and the teams squad-detail
+      `.hiddenbox` panel cards (live faded only the nav grid).
+    - Verified by Playwright across all 6 pages: every faded card starts
+      `opacity:0` at load and reaches `opacity:1` after scrolling (0 stuck
+      hidden); stays visible under `reducedMotion: reduce` and with no JS.
+- **Visual regression (8 pages × 7 widths = 56):** 18 pixel-identical; the other
+  38 are all **< 1.1%** (mostly < 0.3%) — sub-pixel glyph/line-height and
+  5–12px margin nuances, treated as acceptable. Notable bugs found + fixed along
+  the way: a `background-color` transition rendering mid-animation during
+  capture (contact-us 38%→0.4%), a hero `z-index` regression that hid the navbar,
+  and several `!important`/responsive rules dropped in transcription.
+- **Known-acceptable residual micro-diffs:** teams@375 (~1.1%, footer sits ~12px
+  high); official-info@640 (0.6%); ~35 others < 0.3%; 4 SIZE diffs of +1…+10px
+  on membership/official-info @960/1024. None visible in normal use.
 
 ## 2026-05-31 — Optimisation & de-duplication pass (branch `optimise-dedupe`)
 
@@ -84,12 +186,9 @@ launch blocker.
 - `settings/site.json` — counters, fees, season, club info
 
 ### Vendored assets (under `public/`)
-- `templates/yootheme/css/theme.css` (393 KB, UIkit + YOOtheme)
-- `templates/yootheme/css/custom.css` (39 KB)
-- `templates/yootheme/css/overrides.css` — page-level rules we wrote
-- `templates/yootheme/fonts/` — BebasKai + TradeGothic LT (licensed for the domain — see `~/.claude/projects/.../memory/font-licensing.md`)
-- `templates/yootheme/vendor/.../uikit{,-icons}.min.js`
+- `templates/yootheme/fonts/` — BebasKai + TradeGothic LT only (licensed for the domain — see `~/.claude/projects/.../memory/font-licensing.md`). All styling now lives in `src/styles/app.css`.
 - `images/heros/`, `images/home/`, `images/contacts/`, etc.
+- _(removed in the Tailwind migration: theme/custom/overrides.css, uikit\*.js, yootheme theme.js.)_
 
 ## What's deferred / known issues
 
@@ -100,7 +199,13 @@ launch blocker.
 
 ### Visual nits to polish (not blocking)
 1. **Resources page** has a vertical gap in the Forms & Guides section between row 2 (Littleton Rec / Other Pitch Bookings) and row 3 (Incident Form / Expense Claims). Likely a `uk-grid-match` row-matching artifact.
-2. **Teams page** omits the collapsible squad-detail panels from the live site — all squads render inline, "More" buttons anchor-scroll. Functional but visually denser than live.
+2. ~~**Teams page** omits the collapsible squad-detail panels.~~ **Resolved
+   (2026-06-03):** the `.hiddenbox` squad panels are collapsible (slide
+   open/close via the teams.astro inline JS), and the live-site open state is
+   now reproduced — opening a year group dims the other nav cards (disabled
+   dark-grey, `.dim`), marks the open card `.notdim` (stays blue, hides its
+   own "More" button), and shows a `.closeMe` × button top-right of the panel
+   (`/images/close.png`). CSS in `app.css` ("Teams More open state").
 3. **Contact-us page** omits the closing testimonial blockquote + bottom image present on the live site.
 4. **Mobile breakpoints unverified** — CSS has them via `@media` but I haven't visually tested the ported pages on narrow widths.
 5. **Resources featured cards** (Our Ethos + Player Development) use `uk-img` lazy loading. Visible in real browsers; headless screenshots may show blank cards.

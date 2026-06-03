@@ -52,12 +52,13 @@ const sponsors: Sponsor[] = [
   {/* Counters */}
   <Section id="counters" width="full">
     <CardGrid
-      wrap="uk-margin uk-text-center"
-      grid="uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m"
+      tw
+      wrap="uk-margin text-center"
+      grid="grid grid-cols-2 md:grid-cols-4"
     >
       {
         counters.map(({ count, label }) => (
-          <Card colour="primary">
+          <Card colour="primary" scrollspyClass={false}>
             <h3 class="counter" data-count={count}>
               0
             </h3>
@@ -68,27 +69,16 @@ const sponsors: Sponsor[] = [
     </CardGrid>
   </Section>
 
-  {/* Homesquares (Origins / Ethos / Coaching / Location) */}
-  <Section
-    id="homesquares-section"
-    width="full"
-    uk-scrollspy="target: [uk-scrollspy-class]; cls: uk-animation-fade; delay: false;"
-  >
-    <div id="homesquares" uk-filter=".js-filter" class="homesquares uk-margin uk-text-center">
-      <ul class="el-nav uk-margin uk-tab">
-        <li class="uk-active" uk-filter-control><a href="#">All</a></li>
-        <li uk-filter-control="[data-tag~='Download']">
-          <a href="#">Download</a>
-        </li>
-      </ul>
-
-      <div class="js-filter uk-child-width-1-2 uk-grid-match" uk-grid>
+  {/* Homesquares (Origins / Ethos / Coaching / Location) — these fade in on
+      scroll (Card emits uk-scrollspy-class by default). */}
+  <Section id="homesquares-section" width="full">
+    <div id="homesquares" class="homesquares uk-margin text-center">
+      <div class="js-filter card-grid grid grid-cols-2">
         {
           homesquares.map((card) =>
             card.kind === 'image' ? (
               <Card
                 colour="secondary"
-                scrollspyClass
                 lazyImg={{
                   src: card.src,
                   sizes: '(min-width: 1246px) 1246px',
@@ -99,7 +89,6 @@ const sponsors: Sponsor[] = [
             ) : (
               <Card
                 colour="secondary"
-                scrollspyClass
                 dataTag={card.tag}
                 heading={card.heading}
                 body={card.body}
@@ -114,18 +103,8 @@ const sponsors: Sponsor[] = [
 
   {/* Sponsors */}
   <Section id="sponsors-section" width="full">
-    <div id="sponsors" uk-filter=".js-filter" class="sponsors uk-margin uk-text-center">
-      <ul class="el-nav uk-margin uk-tab">
-        <li class="uk-active" uk-filter-control><a href="#">All</a></li>
-        <li uk-filter-control="[data-tag~='Visit']">
-          <a href="#">Visit</a>
-        </li>
-      </ul>
-
-      <div
-        class="js-filter uk-child-width-1-2 uk-child-width-1-2@s uk-child-width-1-4@m uk-grid-match"
-        uk-grid
-      >
+    <div id="sponsors" class="sponsors uk-margin text-center">
+      <div class="js-filter card-grid grid grid-cols-2 md:grid-cols-4">
         {
           sponsors.map((s) => {
             const lazyImg = {
@@ -138,11 +117,11 @@ const sponsors: Sponsor[] = [
             // Only the populated sponsor has a body — placeholders are image-only,
             // so don't pass a slot (which would emit an empty el-content div).
             return s.body ? (
-              <Card colour="primary" dataTag={s.tag} lazyImg={lazyImg} cta={cta}>
+              <Card colour="primary" scrollspyClass={false} dataTag={s.tag} lazyImg={lazyImg} cta={cta}>
                 {s.body}
               </Card>
             ) : (
-              <Card colour="primary" dataTag={s.tag} lazyImg={lazyImg} cta={cta} />
+              <Card colour="primary" scrollspyClass={false} dataTag={s.tag} lazyImg={lazyImg} cta={cta} />
             );
           })
         }

@@ -30,8 +30,9 @@ const allRows = [
       allRows.map(({ kind, row }, rowIdx) => (
         <Section width="full">
           <CardGrid
-            wrap={`alternates ${rowIdx % 2 === 0 ? 'first' : 'second'} contacts uk-margin uk-text-left`}
-            grid="uk-child-width-1-2 uk-child-width-1-4@m"
+            tw
+            wrap={`alternates ${rowIdx % 2 === 0 ? 'first' : 'second'} contacts uk-margin text-left`}
+            grid="grid grid-cols-2 md:grid-cols-4"
             filter
           >
             {row.map((p) =>

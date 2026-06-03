@@ -1,0 +1,1204 @@
+/*
+ * Tailwind entry for the Littleton Junior FC site.
+ *
+ * NOTE — preflight is deliberately NOT imported during the UIkit→Tailwind
+ * migration. Tailwind's base reset would fight UIkit's own reset while both
+ * stylesheets coexist and cause visual diffs. We import only the `theme`
+ * (design tokens / @theme) and `utilities` layers. Once UIkit is fully
+ * removed (Stage 4) we re-evaluate whether a small base reset is needed.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* ── Design tokens (exact values lifted from the live YOOtheme styling) ── */
+@theme {
+  /* Palette */
+  --color-brand: #5da9dd; /* accent blue (uk-card-primary, links, buttons) */
+  --color-dark: #464547; /* dark grey (uk-card-secondary, footer) */
+  --color-dim: #808285; /* dimmed text/cards on the teams "More" panels */
+  /* Pitch colours — only used by the (unbuilt) schedule; parked here. */
+  --color-pitch-nursery: #ec008c;
+  --color-pitch-top: #5da9dd;
+  --color-pitch-middle: #a6ce39;
+  --color-pitch-bottom: #ebc900;
+
+  /* Fonts (licensed for this domain — see memory font-licensing.md) */
+  --font-display: 'BebasKai', sans-serif;
+  --font-body: 'TradeGothic', sans-serif;
+
+  /* Breakpoints — UIkit s/m/l plus the bespoke type breakpoints from
+     custom.css. min-width based; `max-*` variants reuse these values.
+     Defined explicitly so utilities switch at exactly the live widths. */
+  --breakpoint-xs: 376px;
+  --breakpoint-mob: 451px;
+  --breakpoint-sm: 641px; /* UIkit `s` ≈ 640 boundary */
+  --breakpoint-tab: 769px;
+  --breakpoint-md: 960px; /* UIkit `m` */
+  --breakpoint-lg: 1025px;
+  --breakpoint-xl: 1153px;
+  --breakpoint-2xl: 1200px; /* UIkit `l` */
+}
+
+/* ── Fonts ──
+ * Self-hosted, licensed for this domain (see memory font-licensing.md).
+ * Declared here so the flip can drop custom.css without losing the faces.
+ * During the migration custom.css also declares these — a duplicate
+ * @font-face is harmless (identical src), and the link to the fonts is
+ * unchanged so the preloads in <head> still match.
+ */
+@font-face {
+  font-display: swap;
+  font-family: 'BebasKai';
+  src:
+    url('/templates/yootheme/fonts/3A11AF_0_0.woff2') format('woff2'),
+    url('/templates/yootheme/fonts/3A11AF_0_0.woff') format('woff');
+}
+@font-face {
+  font-display: swap;
+  font-family: 'TradeGothic';
+  src:
+    url('/templates/yootheme/fonts/TradeGothicLT.woff2') format('woff2'),
+    url('/templates/yootheme/fonts/TradeGothicLT.woff') format('woff');
+}
+
+/* ── Base layer ──
+ * Replaces the global reset/typography UIkit's base provided (we don't load
+ * Tailwind preflight). Values lifted from the live computed styles. While the
+ * old stylesheets are still linked these are dormant (unlayered old CSS wins
+ * over anything @layer); they take over at the flip.
+ */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+  html {
+    background: #fff;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.7;
+    color: #717171;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  /* Display headings (BebasKai). Per-level line-heights match UIkit's base;
+     most contexts override the margin/size in the component layer. */
+  h1, h2, h3, h4 {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-weight: normal;
+    letter-spacing: -0.015em;
+    color: inherit;
+  }
+  h1 { line-height: 1.2; }
+  h2 { line-height: 1.3; }
+  h3, h4 { line-height: 1.4; }
+  p {
+    margin: 0 0 20px;
+    letter-spacing: -0.03em;
+  }
+  a {
+    color: var(--color-brand);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover {
+    color: #fff;
+  }
+  img {
+    display: block; /* kills the inline-image descender gap (UIkit's base did this) */
+    max-width: 100%;
+    height: auto;
+    border-style: none;
+  }
+  blockquote {
+    margin: 0;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* ── Component layer ──
+ * Structure/layout/colour/spacing live as Tailwind utilities in the markup.
+ * This layer holds (a) the few UIkit framework primitives still referenced
+ * by class in the markup, reproduced 1:1, and (b) the bespoke multi-breakpoint
+ * typography + pseudo-element bits that would be unreadable inline. Source
+ * order mirrors the old theme.css → custom.css → overrides.css cascade.
+ */
+@layer components {
+  /* ── Page frame ───────────────────────────────────────────────── */
+  .tm-page-container {
+    background: #bababa;
+  }
+  .tm-page {
+    position: relative;
+    z-index: 0; /* stacking context so the hero's z-index:-1 stays within the
+                   page (behind the navbar, in front of the page background) */
+    max-width: 1200px;
+    margin-inline: auto;
+    background: #fff;
+    box-shadow:
+      0 10px 20px rgba(0, 0, 0, 0.19),
+      0 6px 6px rgba(0, 0, 0, 0.23);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Layout primitives — the UIkit subset still referenced by class in the
+   * markup, reproduced 1:1 from the live computed styles. (`uk-grid` is an
+   * ATTRIBUTE UIkit JS turns into the .uk-grid class + .uk-first-column on
+   * the first cell; post-flip there's no JS, so we style the attribute
+   * selector directly and let every cell carry the 5px left padding — the
+   * container's -5px left margin cancels the first cell's, matching the
+   * legacy alignment.)
+   * ════════════════════════════════════════════════════════════════ */
+
+  .uk-section {
+    padding: 5px 0;
+  }
+  /* The hero is the positioned ancestor for its absolute headerText overlay.
+     (Scoped to .hero — making every section relative regresses other pages.) */
+  .hero {
+    position: relative;
+    z-index: -1; /* sits behind the navbar (which overlays the hero) */
+  }
+  .uk-section.uk-section-default {
+    background: #fff;
+  }
+
+  .uk-container {
+    max-width: 1360px;
+    margin-inline: auto;
+  }
+  /* UIkit base: the last child of a container has no bottom margin. */
+  .uk-container > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* Grid: 5px gutter via UIkit's negative-margin technique. */
+  [uk-grid],
+  .uk-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -5px;
+    row-gap: 5px; /* vertical gutter between wrapped rows/stacked columns
+                     (UIkit JS added .uk-grid-margin{margin-top:5px} for this) */
+  }
+  [uk-grid] > *,
+  .uk-grid > * {
+    padding-left: 5px;
+  }
+  /* Stacked grids/rows: 5px top gutter on all but the first. */
+  * + .uk-grid-margin {
+    margin-top: 5px;
+  }
+
+  /* Equal-height inner-fill, shared by the legacy flex grids (uk-grid-match)
+     and their Tailwind CSS-grid replacement (.card-grid, applied via
+     `grid grid-cols-*`): the cell becomes flex so the inner .el-item fills the
+     (grid- or flex-) stretched height. Every bespoke square/colour/positioning
+     rule is dual-hooked `:is(.uk-grid-match, .card-grid)` so it matches both
+     during the conversion; collapses to `.card-grid` once done. */
+  :is(.uk-grid-match, .card-grid) > * {
+    display: flex;
+  }
+  :is(.uk-grid-match, .card-grid) > * > * {
+    width: 100%;
+  }
+  /* Gutter: reproduce UIkit's negative-margin technique EXACTLY rather than use
+     CSS `gap`. `gap` is symmetric (columns = (w − gap·(n−1))/n, flush both
+     edges); UIkit insets each cell 5px-left under a -5px container margin, so
+     cells are w/n wide, flush-left, with a 5px overhang on the right. The
+     difference is a fixed 1.25px/cell — invisible on content-height cards but
+     it compounds on square cards (teams nav: 4 rows → ~5px + visible mis-
+     alignment). Columns still come from `grid grid-cols-N` in the markup; this
+     supplies the horizontal gutter + the 5px stacked-row gap. */
+  .card-grid {
+    margin-left: -5px;
+    row-gap: 5px;
+  }
+  .card-grid > * {
+    padding-left: 5px;
+  }
+
+  /* Child widths (UIkit s=640, m=960 breakpoints). */
+  .uk-child-width-1-1 > * { width: 100%; }
+  .uk-child-width-1-2 > * { width: 50%; }
+  .uk-child-width-1-4 > * { width: 25%; }
+  @media (min-width: 640px) {
+    .uk-child-width-1-2\@s > * { width: 50%; }
+  }
+  @media (min-width: 960px) {
+    .uk-child-width-1-1\@m > * { width: 100%; }
+    .uk-child-width-1-2\@m > * { width: 50%; }
+    .uk-child-width-1-4\@m > * { width: 25%; }
+  }
+
+  /* Element widths. Below @m (960) the columns stack full-width; at @m the
+     expand columns share the row (flex:1). */
+  .uk-width-1-1\@m,
+  .uk-width-expand\@m {
+    width: 100%;
+  }
+  @media (min-width: 960px) {
+    .uk-width-expand\@m {
+      flex: 1;
+      width: auto;
+      min-width: 1px;
+      max-width: 100%;
+    }
+  }
+
+  /* Spacing helpers still referenced by bespoke hooks (the squad band, the
+     quoteimage band, the alternates/homesquares CTA wrappers) — kept as
+     component classes because those hooks must OVERRIDE them, which a utility
+     (higher layer) wouldn't allow. The unhooked text/padding/margin-remove
+     helpers became Tailwind utilities in the markup. */
+  .uk-margin { margin-bottom: 20px; }
+  .uk-margin-top { margin-top: 20px; }
+  /* A grid column's last child never extends the row with its bottom margin —
+     the inter-row/column gap is provided by the grid row-gap (above), matching
+     the legacy layout (column height = content). */
+  .uk-width-1-1\@m > :last-child,
+  .uk-width-expand\@m > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* Cards. */
+  .uk-card-body {
+    position: relative;
+    padding: 30px; /* UIkit: 30px, → 40px at the @l (1200) breakpoint */
+    color: rgba(255, 255, 255, 0.7);
+  }
+  @media (min-width: 1200px) {
+    .uk-card-body {
+      padding: 40px;
+    }
+  }
+  .uk-card-primary {
+    background: var(--color-brand);
+  }
+  .uk-card-secondary {
+    background: var(--color-dark);
+  }
+  .uk-card-primary > :not([class*='uk-card-media']),
+  .uk-card-secondary > :not([class*='uk-card-media']) {
+    color: #fff;
+  }
+
+  /* Images fill their column by default (custom.css `.uk-section img`). */
+  .uk-section img,
+  .el-image {
+    width: 100%;
+  }
+
+  /* Buttons (CTA links). */
+  .uk-button {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 0 20px;
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 44px;
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+  .uk-button-default {
+    background-color: var(--color-brand);
+    color: #fff;
+  }
+
+  /* Square-aspect cells — UIkit padding-top:100% trick on grid children.
+     Applied per-grid as the live custom.css/overrides.css did. */
+  .hiddenbox :is(.uk-grid-match, .card-grid) > div::after,
+  #counters .card-grid > div::after,
+  #sponsors .card-grid > div::after,
+  .homesquares.resources :is(.uk-grid-match, .card-grid) > div::after,
+  .offinfo4x4 > div > div::after,
+  .wellsafeimg > div > div::after,
+  .bluesquare > div > div::after,
+  .greysquare > div > div::after,
+  .alternates.second.blue > div > div::after,
+  #alternates1 :is(.uk-grid-match, .card-grid) > div::after,
+  #alternates2 :is(.uk-grid-match, .card-grid) > div::after,
+  #alternates3 :is(.uk-grid-match, .card-grid) > div::after,
+  #alternates4 :is(.uk-grid-match, .card-grid) > div::after,
+  .alternates.first.blue :is(.uk-grid-match, .card-grid) > div::after,
+  .alternates.first.grey :is(.uk-grid-match, .card-grid) > div::after,
+  .alternates.first.contacts :is(.uk-grid-match, .card-grid) > div::after,
+  .alternates.second.contacts :is(.uk-grid-match, .card-grid) > div::after {
+    content: '';
+    display: block;
+    padding-top: 100%;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Bespoke type + positioning. Kept-class selectors (these classes are
+   * already semantic — .headerText, .quotes, .alternates, …); values are
+   * transcribed verbatim from the live custom.css/overrides.css, with the
+   * dead Joomla/schedule/login rules dropped and #fff/#5da9dd/#464547/
+   * #808285 mapped to theme vars. Raw @media keeps the exact legacy
+   * breakpoints so the responsive type switches at identical widths.
+   *
+   * NOTE — the .alternates nth-child COLOUR-alternation matrix and the
+   * navbar/off-canvas chrome are intentionally NOT here yet; they are
+   * authored with the flip (when they can be diffed against pixels).
+   * ════════════════════════════════════════════════════════════════ */
+
+  /* ── Hero overlay title + privacy/terms banner variant ──────────── */
+  .headerText {
+    position: absolute;
+    top: 265px;
+    left: 58px;
+    margin-top: 0;
+    font-size: 130px;
+    line-height: 110px;
+    color: #fff;
+  }
+  .privacysect .headerText {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 58px;
+    line-height: normal;
+    background-color: var(--color-dark);
+  }
+  .privacysect .el-image {
+    pointer-events: none;
+  }
+
+  /* ── Closing quote band ─────────────────────────────────────────── */
+  .quoteimage {
+    position: relative;
+    padding-top: 0;
+  }
+  .quoteimage .uk-width-1-1\@m > .uk-margin {
+    margin-bottom: 0;
+  }
+  .quotes {
+    position: absolute;
+    top: 165px;
+    right: 115px;
+    width: 388px;
+    margin-top: 0;
+    font-family: var(--font-display);
+    font-size: 50px;
+    line-height: 50px;
+    font-style: normal;
+    font-weight: normal;
+    letter-spacing: -0.015em;
+    color: #fff;
+  }
+  .quotes span:nth-child(1) {
+    margin-left: -18px;
+  }
+
+  /* ── Home counters ──────────────────────────────────────────────── */
+  #counters .el-content {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    left: 15px;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-size: 20px;
+  }
+  #counters .el-content h3 {
+    margin: -15px 0 0;
+    font-size: 110px;
+    line-height: 110px;
+  }
+  #counters .el-content p {
+    margin: 0;
+    line-height: 20px;
+  }
+
+  /* ── Home squares ───────────────────────────────────────────────── */
+  .homesquares h2,
+  .homesquares p {
+    margin: 0;
+  }
+  #homesquares .el-content {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    left: 15px;
+    margin: 0 25%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #fff;
+  }
+  #homesquares .el-content h2 {
+    font-size: 46px;
+    color: var(--color-brand);
+  }
+  /* The image cells (2,3,6,7) + the featured resources cells fill the square —
+     no card padding (legacy custom.css). (Equal-height handled by .card-grid.) */
+  .homesquares .card-grid > div:nth-child(2) > div,
+  .homesquares .card-grid > div:nth-child(3) > div,
+  .homesquares .card-grid > div:nth-child(6) > div,
+  .homesquares .card-grid > div:nth-child(7) > div,
+  .homesquares.resources :is(.uk-grid-match, .card-grid) > div > div {
+    padding: 0;
+  }
+
+  /* ── Section-label panels (resources blue/grey, official-info image) ─ */
+  .bluesquare .el-item,
+  .greysquare .el-item,
+  .wellsafeimg .el-item {
+    position: relative;
+  }
+  .bluesquare .el-title,
+  .greysquare .el-title,
+  .wellsafeimg h3.el-title,
+  #charter .wellsafeimg h3.el-title {
+    position: absolute;
+    top: 56px;
+    left: 36px;
+    margin: 0;
+    font-size: 64px;
+    line-height: 58px;
+    color: #fff;
+    z-index: 1;
+  }
+  .wellsafeimg .el-title {
+    margin-top: -7px !important; /* beats the .wellsafeimg h3.el-title{margin:0} above */
+  }
+  .wellsafeimg .el-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .bluesquare {
+    background-color: var(--color-brand);
+    color: #fff;
+  }
+  .greysquare {
+    background-color: var(--color-dark);
+    color: #fff;
+  }
+  /* Below 960 the resources blue/grey label panels are a short 12em bar,
+     not a full-width square (legacy `.uk-first-column:after{padding-top:12em}`
+     in the max-959 @media blocks). */
+  @media (max-width: 959px) {
+    .bluesquare > div > div::after,
+    .greysquare > div > div::after {
+      padding-top: 12em;
+    }
+  }
+
+  /* ── Featured resource band (homesquares.resources) ─────────────── */
+  .homesquares.resources .el-content {
+    position: absolute;
+    top: 56px;
+    left: 36px;
+    width: 212px;
+    margin: 0;
+    transform: none;
+    text-align: left;
+    font-size: 18px;
+    line-height: 21px;
+    font-weight: 400;
+    color: #fff;
+  }
+  .homesquares.resources .el-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .homesquares.resources h3 {
+    margin: 0 0 10px;
+    font-size: 46px;
+    line-height: 40px;
+  }
+  .homesquares.resources h4 {
+    margin: -6px 0 5px;
+    font-size: 24px;
+    line-height: 26px;
+  }
+  .homesquares.resources p {
+    margin: 0;
+    padding: 3px 0;
+    border-top: 1px dashed #fff;
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  /* ── Action-card type scales (.alternates / .offinfo4x4 / contacts) ─ */
+  .alternates.blue h3,
+  .alternates.contacts h3,
+  .homesquares.resources h3,
+  .alternates.grey h3,
+  #charter h3,
+  #membership h3 {
+    margin: 0 0 10px;
+    font-size: 46px;
+    line-height: 40px;
+  }
+  .alternates.blue h4,
+  .alternates.contacts h4,
+  .alternates.grey h4 {
+    margin: -6px 0 5px;
+    font-size: 24px;
+    line-height: 26px;
+  }
+  .alternates.blue p,
+  .alternates.contacts p,
+  .alternates.grey p {
+    margin: 0;
+    padding: 3px 0;
+    border-top: 1px dashed #fff;
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  /* ── Official-info 4×4 intro/action cards ───────────────────────── */
+  .offinfo4x4 .el-item {
+    padding: 56px 33px 10px 36px;
+  }
+  .offinfo4x4 h3 {
+    margin: 0 0 5px;
+    font-size: 24px;
+    line-height: 23px;
+  }
+  .offinfo4x4 p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+  }
+  #charter .offinfo4x4 .el-item {
+    padding: 40px;
+  }
+
+  /* ── Teams "More" detail panels (.hiddenbox) ────────────────────── */
+  /* Hidden by default (the live site hid the #u6…#pan ids); the teams.astro
+     slide JS sets inline display:block to open and reverts to '' on close. */
+  .hiddenbox {
+    position: relative;
+    display: none;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  /* Squad row reads as one continuous full-width blue band — drop the 5px
+     column gutter so the cells touch (no white vertical lines). */
+  .hiddenbox :is([uk-grid], .card-grid) {
+    margin-left: 0;
+  }
+  .hiddenbox :is([uk-grid], .card-grid) > * {
+    padding-left: 0;
+  }
+  /* Each squad row has a 5px bottom gap (incl. the last), giving the thin
+     white separator lines between squads (legacy custom.css set this on the
+     squad CardGrid wrappers). Beats the column last-child margin reset. */
+  .hiddenbox > div > div > div > .uk-margin {
+    margin: 0 0 5px;
+    background-color: var(--color-brand);
+  }
+  .hiddenbox h2 {
+    margin: 0;
+    font-size: 64px;
+    line-height: 45px;
+    color: #fff;
+  }
+  .hiddenbox h4 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    line-height: 24px;
+    color: var(--color-dark);
+  }
+  .hiddenbox p {
+    margin: 0;
+    padding: 3px 0;
+    border-top: 1px dashed #fff;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+  .closeMe {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 22px;
+    height: 22px;
+    background-image: url(/images/close.png);
+    background-size: 22px 22px;
+  }
+
+  /* ── Privacy / terms / schedule prose block ─────────────────────── */
+  .privacy {
+    margin-top: -10px;
+    padding: 50px 58px 20px;
+    background-color: var(--color-dark);
+    color: #fff;
+  }
+  .privacy h5 {
+    margin: 10px 0;
+    font-family: var(--font-body);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-brand);
+  }
+  .privacy p {
+    margin-top: -20px;
+    margin-bottom: 1px;
+    padding: 20px 0;
+    letter-spacing: -0.03em;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Responsive type — transcribed verbatim from custom.css's @media
+   * blocks (exact legacy breakpoints: 480 / 376-450 / 451-640 / 641-768 /
+   * 769-959 / 960-1024 / 1025-1152). Chrome (logo/toggle) and the
+   * .alternates colour matrix are NOT here (they land with the flip).
+   * ════════════════════════════════════════════════════════════════ */
+
+  @media (max-width: 480px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 17px; line-height: 17px; }
+    .alternates.contacts h4 { font-size: 17px; line-height: 17px; }
+    .homesquares.resources h3 { font-size: 30px; line-height: 30px; }
+    .homesquares.resources p { font-size: 14px; line-height: 16px; }
+    .homesquares.resources .el-content { width: 130px; }
+    .homesquares .el-content { margin: 0 5% !important; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 8%; }
+    .wellsafeimg .el-item h3 {
+      font-size: 35px !important; line-height: 37px !important; top: 26px !important;
+      left: 0 !important; max-width: 300px;
+    }
+    .offinfo4x4 p { font-size: 12px; line-height: 13px; margin: 5px 0; }
+    .offinfo4x4 .el-item { padding: 8% 10%; }
+    .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
+      font-size: 18px; line-height: 18px;
+    }
+    .quotes { top: 45px; right: 35px; font-size: 15px; line-height: 15px; width: 120px; }
+    .quotes span:nth-child(1) { margin-left: -6px; }
+    .headerText { top: 80px; left: 25px; font-size: 40px; line-height: 35px; }
+    .hero { margin-top: -106px !important; }
+    .homesquares .el-content { margin: 0 !important; }
+    .homesquares .el-content p { font-size: 11px !important; line-height: 12px !important; margin-top: 0 !important; }
+    .homesquares .el-content h2 { font-size: 20px !important; line-height: 22px !important; margin-bottom: 5px !important; }
+    .footer { padding: 10px 20px !important; font-size: 12px; }
+    .alternates h2 { font-size: 25px !important; line-height: 25px !important; }
+    .alternates .el-item p { font-size: 12px !important; line-height: 13px !important; }
+  }
+
+  @media (min-width: 376px) and (max-width: 450px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 22px; line-height: 20px; }
+    .alternates.contacts h4 { font-size: 22px; line-height: 20px; }
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 130px; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 8%; }
+    .homesquares .el-content { margin: 0 !important; }
+    .wellsafeimg .el-item h3 {
+      font-size: 35px !important; line-height: 37px !important; top: 26px !important;
+      max-width: 300px;
+    }
+    .offinfo4x4 p { font-size: 14px; line-height: 16px; }
+    .offinfo4x4 .el-item { padding: 8% 10%; }
+    .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
+      font-size: 22px; line-height: 20px;
+    }
+    .alternates.blue h4, .alternates.grey h4 { font-size: 18px; line-height: 18px; }
+    .quotes { top: 45px; right: 35px; font-size: 15px; line-height: 15px; width: 120px; }
+    .quotes span:nth-child(1) { margin-left: -6px; }
+    .headerText { top: 80px; left: 5%; font-size: 40px; line-height: 35px; }
+    .hero { margin-top: -106px !important; }
+    .homesquares .el-content p { font-size: 11px !important; line-height: 12px !important; margin-top: 0 !important; }
+    .homesquares .el-content h2 { font-size: 20px !important; line-height: 22px !important; margin-bottom: 5px !important; }
+    .footer { padding: 10px 20px !important; font-size: 12px; }
+    .alternates h2 { font-size: 25px !important; line-height: 25px !important; }
+    .alternates .el-item p { font-size: 15px !important; line-height: 15px !important; }
+  }
+
+  @media (min-width: 451px) and (max-width: 640px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 17px; line-height: 17px; }
+    .alternates.contacts h4 { font-size: 14px; line-height: 14px; }
+    .alternates.contacts .el-item p { font-size: 11px; line-height: 11px; }
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 180px; }
+    .quotes { top: 70px; right: 45px; font-size: 20px; line-height: 20px; width: 200px; }
+    .quotes span:nth-child(1) { margin-left: -7px; }
+    .homesquares .el-content p { font-size: 14px !important; line-height: 16px !important; margin-top: 0 !important; }
+    .homesquares .el-content { margin: 0 5% !important; }
+    .headerText { top: 180px; left: 38px; font-size: 80px; line-height: 70px; }
+    .alternates h2 { font-size: 30px !important; line-height: 30px !important; }
+    .alternates .el-item { padding: 15%; }
+    .alternates .el-item p { font-size: 20px !important; line-height: 20px !important; }
+    .alternates .el-item .uk-margin-top { margin-top: 0; line-height: 12px; }
+    .alternates .el-item a,
+    #membership > div > div:nth-child(3) .el-item a,
+    #membership > div > div:nth-child(4) .el-item a,
+    .sponsors .el-item a {
+      padding: 2px 5px 2px !important; font-size: 14px !important; line-height: 16px !important;
+    }
+    .hero { margin-top: -106px !important; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 10% 15%; }
+    .offinfo4x4 p { font-size: 14px; line-height: 16px; }
+    .offinfo4x4 .el-item, .alternates.blue .el-item, .alternates.grey .el-item {
+      padding: 8% 10%;
+    }
+    .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
+      font-size: 25px; line-height: 23px;
+    }
+    .alternates.blue h4, .alternates.grey h4 { font-size: 20px; line-height: 20px; }
+  }
+
+  @media (min-width: 641px) and (max-width: 768px) {
+    .hero { margin-top: -106px !important; }
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 24px; line-height: 24px; }
+    .alternates.contacts h4 { font-size: 18px; line-height: 18px; }
+    .alternates.contacts .el-item p { font-size: 14px; line-height: 14px; }
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 130px; }
+    .offinfo4x4 .el-item { padding: 56px 33px 10px 36px; }
+    .wellsafeimg .el-item h3 {
+      font-size: 35px !important; line-height: 37px !important; top: 26px !important;
+      left: 25px !important; max-width: 300px;
+    }
+    .offinfo4x4 p { font-size: 20px; line-height: 24px; margin: 5px 0; }
+    .quotes { top: 125px; right: 85px; font-size: 22px; line-height: 22px; width: 250px; }
+    .quotes span:nth-child(1) { margin-left: -8px; }
+    .homesquares .el-content { margin: 0 10% !important; }
+    .headerText { top: 220px; left: 38px; font-size: 80px; line-height: 70px; }
+    .homesquares .el-content h2 { margin-bottom: 10px !important; }
+    .alternates h2 { font-size: 60px !important; line-height: 60px !important; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 10%; }
+    .alternates .el-item a,
+    #membership > div > div:nth-child(3) .el-item a,
+    #membership > div > div:nth-child(4) .el-item a,
+    .sponsors .el-item a {
+      padding: 2px 5px 2px !important; font-size: 16px !important; line-height: 18px !important;
+    }
+    .hiddenbox :is(.uk-grid-match, .card-grid) > div::after { padding-top: 0; display: none; }
+    .hiddenbox h2 { font-size: 35px; margin: 0; line-height: 35px; }
+    .hiddenbox .el-item { padding: 15px; }
+    .hiddenbox .el-item > div:not(.el-content):last-child { bottom: -20px; }
+    .hiddenbox .uk-grid-stack > div:nth-child(2) { padding-bottom: 30px; }
+    .closeMe {
+      width: 16px; height: 16px; top: 15px; right: 15px; background-size: 16px 16px;
+    }
+    .offinfo4x4 h3, .alternates.blue h3, .alternates.grey h3 {
+      font-size: 25px; line-height: 23px;
+    }
+    .alternates.blue h4, .alternates.grey h4 { font-size: 20px; line-height: 20px; }
+    .alternates.blue p, .alternates.contacts p, .homesquares.resources p, .alternates.grey p {
+      font-size: 14px; line-height: 16px;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 959px) {
+    .contacts .uk-card-body { padding: 10%; }
+    .alternates.contacts h3 { font-size: 34px; line-height: 34px; }
+    .alternates.contacts h4 { font-size: 20px; line-height: 20px; }
+    .alternates.contacts .el-item p { font-size: 16px; line-height: 16px; }
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 130px; }
+    .hero { margin-top: -106px !important; }
+    .headerText { top: 220px; left: 38px; font-size: 80px; line-height: 70px; }
+    #alternates1 .el-item, #alternates2 .el-item,
+    #alternates3 .el-item, #alternates4 .el-item { padding: 0 15%; }
+    .quotes { top: 105px; right: 75px; font-size: 30px; line-height: 30px; width: 250px; }
+    .quotes span:nth-child(1) { margin-left: -11px; }
+  }
+
+  @media (min-width: 960px) and (max-width: 1024px) {
+    .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
+    .homesquares.resources p { font-size: 15px; line-height: 15px; }
+    .homesquares.resources .el-content { width: 130px; }
+    .wellsafeimg .el-item h3 {
+      font-size: 50px !important; line-height: 50px !important; top: 26px !important;
+      left: 25px !important; max-width: 300px;
+    }
+    .offinfo4x4 p { font-size: 16px; line-height: 19px; margin: 5px 0; }
+    .offinfo4x4 .el-item { padding: 36px 27px 10px 30px; }
+    .headerText { top: 220px; left: 48px; font-size: 110px; line-height: 95px; }
+    .quotes { top: 165px; right: 115px; font-size: 40px; line-height: 40px; width: 350px; }
+    .quotes span:nth-child(1) { margin-left: -16px; }
+  }
+
+  @media (min-width: 1025px) and (max-width: 1152px) {
+    .offinfo4x4 p { font-size: 16px; line-height: 18px; }
+  }
+
+  @media (max-width: 960px) {
+    .hiddenbox :is(.uk-grid-match, .card-grid) > div::after { padding-top: 0; }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Structural singletons + the action-card COLOUR matrix + CTA
+   * positioning. Faithful transcription (in original cascade order) of the
+   * live custom.css/overrides.css rules — copied so the result reproduces
+   * by construction; the dead Joomla `#page\#N` selectors are dropped.
+   * (The `.dim`/`.notdim` teams open-state rules were later re-added — see
+   * the "Teams More open state" block below.) Verified at the flip diff.
+   * ════════════════════════════════════════════════════════════════ */
+
+  /* Hero structural (overrides.css). */
+  #hero { margin-top: -246px; }
+  #hero[data-variant='banner'] #hero-bg { background-color: var(--color-dark); height: 300px; }
+
+  /* Footer (overrides.css). */
+  #footer-1 { padding-top: 0; padding-bottom: 0; }
+  #footer-4 { padding: 15px 38px; background-color: var(--color-dark); color: #fff; }
+  .footer a { color: var(--color-brand); }
+  .footer a:hover { color: #fff; }
+
+  /* Section padding tweaks (overrides.css). */
+  #homesquares-section { padding-top: 0; }
+  #sponsors-section { padding-top: 0; margin-bottom: 0 !important; }
+  #alternates2, #alternates3, #alternates4 { padding-top: 0; }
+
+  /* Teams age-card display type (overrides.css). */
+  #u6-9 .el-content h2, #u10-13 .el-content h2,
+  #u14-17 .el-content h2, #u18-pan .el-content h2 {
+    font-size: 110px; margin: 0; line-height: 110px;
+  }
+  #u6-9 .el-content p, #u10-13 .el-content p,
+  #u14-17 .el-content p, #u18-pan .el-content p {
+    font-size: 24px; margin: 0; line-height: 24px;
+    font-family: var(--font-display); color: #fff;
+  }
+  .alternates .el-content > p:last-of-type { border-bottom: 1px dashed #fff; }
+
+  /* Home squares CTA + sponsors image (overrides.css). */
+  #homesquares .el-item > .uk-margin-top a { background-color: var(--color-brand); color: #fff; }
+  #homesquares div[data-tag='Download'] .el-item > .uk-margin-top:last-of-type {
+    position: absolute; bottom: 0; text-align: center; margin: 0 auto; left: 0; right: 0;
+  }
+  #sponsors .el-image { position: absolute; top: 0; transform: none; left: 0; right: 0; width: 100%; }
+
+  /* Resources featured band overflow (overrides.css). */
+  .homesquares.resources .el-item { position: relative; overflow: hidden; }
+
+  /* ── CTA pinned to card bottom ──────────────────────────────────── */
+  .alternates .el-item > div:last-child,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child,
+  #membership > div > div:nth-child(3) .el-item > div:last-child,
+  #membership > div > div:nth-child(4) .el-item > div:last-child,
+  .homesquares.resources .el-item > div:last-child,
+  .sponsors .el-item > div:last-child { position: absolute; bottom: 0; }
+  .homesquares.resources .el-item > div:last-child { margin-left: 36px; }
+  .hiddenbox .el-item > div:not(.el-content):last-child { position: absolute; bottom: 0; }
+  /* (Dropped `.alternates .el-item{transition:background-color .5s}` — it was
+     for the removed filter's hover animation, and it made the cards render
+     mid-transition during full-page screenshot capture.) */
+
+  .hiddenbox .el-item > div:not(.el-content):last-child a,
+  .hiddenbox .el-item > div:not(.el-content):last-child a:active,
+  .hiddenbox .el-item > div:not(.el-content):last-child a:focus {
+    border: none; border-radius: 0; background: var(--color-dark);
+    padding: 0 10px 3px; font-size: 18px; line-height: 24px; color: #fff;
+  }
+
+  .alternates .el-item > div:last-child a,
+  .alternates .el-item > div:last-child a:active,
+  .alternates .el-item > div:last-child a:focus,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a,
+  #membership > div > div:nth-child(3) .el-item a,
+  #membership > div > div:nth-child(4) .el-item a,
+  .homesquares.resources .el-item > div:last-child a,
+  .sponsors .el-item > div:last-child a {
+    border: none; border-radius: 0; background: var(--color-dark);
+    padding: 0 10px 3px; font-size: 18px; line-height: 24px; color: #fff;
+    position: absolute; bottom: 0; white-space: nowrap;
+  }
+
+  /* ── CTA colour alternation ─────────────────────────────────────── */
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover { color: var(--color-brand); }
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
+  #membership > div > div:nth-child(3) .el-item a { background-color: #fff; color: var(--color-dark); }
+  #membership > div > div:nth-child(4) .el-item a:hover { background-color: #fff; color: var(--color-brand); }
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a,
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
+  #membership > div > div:nth-child(3) .el-item a,
+  .bluesquare { background-color: var(--color-brand); color: #fff; }
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(2) .el-item,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item { background-color: var(--color-brand); color: #fff; }
+  .alternates :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
+  #membership > div > div:nth-child(3) .el-item a:hover { background-color: #fff; color: var(--color-dark); }
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
+  .greysquare,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(1) .el-item,
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item > div:last-child a { background-color: var(--color-dark); color: #fff; }
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a,
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a,
+  .homesquares.resources .el-item > div:last-child a { background-color: var(--color-dark); color: #fff; }
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:active,
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:focus,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:active,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:focus { background-color: var(--color-dark); color: var(--color-brand); }
+  .alternates.blue :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
+  #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-brand); }
+  .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a,
+  .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:active,
+  .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:focus,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item > div:last-child a,
+  .homesquares.resources :is(.uk-grid-match, .card-grid) > div:nth-child(2) .el-item > div:last-child a { background-color: var(--color-brand); color: #fff; }
+  .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+
+  .grey .uk-card-primary { background-color: var(--color-dark) !important; }
+
+  /* Row margin tweaks (.blue/.grey stacks). */
+  .alternates.blue:nth-child(1) { margin-bottom: 0 !important; }
+  .alternates.blue:nth-child(2) { margin-top: 5px !important; }
+  .alternates.blue.two > div > div:nth-child(4) { padding-left: 0 !important; }
+  .alternates.grey:nth-child(1) { margin-bottom: 0 !important; }
+  .alternates.grey:nth-child(2) { margin-top: 5px !important; }
+  .alternates.grey.two > div > div:nth-child(4) { background-color: var(--color-dark) !important; }
+  .alternates.blue:nth-child(2), .alternates.blue:nth-child(3) { margin-bottom: 0 !important; }
+  .alternates.blue:nth-child(3) { margin-top: 5px !important; }
+
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:hover,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+  .alternates.second :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates.fourth :is(.uk-grid-match, .card-grid) > div:nth-child(even) .el-item > div:last-child a:hover,
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item > div:last-child a:hover,
+  .homesquares.resources .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-brand); }
+  .alternates.second.gb :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item > div:last-child a:hover,
+  .homesquares.resources :is(.uk-grid-match, .card-grid) > div:nth-child(2) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
+
+  /* el-item colour alternation (teams 1×4 nav rows). */
+  .alternates .grid-cols-4 > div:nth-child(even) .uk-card-primary { background: var(--color-dark); }
+  .alternates.blue .grid-cols-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
+  .alternates.second .grid-cols-4 > div:nth-child(odd) .uk-card-primary,
+  .alternates.fourth .grid-cols-4 > div:nth-child(odd) .uk-card-primary { background: var(--color-dark); }
+  .alternates.second .grid-cols-4 > div:nth-child(even) .uk-card-primary,
+  .alternates.fourth .grid-cols-4 > div:nth-child(even) .uk-card-primary { background: var(--color-brand); }
+
+  /* Teams "More" open state (transcribed from custom.css): when a year group
+     is expanded, the teams.astro panel JS marks the open nav card `.notdim`
+     and every other nav card `.dim`. The dim cards read as disabled (dark
+     grey, greyed text + button); the open card stays blue and hides its own
+     "More" button (.notdim a). */
+  .alternates .notdim .el-item { background-color: var(--color-brand) !important; }
+  .alternates .dim .el-item { background-color: #464547 !important; }
+  .alternates .dim .el-item a { background-color: #808285 !important; color: #464547 !important; }
+  .alternates .dim .el-content h2,
+  .alternates .dim .el-content p { color: #808285 !important; }
+  .notdim a { display: none; }
+
+  /* Sponsors. */
+  .sponsors .el-item { padding: 0; }
+  .sponsors .el-item .el-content {
+    text-align: left; margin: 0 20px; line-height: 18px; font-size: 16px; letter-spacing: -0.03em;
+  }
+
+  /* Teams u18 panel row. */
+  #u18-pan > div > div:nth-child(4) { padding-left: 0; }
+  #u18-pan > div > div:nth-child(3) .el-item,
+  #u18-pan > div > div:nth-child(4) .el-item { background-color: var(--color-dark) !important; }
+
+  /* Membership el-item colours (overrides.css — two blocks, order preserved). */
+  #membership > div > div:nth-child(1) .el-item { background-color: var(--color-dark) !important; }
+  #membership > div > div:nth-child(2) .el-item { background-color: var(--color-brand) !important; }
+  #membership > div > div:nth-child(1) .el-item, #membership > div > div:nth-child(4) .el-item { background-color: var(--color-brand) !important; }
+  #membership > div > div:nth-child(1) .el-item.uk-card-primary,
+  #membership > div > div:nth-child(4) .el-item.uk-card-primary { background-color: var(--color-brand) !important; }
+  #membership > div > div:nth-child(2) .el-item.uk-card-primary,
+  #membership > div > div:nth-child(3) .el-item.uk-card-primary { background-color: var(--color-dark) !important; }
+
+  /* Resources .second.gb.swap colour swap (≥961). */
+  @media (min-width: 961px) {
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item,
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item > div:last-child a { background-color: var(--color-dark) !important; }
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item,
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item > div:last-child a { background-color: var(--color-brand) !important; }
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(3) .el-item > div:last-child a:hover { background-color: #fff !important; color: var(--color-dark) !important; }
+    .alternates.second.gb.swap :is(.uk-grid-match, .card-grid) > div:nth-child(4) .el-item > div:last-child a:hover { background-color: #fff !important; color: var(--color-brand) !important; }
+  }
+
+  /* Contact-us js-filter colour alternation. */
+  .contactus .alternates.first .js-filter > div:nth-of-type(even) > div { background-color: var(--color-dark) !important; }
+  .contactus .alternates.first .js-filter > div:nth-of-type(odd) > div { background-color: var(--color-brand) !important; }
+  .contactus .alternates.second .js-filter > div:nth-of-type(odd) > div { background-color: var(--color-dark) !important; }
+  .contactus .alternates.second .js-filter > div:nth-of-type(even) > div { background-color: var(--color-brand) !important; }
+
+  @media (max-width: 639px) {
+    .contactus .alternates.first .js-filter > div:nth-of-type(1) > div, .contactus .alternates.first .js-filter > div:nth-of-type(4) > div { background-color: var(--color-brand) !important; }
+    .contactus .alternates.first .js-filter > div:nth-of-type(2) > div, .contactus .alternates.first .js-filter > div:nth-of-type(3) > div { background-color: var(--color-dark) !important; }
+    .contactus .alternates.second .js-filter > div:nth-of-type(1) > div, .contactus .alternates.first .js-filter > div:nth-of-type(4) > div { background-color: var(--color-brand) !important; }
+    .contactus .alternates.second .js-filter > div:nth-of-type(2) > div, .contactus .alternates.first .js-filter > div:nth-of-type(3) > div { background-color: var(--color-dark) !important; }
+    #charter h3, #membership h3 { font-size: 18px; line-height: 18px; margin: 0 0 5px; }
+    #charter .offinfo4x4 .el-item { padding: 8%; }
+    .el-title { left: 0 !important; padding-left: 5% !important; font-size: 40px !important; line-height: 35px !important; }
+    .homesquares.resources .el-content { left: 0 !important; padding-left: 6% !important; }
+    .alternates .el-item > div:last-child a,
+    .alternates .el-item > div:last-child a:active,
+    .alternates .el-item > div:last-child a:focus,
+    #charter .offinfo4x4 > div > div:nth-child(3) .el-item > div:last-child a,
+    #membership > div > div:nth-child(3) .el-item a,
+    #membership > div > div:nth-child(4) .el-item a,
+    .homesquares.resources .el-item > div:last-child a,
+    .sponsors .el-item > div:last-child a {
+      padding: 2px 7px 2px !important; font-size: 15px !important; line-height: 21px !important;
+    }
+    #membership > div > div:nth-child(3) .el-item a { background: var(--color-brand); }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+   * Chrome — header / nav / off-canvas, rebuilt static (no UIkit JS).
+   * New class names (no old rule competes), so these apply as soon as the
+   * markup is rewritten, even before the old CSS links are removed.
+   * Geometry from the live computed styles (see plan PROGRESS notes).
+   * ════════════════════════════════════════════════════════════════ */
+
+  .site-header { display: none; position: relative; }
+  .mobile-header { display: block; }
+  @media (min-width: 960px) {
+    .site-header { display: block; }
+    .mobile-header { display: none; }
+  }
+
+  /* Desktop: centred logo flanked by two absolutely-positioned nav groups. */
+  .site-header__inner { position: relative; padding-top: 48px; }
+  .site-logo {
+    display: flex; justify-content: center; align-items: center;
+    width: 380px; margin-inline: auto; padding: 0 90px; min-height: 80px;
+  }
+  .site-logo img { width: 100%; }
+  .nav-group { position: absolute; top: 108px; display: flex; }
+  .nav-group--left { right: calc(50% + 190px); }
+  .nav-group--right { left: calc(50% + 190px); }
+  .nav-group ul { display: flex; margin: 0; padding: 0; list-style: none; }
+  .nav-group a {
+    display: flex; box-sizing: border-box; min-height: 80px; padding: 26px 26px 0;
+    font-family: var(--font-display); font-size: 20px; line-height: 20px;
+    text-align: center; text-transform: uppercase; color: #fff;
+    justify-content: center; align-items: flex-start;
+  }
+  .nav-group a:hover { color: #fff; }
+  .nav-group li.active a { color: var(--color-brand); }
+  .nav-group::before {
+    content: ''; position: absolute; top: 15px; width: 401px; border-top: 2px solid #fff;
+  }
+  .nav-group--left::before { right: 9px; }
+  .nav-group--right::before { left: 9px; }
+
+  /* 960-1024: the logo shrinks to 250px (legacy `.uk-logo{width:250px;
+     padding:0 50px}`), so the nav groups sit ±125px from centre. This also
+     stops the underline overshooting the page edge (it ended past 1112 with
+     the 380px geometry; now ends at the legacy 1047/1015). */
+  @media (min-width: 960px) and (max-width: 1024px) {
+    .site-logo { width: 250px; padding: 0 50px; }
+    .nav-group--left { right: calc(50% + 125px); }
+    .nav-group--right { left: calc(50% + 125px); }
+  }
+
+  /* Mobile header: toggle (left) + centred logo. */
+  .mobile-nav { position: relative; display: flex; align-items: center; height: 80px; padding-left: 5%; }
+  .nav-toggle {
+    display: flex; align-items: center; justify-content: center;
+    width: 45px; min-height: 80px; padding: 0 25px 0 0;
+    background: none; border: none; color: #fff; cursor: pointer;
+  }
+  .mobile-logo {
+    position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+    display: flex; align-items: center; justify-content: center;
+    width: 100px; height: 80px; padding: 5px 15px 0;
+  }
+  .mobile-logo img { width: 100%; }
+
+  /* Off-canvas drawer (closed in screenshots, so not in the pixel diff;
+     styled to match the legacy UIkit off-canvas + custom.css). */
+  .drawer { position: fixed; inset: 0; z-index: 1000; }
+  .drawer[hidden] { display: none; }
+  .drawer__overlay {
+    position: absolute; inset: 0; background: rgba(0, 0, 0, 0.1);
+    opacity: 0; transition: opacity 0.3s ease;
+  }
+  .drawer.is-open .drawer__overlay { opacity: 1; }
+  .drawer__bar {
+    position: absolute; top: 0; left: 0; bottom: 0; width: 270px;
+    background: var(--color-dark); padding: 20px 20px 40px;
+    transform: translateX(-100%); transition: transform 0.3s ease; overflow-y: auto;
+  }
+  .drawer.is-open .drawer__bar { transform: translateX(0); }
+  .drawer__close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none; color: #fff; cursor: pointer; padding: 0;
+  }
+  .drawer__close:hover { color: var(--color-brand); }
+  .drawer__nav { list-style: none; margin: 0; padding: 30px 0 0; }
+  .drawer__nav a { display: block; color: #fff; font-size: 20px; }
+  .drawer__nav a:hover { color: var(--color-brand); }
+  .drawer__nav li.active a { color: var(--color-brand); }
+}
+
+/* ── On-scroll fade-in for the home squares ───────────────────────────
+ * Vanilla replacement for the old UIkit uk-scrollspy + uk-animation-fade.
+ * Cards carry the `uk-scrollspy-class` attribute (Card.astro). They start
+ * hidden and fade in (0.8s linear, matching UIkit's uk-fade) when they
+ * scroll into view — an IntersectionObserver in BaseLayout adds
+ * `.uk-scrollspy-inview`.
+ *
+ * The `opacity: 0` is gated behind `.scrollspy-enabled` on <html>, which an
+ * inline <head> script only sets when JS + IntersectionObserver are present
+ * and motion isn't reduced — so cards stay visible with no JS / reduced
+ * motion, and the gate is set before first paint (no flash of hidden cards).
+ */
+@layer components {
+  .scrollspy-enabled [uk-scrollspy-class] { opacity: 0; }
+  .scrollspy-enabled [uk-scrollspy-class].uk-scrollspy-inview {
+    opacity: 1;
+    animation: uk-fade 0.8s linear;
+  }
+  @keyframes uk-fade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+}

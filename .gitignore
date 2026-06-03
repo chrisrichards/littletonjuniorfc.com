@@ -32,3 +32,6 @@ pnpm-debug.log*
 
 # generated worker types
 worker-configuration.d.ts
+
+# visual-regression harness output (scripts/visual/*) — scripts tracked, PNGs not
+.visual/
