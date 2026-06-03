@@ -1148,3 +1148,27 @@
   .drawer__nav a:hover { color: var(--color-brand); }
   .drawer__nav li.active a { color: var(--color-brand); }
 }
+
+/* ── On-scroll fade-in for the home squares ───────────────────────────
+ * Vanilla replacement for the old UIkit uk-scrollspy + uk-animation-fade.
+ * Cards carry the `uk-scrollspy-class` attribute (Card.astro). They start
+ * hidden and fade in (0.8s linear, matching UIkit's uk-fade) when they
+ * scroll into view — an IntersectionObserver in BaseLayout adds
+ * `.uk-scrollspy-inview`.
+ *
+ * The `opacity: 0` is gated behind `.scrollspy-enabled` on <html>, which an
+ * inline <head> script only sets when JS + IntersectionObserver are present
+ * and motion isn't reduced — so cards stay visible with no JS / reduced
+ * motion, and the gate is set before first paint (no flash of hidden cards).
+ */
+@layer components {
+  .scrollspy-enabled [uk-scrollspy-class] { opacity: 0; }
+  .scrollspy-enabled [uk-scrollspy-class].uk-scrollspy-inview {
+    opacity: 1;
+    animation: uk-fade 0.8s linear;
+  }
+  @keyframes uk-fade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+}

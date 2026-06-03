@@ -51,7 +51,11 @@ export interface Props {
   cta?: CardCta;
   // Visual
   colour?: 'primary' | 'secondary';
-  /** Adds `uk-scrollspy-class` to the el-item (home squares fade-in). */
+  /** Emits `uk-scrollspy-class` on the el-item, which drives the on-scroll
+   *  fade-in (see BaseLayout's IntersectionObserver + app.css). Defaults to
+   *  `true` because the live site fades in essentially every card; set
+   *  `false` to opt out — used for the home counters + sponsors, which never
+   *  faded on the live site. */
   scrollspyClass?: boolean;
   // Misc
   dataTag?: string;
@@ -69,7 +73,7 @@ const {
   lazyImg,
   cta,
   colour = 'primary',
-  scrollspyClass = false,
+  scrollspyClass = true,
   dataTag,
   contentLabel,
 } = Astro.props;

@@ -61,6 +61,21 @@ const navRight = [
       crossorigin
     />
 
+    {/* Gate the home-squares scrollspy fade-in. Set synchronously in <head>
+        (before first paint, so cards never flash visible-then-hidden) and
+        only when JS + IntersectionObserver are available and the user hasn't
+        asked for reduced motion — otherwise the cards stay visible. The CSS
+        `opacity: 0` is scoped to `.scrollspy-enabled` (see app.css). */}
+    <script is:inline>
+      (function () {
+        if (
+          'IntersectionObserver' in window &&
+          !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ) {
+          document.documentElement.classList.add('scrollspy-enabled');
+        }
+      })();
+    </script>
   </head>
   <body class="">
     <div class="tm-page-container uk-clearfix">
@@ -233,6 +248,29 @@ const navRight = [
           requestAnimationFrame(step);
         });
       });
+    </script>
+    <script is:inline>
+      // On-scroll fade-in for the home squares (vanilla replacement for
+      // UIkit uk-scrollspy). Reveals each [uk-scrollspy-class] card as it
+      // enters the viewport by adding .uk-scrollspy-inview (CSS does the
+      // fade). Gated by the .scrollspy-enabled class set in <head>.
+      (function () {
+        if (!document.documentElement.classList.contains('scrollspy-enabled')) return;
+        var targets = document.querySelectorAll('[uk-scrollspy-class]');
+        if (!targets.length || !('IntersectionObserver' in window)) return;
+        // No rootMargin: fire as soon as a card's top edge enters the
+        // viewport from the bottom (matching the old UIkit scrollspy), so a
+        // card peeking at the bottom is already fading rather than sitting
+        // blank until the next scroll.
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('uk-scrollspy-inview');
+            io.unobserve(entry.target);
+          });
+        });
+        targets.forEach(function (t) { io.observe(t); });
+      })();
     </script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-06-02.
+Last updated: 2026-06-03.
 
 Living document — update this when something material changes (phase completes, decision made, blocker found). For the original detailed plan see [`migration-plan.md`](./migration-plan.md); for the page-by-page audit see [`inventory.md`](./inventory.md).
 
@@ -33,17 +33,32 @@ alongside for exact A/B measurement.
 - **Chrome rebuilt static:** centred-logo navbar (responsive 380→250px geometry
   at the 960–1024 band), vanilla off-canvas drawer (~30 lines) + inline SVG
   hamburger/close, footer. Decorative behaviour dropped per plan: the no-op
-  home/sponsor filter tabs and the scrollspy fade-in. Kept: teams "More" panel
-  JS, counter count-up.
-  - **⚠ FOLLOW-UP WANTED (2026-06-02):** the on-scroll **image fade-in** (the old
-    UIkit `uk-scrollspy` / `uk-animation-fade` on the home squares) was dropped
-    here as decorative, but it IS wanted back. Re-implement with a small
-    `IntersectionObserver` + a CSS fade (no UIkit). The hooks still exist in the
-    markup: `Card.astro` emits `uk-scrollspy-class` on the el-item when
-    `scrollspyClass` is set (home squares), and `index.astro` still has the
-    `uk-scrollspy` attr on the squares `<Section>`. NB the visual-regression
-    `shoot.mjs` waits for load + settle, so a scroll fade won't show in the
-    pixel-diff — verify by eye / interaction.
+  home/sponsor filter tabs. Kept: teams "More" panel
+  JS, counter count-up. (The scrollspy fade-in was dropped then re-added —
+  see the 2026-06-03 follow-up below.)
+  - **✅ DONE (2026-06-03):** the on-scroll **card fade-in** is re-added as a
+    vanilla `IntersectionObserver` + CSS fade (no UIkit). Cards carrying
+    `uk-scrollspy-class` (Card.astro) start `opacity:0` and fade in over 0.8s
+    (matching UIkit's `uk-fade`) as their top edge enters the viewport — the
+    observer in `BaseLayout.astro` adds `.uk-scrollspy-inview` (no `rootMargin`,
+    so a card peeking at the bottom is already fading rather than sitting
+    blank). The `opacity:0` is gated behind `.scrollspy-enabled` on `<html>`,
+    set synchronously by an inline `<head>` script only when JS +
+    `IntersectionObserver` are present and motion isn't reduced — so cards stay
+    visible with no JS / reduced motion, and the gate lands before first paint
+    (no flash). CSS lives in `app.css` (`@layer components`).
+    - **Scope matches the live site, not just home.** `Card.astro` now emits
+      `uk-scrollspy-class` **by default** (opt out with `scrollspyClass={false}`),
+      because the live site faded essentially every card. Faded-card counts per
+      page vs. the live mirror: home 8/8, teams 16/16, contact-us 20/20,
+      official-info 32/36, membership 4/5, resources 44/46 (the small shortfalls
+      are non-`Card` elements — section wrappers + `QuoteImage` image/featured
+      cards — that the live site faded only subtly). **Opt-outs:** the home
+      counters + sponsors (never faded live) and the teams squad-detail
+      `.hiddenbox` panel cards (live faded only the nav grid).
+    - Verified by Playwright across all 6 pages: every faded card starts
+      `opacity:0` at load and reaches `opacity:1` after scrolling (0 stuck
+      hidden); stays visible under `reducedMotion: reduce` and with no JS.
 - **Visual regression (8 pages × 7 widths = 56):** 18 pixel-identical; the other
   38 are all **< 1.1%** (mostly < 0.3%) — sub-pixel glyph/line-height and
   5–12px margin nuances, treated as acceptable. Notable bugs found + fixed along

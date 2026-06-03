@@ -61,17 +61,21 @@ const navRows = chunk(teams, 4).map((slice, i) => ({
               <div class="info uk-grid-margin" uk-grid>
                 <div class="uk-width-1-1@m">
                   {t.data.squads.map((s) => (
+                    // Squad-detail cards live in the collapsible .hiddenbox
+                    // panels — the live site did not fade these (only the nav
+                    // grid faded), so opt them out of the scrollspy.
                     <CardGrid wrap="uk-margin" grid="uk-child-width-1-1 uk-child-width-1-4@m">
-                      <Card heading={s.name} />
+                      <Card heading={s.name} scrollspyClass={false} />
                       <Card
                         contentLabel="Contact"
                         phone={s.managerName}
                         cta={{ label: 'Email', href: `mailto:${s.managerEmail}` }}
+                        scrollspyClass={false}
                       />
                       {/* Two empty cards pad the squad row to the full 4 columns
                           (blue), so the open panel reads as a full-width band. */}
-                      <Card />
-                      <Card />
+                      <Card scrollspyClass={false} />
+                      <Card scrollspyClass={false} />
                     </CardGrid>
                   ))}
                 </div>

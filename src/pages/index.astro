@@ -57,7 +57,7 @@ const sponsors: Sponsor[] = [
     >
       {
         counters.map(({ count, label }) => (
-          <Card colour="primary">
+          <Card colour="primary" scrollspyClass={false}>
             <h3 class="counter" data-count={count}>
               0
             </h3>
@@ -68,12 +68,9 @@ const sponsors: Sponsor[] = [
     </CardGrid>
   </Section>
 
-  {/* Homesquares (Origins / Ethos / Coaching / Location) */}
-  <Section
-    id="homesquares-section"
-    width="full"
-    uk-scrollspy="target: [uk-scrollspy-class]; cls: uk-animation-fade; delay: false;"
-  >
+  {/* Homesquares (Origins / Ethos / Coaching / Location) — these fade in on
+      scroll (Card emits uk-scrollspy-class by default). */}
+  <Section id="homesquares-section" width="full">
     <div id="homesquares" class="homesquares uk-margin uk-text-center">
       <div class="js-filter uk-child-width-1-2 uk-grid-match" uk-grid>
         {
@@ -81,7 +78,6 @@ const sponsors: Sponsor[] = [
             card.kind === 'image' ? (
               <Card
                 colour="secondary"
-                scrollspyClass
                 lazyImg={{
                   src: card.src,
                   sizes: '(min-width: 1246px) 1246px',
@@ -92,7 +88,6 @@ const sponsors: Sponsor[] = [
             ) : (
               <Card
                 colour="secondary"
-                scrollspyClass
                 dataTag={card.tag}
                 heading={card.heading}
                 body={card.body}
@@ -124,11 +119,11 @@ const sponsors: Sponsor[] = [
             // Only the populated sponsor has a body — placeholders are image-only,
             // so don't pass a slot (which would emit an empty el-content div).
             return s.body ? (
-              <Card colour="primary" dataTag={s.tag} lazyImg={lazyImg} cta={cta}>
+              <Card colour="primary" scrollspyClass={false} dataTag={s.tag} lazyImg={lazyImg} cta={cta}>
                 {s.body}
               </Card>
             ) : (
-              <Card colour="primary" dataTag={s.tag} lazyImg={lazyImg} cta={cta} />
+              <Card colour="primary" scrollspyClass={false} dataTag={s.tag} lazyImg={lazyImg} cta={cta} />
             );
           })
         }
