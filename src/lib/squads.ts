@@ -71,6 +71,11 @@ export function roleFor(email: string | null | undefined): Role {
   return 'none';
 }
 
+/** An example admin address, for the local sign-in panel. */
+export function adminExample(): string {
+  return [...adminEmails][0] ?? 'chair@littletonjuniorfc.com';
+}
+
 /** Every address Cloudflare Access should admit — paste into the Access policy. */
 export function allowlist(): string[] {
   return [...new Set([...squads.map((s) => s.managerEmail), ...adminEmails])].sort();

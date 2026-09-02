@@ -1301,6 +1301,9 @@
   }
   .sched-form button { justify-self: start; border: none; cursor: pointer; }
 
+  .sched-devsignin { list-style: none; margin: 0 0 20px; }
+  .sched-devsignin li { padding: 4px 0; }
+
   .sched-upcoming-title { margin-top: 20px; }
   .sched-list { list-style: none; }
   .sched-list li {

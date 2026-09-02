@@ -14,7 +14,7 @@ import Hero from '../../components/Hero.astro';
 import Section from '../../components/Section.astro';
 import { listRange, pitches } from '../../lib/bookings';
 import { getUser } from '../../lib/access';
-import { squads, squadsForEmail } from '../../lib/squads';
+import { squads, squadsForEmail, adminExample } from '../../lib/squads';
 import { today, addDays, formatLong } from '../../lib/dates';
 import settings from '../../content/settings/bookings.json';
 
@@ -53,9 +53,48 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
 
     {
       !user ? (
-        <p>
-          You are not signed in. <a href="/schedule">Back to the schedule</a>.
-        </p>
+        import.meta.env.DEV ? (
+          <>
+            <h5>Not signed in</h5>
+            <p>
+              On the live site Cloudflare Access handles this: it asks for your email address,
+              emails you a one-time code, and only then lets you through to this page. Access
+              does not run in front of a local dev server, so pick an identity instead:
+            </p>
+            <ul class="sched-devsignin">
+              <li>
+                <a href={`/schedule/book?as=${squads[0].managerEmail}`}>
+                  {squads[0].managerEmail}
+                </a>{' '}
+                — team manager ({squads[0].label})
+              </li>
+              <li>
+                <a href={`/schedule/book?as=${adminExample()}`}>{adminExample()}</a> — committee,
+                can book for any team
+              </li>
+              <li>
+                <a href="/schedule/book?as=nobody@example.com">nobody@example.com</a> — not on the
+                allowlist, to check it is refused
+              </li>
+            </ul>
+            <p>
+              Add <code>?as=</code> to any URL to switch, or{' '}
+              <a href="/schedule/book?as=">sign out</a>. This only exists in dev — it is compiled
+              out of the deployed site.
+            </p>
+          </>
+        ) : (
+          <>
+            <h5>Not signed in</h5>
+            <p>
+              Booking is only open to team managers, and sign-in is handled by Cloudflare Access
+              before you reach this page — so seeing this message usually means the sign-in did
+              not complete. Try <a href="/schedule/book">loading the page again</a>; if it keeps
+              happening, contact your Age Group Coordinator on the{' '}
+              <a href="/contact-us">Contact us</a> page.
+            </p>
+          </>
+        )
       ) : user.role === 'none' ? (
         <p>
           <strong>{user.email}</strong> is not on the list of team managers. If you should be,
