@@ -262,6 +262,29 @@ for (const r of events) {
 }
 
 /*
+ * The same booking is sometimes saved two or three times — three identical
+ * Ospreys U15 rows on bottom, 2026-11-01, 09:30-11:30. Identical pitch, date,
+ * times AND team is one booking entered repeatedly, not a real clash, so keep
+ * the first and report the rest. Anything that differs in any field is left
+ * alone for a human to look at.
+ */
+const duplicates = [];
+{
+  const seen = new Map();
+  for (let i = kept.length - 1; i >= 0; i--) {
+    const b = kept[i];
+    const k = [b.pitch, b.date, b.start_time, b.end_time, b.team_label].join('|');
+    if (seen.has(k)) {
+      duplicates.push({ ...b, keptId: seen.get(k) });
+      kept.splice(i, 1);
+    } else {
+      seen.set(k, b.joomla_id);
+    }
+  }
+  duplicates.reverse();
+}
+
+/*
  * Club policy is one team per pitch at a time (maxConcurrentPerPitch = 1), but
  * the old system never enforced it and this import writes SQL directly, so the
  * application-level check never sees these rows. Any overlap that lands in the
@@ -346,6 +369,7 @@ console.log(`Dump:            ${DUMP}`);
 console.log(`Events in dump:  ${events.length}`);
 console.log(`Cutoff:          ${CUTOFF}`);
 console.log(`Kept:            ${kept.length}`);
+console.log(`  duplicates dropped: ${duplicates.length} (identical pitch/date/time/team)`);
 console.log(`  squad matched:   ${withSquad}/${kept.length}`);
 console.log(`  manager matched: ${withManager}/${kept.length}`);
 console.log(`Rejected:        ${unmapped.length}  (scripts/out/bookings-unmapped.csv)`);
