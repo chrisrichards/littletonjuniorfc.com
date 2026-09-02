@@ -97,7 +97,7 @@ const label = (b: Booking) => squadById(b.squad_id)?.label ?? b.team_label;
                           <span class="sched-free">&mdash;</span>
                         ) : (
                           booked.map((b) => (
-                            <a class="sched-booking" href={`/schedule/booking/${b.id}`}>
+                            <a class="sched-booking" href={`/schedule/booking/${b.id}#schedule`}>
                               <span class="sched-time">
                                 {b.start_time}&ndash;{b.end_time}
                               </span>

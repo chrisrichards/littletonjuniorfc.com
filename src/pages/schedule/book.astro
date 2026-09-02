@@ -68,7 +68,7 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
   <Hero variant="image" image="/images/heros/teams.jpg" title="Book a<br>Pitch" />
 
   <Section width="full">
-    <div class="sched-page">
+    <div class="sched-page" id="schedule">
       {ok && <p class="sched-msg is-ok">{ok}</p>}
       {err && <p class="sched-msg is-err">{err}</p>}
 
@@ -208,7 +208,7 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
                     <span class="sched-rowactions">
                       <a
                         class="uk-button uk-button-default sched-edit"
-                        href={`/schedule/book?edit=${b.id}`}
+                        href={`/schedule/book?edit=${b.id}#schedule`}
                       >
                         Edit
                       </a>

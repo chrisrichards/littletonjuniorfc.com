@@ -37,7 +37,9 @@ function safeReturn(value: FormDataEntryValue | null): string {
 const back = (params: Record<string, string>, target = '/schedule/book') =>
   new Response(null, {
     status: 303,
-    headers: { Location: `${target}?${new URLSearchParams(params)}` },
+    // Every page back() can return to carries id="schedule" on its wrapper, so
+    // the ok/err message lands in view rather than below the hero.
+    headers: { Location: `${target}?${new URLSearchParams(params)}#schedule` },
   });
 
 /** Who may change a given booking: admins anything, managers their own. */
