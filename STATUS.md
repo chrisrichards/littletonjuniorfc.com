@@ -170,6 +170,7 @@ launch blocker.
 - `/terms-conditions` — long-form markdown body, fee corrected to 2025/26
 - `/schedule` — public week view, server-rendered from D1
 - `/schedule/book` — booking form, edit and delete, behind Access
+- `/schedule/booking/<id>` — one booking; **public**, editable only for whoever may manage it
 
 ### Cloudflare wiring
 - Account: set up
@@ -207,6 +208,12 @@ eight pages stay prerendered.
   certs endpoint rather than trusting `Cf-Access-Authenticated-User-Email`, which anything
   could set on a request that bypasses Access. Managers book for their own squads; the
   committee (from `people.json`) can book and cancel for anyone.
+- **Every booking on the schedule links to its own page** (`/schedule/booking/<id>`). That page
+  is deliberately **outside** the Access-protected `/schedule/book*` path, because it hangs off
+  the public schedule and has to be readable by anyone; it renders the edit form and a delete
+  button only for whoever may manage that booking, and read-only otherwise. Access sets its
+  cookie site-wide, so a manager who signed in at `/schedule/book` is recognised here without a
+  second prompt; a manager who has not is offered a link that takes them through Access.
 - **Managers edit and delete their own bookings; admins any.** `?edit=<id>` reloads the form
   against an existing booking, checked on the way in and again on submit. Delete is a soft
   cancel (`cancelled_at`), so the record of who booked what survives while the slot frees up

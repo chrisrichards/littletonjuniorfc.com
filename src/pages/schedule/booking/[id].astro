@@ -1,0 +1,192 @@
+---
+/*
+ * One booking, in detail.
+ *
+ * Public, because it hangs off the public schedule — so it sits OUTSIDE the
+ * /schedule/book* path that Cloudflare Access protects. Anyone can read it;
+ * whether it is editable depends on who the caller turns out to be:
+ *
+ *   - can manage it  -> the same form as /schedule/book, plus Delete
+ *   - signed in, not theirs -> read-only
+ *   - not signed in  -> read-only, with a link that takes them through Access
+ *
+ * Access sets its cookie for the whole site, so a manager who has signed in at
+ * /schedule/book is recognised here too without a second prompt.
+ */
+export const prerender = false;
+
+import { env } from 'cloudflare:workers';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Hero from '../../../components/Hero.astro';
+import Section from '../../../components/Section.astro';
+import { byId, pitchLabel, pitches, type Booking } from '../../../lib/bookings';
+import { getUser } from '../../../lib/access';
+import { squads, squadsForEmail } from '../../../lib/squads';
+import { today, addDays, formatLong, weekStart } from '../../../lib/dates';
+import settings from '../../../content/settings/bookings.json';
+
+const id = Number(Astro.params.id);
+const booking: Booking | null =
+  Number.isInteger(id) && id > 0 ? await byId(env.DB, id) : null;
+
+if (!booking || booking.cancelled_at) {
+  return new Response(null, { status: 404, statusText: 'Booking not found' });
+}
+
+let user = null;
+try {
+  user = await getUser(Astro.request);
+} catch {
+  user = null; // ACCESS_* unconfigured — fall back to the read-only view
+}
+
+const canManage =
+  !!user &&
+  (user.role === 'admin' ||
+    (user.role === 'manager' &&
+      booking.manager_email !== null &&
+      booking.manager_email === user.email));
+
+const ok = Astro.url.searchParams.get('ok');
+const err = Astro.url.searchParams.get('err');
+
+const now = today();
+const maxDate = addDays(now, settings.maxWeeksAhead * 7);
+const mine = user?.role === 'admin' ? squads : user ? squadsForEmail(user.email) : [];
+
+const times: string[] = [];
+for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
+  const t = `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+  if (t >= settings.openingTime && t < settings.closingTime) times.push(t);
+}
+
+const mins = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+const duration = mins(booking.end_time) - mins(booking.start_time);
+const backToWeek = `/schedule?week=${weekStart(booking.date)}`;
+const self = `/schedule/booking/${booking.id}`;
+---
+
+<BaseLayout
+  title={`${booking.team_label} — Pitch Bookings | Littleton Junior FC`}
+  description={`${booking.team_label} on the ${pitchLabel(booking.pitch)}, ${formatLong(booking.date)}.`}
+>
+  <Hero variant="image" image="/images/heros/teams.jpg" title="Pitch<br>Bookings" />
+
+  <Section width="full">
+    <div class="sched-page">
+      {ok && <p class="sched-msg is-ok">{ok}</p>}
+      {err && <p class="sched-msg is-err">{err}</p>}
+
+      <h5>{booking.team_label}</h5>
+
+      <dl class="sched-detail">
+        <dt>Pitch</dt>
+        <dd>{pitchLabel(booking.pitch)}</dd>
+        <dt>Date</dt>
+        <dd>{formatLong(booking.date)}</dd>
+        <dt>Time</dt>
+        <dd>{booking.start_time}&ndash;{booking.end_time}</dd>
+        <dt>Manager</dt>
+        <dd>{booking.manager_name ?? 'Not recorded'}</dd>
+      </dl>
+
+      {
+        canManage ? (
+          <>
+            <h5 class="sched-upcoming-title">Change this booking</h5>
+            <form class="sched-form" method="POST" action="/api/bookings">
+              <input type="hidden" name="action" value="update" />
+              <input type="hidden" name="id" value={booking.id} />
+              <input type="hidden" name="return" value={self} />
+
+              <label>
+                Team
+                <select name="squad_id" required>
+                  {mine.map((s) => (
+                    <option value={s.id} selected={booking.squad_id === s.id}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Pitch
+                <select name="pitch" required>
+                  {pitches.map((p) => (
+                    <option value={p.id} selected={booking.pitch === p.id}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Date
+                <input
+                  type="date"
+                  name="date"
+                  required
+                  min={now}
+                  max={maxDate}
+                  value={booking.date}
+                />
+              </label>
+
+              <label>
+                Start
+                <select name="start_time" required>
+                  {times.map((t) => (
+                    <option value={t} selected={t === booking.start_time}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Duration
+                <select name="duration" required>
+                  {settings.durations.map((d) => (
+                    <option value={d} selected={d === duration}>
+                      {d % 60 === 0 ? `${d / 60} hours` : `${Math.floor(d / 60)}h ${d % 60}m`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div class="sched-form-actions">
+                <button class="uk-button uk-button-default" type="submit">
+                  Save changes
+                </button>
+              </div>
+            </form>
+
+            <form method="POST" action="/api/bookings" class="sched-deleteform">
+              <input type="hidden" name="action" value="delete" />
+              <input type="hidden" name="id" value={booking.id} />
+              <input type="hidden" name="return" value={backToWeek} />
+              <button class="uk-button uk-button-default sched-cancel" type="submit">
+                Delete this booking
+              </button>
+            </form>
+          </>
+        ) : user ? (
+          <p class="sched-readonly">
+            This booking belongs to another team, so it is shown read-only. Managers can change
+            their own bookings from <a href="/schedule/book">the booking page</a>.
+          </p>
+        ) : (
+          <p class="sched-readonly">
+            Signed-in team managers can change their own bookings.{' '}
+            <a href="/schedule/book">Sign in to manage a booking</a>.
+          </p>
+        )
+      }
+
+      <p class="sched-foot">
+        <a href={backToWeek}>Back to the schedule</a>
+      </p>
+    </div>
+  </Section>
+</BaseLayout>

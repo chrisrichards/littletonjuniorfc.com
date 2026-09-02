@@ -17,10 +17,27 @@ export const prerender = false;
  * — Access proves who you are, it does not decide which squads you may book for.
  */
 
-const back = (params: Record<string, string>) =>
+/*
+ * Forms post from both /schedule/book and a booking's own page, so they carry a
+ * `return` path saying where to land afterwards. Only same-site /schedule paths
+ * are accepted — a caller-supplied redirect target is an open redirect
+ * otherwise, and "//evil.com" is a protocol-relative URL, not a local path.
+ */
+function safeReturn(value: FormDataEntryValue | null): string {
+  const v = String(value ?? '');
+  // Rejects, in order: anything not under /schedule, "//evil.com" (a
+  // protocol-relative URL, not a local path), and "/schedule/../admin", which a
+  // browser normalises to /admin and so escapes the prefix entirely.
+  const shaped = /^\/schedule(\/[A-Za-z0-9._~\-/]*)?$/.test(v);
+  return shaped && !v.includes('//') && !v.split('/').includes('..')
+    ? v
+    : '/schedule/book';
+}
+
+const back = (params: Record<string, string>, target = '/schedule/book') =>
   new Response(null, {
     status: 303,
-    headers: { Location: `/schedule/book?${new URLSearchParams(params)}` },
+    headers: { Location: `${target}?${new URLSearchParams(params)}` },
   });
 
 /** Who may change a given booking: admins anything, managers their own. */
@@ -97,6 +114,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const form = await request.formData();
   const action = String(form.get('action') ?? 'create');
+  const to = safeReturn(form.get('return'));
 
   /*
    * Delete is a soft cancel: the row stays with cancelled_at set, so the record
@@ -105,45 +123,48 @@ export const POST: APIRoute = async ({ request }) => {
    */
   if (action === 'cancel' || action === 'delete') {
     const id = Number(form.get('id'));
-    if (!Number.isInteger(id)) return back({ err: 'That booking could not be found.' });
+    if (!Number.isInteger(id)) return back({ err: 'That booking could not be found.' }, to);
 
     const existing = await byId(env.DB, id);
     if (!existing || existing.cancelled_at) {
-      return back({ err: 'That booking could not be found.' });
+      return back({ err: 'That booking could not be found.' }, to);
     }
     if (!canManage(user, existing)) {
-      return back({ err: 'That booking belongs to another manager.' });
+      return back({ err: 'That booking belongs to another manager.' }, to);
     }
     return (await cancel(env.DB, id))
-      ? back({ ok: `Deleted ${existing.team_label} on ${existing.date}.` })
-      : back({ err: 'That booking was already deleted.' });
+      ? back({ ok: `Deleted ${existing.team_label} on ${existing.date}.` }, to)
+      : back({ err: 'That booking was already deleted.' }, to);
   }
 
   if (action === 'update') {
     const id = Number(form.get('id'));
-    if (!Number.isInteger(id)) return back({ err: 'That booking could not be found.' });
+    if (!Number.isInteger(id)) return back({ err: 'That booking could not be found.' }, to);
 
     const existing = await byId(env.DB, id);
     if (!existing || existing.cancelled_at) {
-      return back({ err: 'That booking could not be found.' });
+      return back({ err: 'That booking could not be found.' }, to);
     }
     if (!canManage(user, existing)) {
-      return back({ err: 'That booking belongs to another manager.' });
+      return back({ err: 'That booking belongs to another manager.' }, to);
     }
 
     const parsed = readBooking(form, user);
-    if ('err' in parsed) return back({ err: parsed.err, edit: String(id) });
+    if ('err' in parsed) return back({ err: parsed.err, edit: String(id) }, to);
 
     const result = await update(env.DB, id, parsed.fields);
     if (!result.ok) {
-      if (result.reason === 'gone') return back({ err: 'That booking could not be found.' });
-      return back({ err: clashMessage(parsed.fields.pitch, result.existing), edit: String(id) });
+      if (result.reason === 'gone') return back({ err: 'That booking could not be found.' }, to);
+      return back(
+        { err: clashMessage(parsed.fields.pitch, result.existing), edit: String(id) },
+        to
+      );
     }
     const f = parsed.fields;
-    return back({
-      ok: `Updated ${f.team_label} to ${f.date}, ${f.start_time}\u2013${f.end_time}.`,
-      week: f.date,
-    });
+    return back(
+      { ok: `Updated ${f.team_label} to ${f.date}, ${f.start_time}\u2013${f.end_time}.`, week: f.date },
+      to
+    );
   }
 
   const parsed = readBooking(form, user);

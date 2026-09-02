@@ -1272,6 +1272,11 @@
   .sched tr.is-today th,
   .sched tr.is-today td { background: #f0f7fc; }
 
+  /* Each booking links to its own page; keep the cell looking like text rather
+     than a run of links, and let the whole block be the target. */
+  a.sched-booking { display: block; color: inherit; }
+  a.sched-booking:hover { color: inherit; }
+  a.sched-booking:hover .sched-team { text-decoration: underline; }
   .sched-booking + .sched-booking { margin-top: 6px; }
   .sched-time { display: block; color: var(--color-brand); }
   .sched-team { display: block; }
@@ -1306,6 +1311,18 @@
 
   .sched-devsignin { list-style: none; margin: 0 0 20px; }
   .sched-devsignin li { padding: 4px 0; }
+
+  .sched-detail {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 20px;
+    margin: 0 0 24px;
+  }
+  .sched-detail dt { color: #8a8a8a; }
+  .sched-detail dd { margin: 0; }
+
+  .sched-readonly { margin-bottom: 20px; }
+  .sched-deleteform { margin-bottom: 20px; }
 
   .sched-form-actions { display: flex; align-items: center; gap: 14px; }
 
