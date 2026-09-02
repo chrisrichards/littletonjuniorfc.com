@@ -30,7 +30,7 @@ hero: "/images/home/Home_banner.jpg"
     
     We believe that fun should always come first. If you’re enjoying football, then you’re going to be better at it. We are a club for children of all ages and abilities, where football is for everyone, not just the elite few. Download our ethos document to read more.
     
-    [Read more](/images/downloads/Club_Ethos_2021_pb3.pdf)
+    [Read more](/downloads/Club_Ethos_2021_pb3.pdf)
     
 -   ## Coaching
     

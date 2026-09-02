@@ -4,7 +4,7 @@
     "section": "General",
     "title": "Our ethos",
     "description": "Download our club's ethos document here.",
-    "href": "/images/downloads/Club_Ethos_2021_pb3.pdf",
+    "href": "/downloads/Club_Ethos_2021_pb3.pdf",
     "action": "download",
     "order": 0
   },
@@ -13,7 +13,7 @@
     "section": "General",
     "title": "Player Development",
     "description": "Download our club's player development plan here.",
-    "href": "/images/downloads/LJFC_Player_Development.pdf",
+    "href": "/downloads/LJFC_Player_Development.pdf",
     "action": "download",
     "order": 1
   },
@@ -22,7 +22,7 @@
     "section": "Forms & Guides",
     "title": "Membership",
     "description": "Instructions for joining the club. NB this must be agreed first with a year rep (see Contact Us page).",
-    "href": "/images/downloads/LJFC_Registration_2025-26.pdf",
+    "href": "/downloads/LJFC_Registration_2025-26.pdf",
     "action": "download",
     "order": 2
   },
@@ -31,7 +31,7 @@
     "section": "Forms & Guides",
     "title": "DBS checks",
     "description": "Instructions on how to apply for a DBS background check – compulsory for all football coaches.",
-    "href": "/images/downloads/LJFC_DBS_Instructions.pdf",
+    "href": "/downloads/LJFC_DBS_Instructions.pdf",
     "action": "download",
     "order": 3
   },
@@ -49,7 +49,7 @@
     "section": "Forms & Guides",
     "title": "Other pitch bookings",
     "description": "Guide to booking KGV pitches and Garrison Ground.",
-    "href": "/images/downloads/LJFC_Pitch_Bookings_2025.pdf",
+    "href": "/downloads/LJFC_Pitch_Bookings_2025.pdf",
     "action": "download",
     "order": 5
   },
@@ -58,7 +58,7 @@
     "section": "Forms & Guides",
     "title": "Incident Form",
     "description": "Use this form to tell the club about any injuries or accidents that occur during training or matches.",
-    "href": "/images/downloads/LJFC_Incident_Form.pdf",
+    "href": "/downloads/LJFC_Incident_Form.pdf",
     "action": "download",
     "order": 6
   },
@@ -139,7 +139,7 @@
     "section": "The FA",
     "title": "fa anti-bullying policy",
     "description": "The anti-bulling policy we adhere to.",
-    "href": "/images/downloads/FA-anti-bullying-policy-for-clubs.pdf",
+    "href": "/downloads/FA-anti-bullying-policy-for-clubs.pdf",
     "action": "download",
     "order": 15
   },
@@ -220,7 +220,7 @@
     "section": "Venue Guides",
     "title": "Littleton Recreation Ground",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_Littleton_Rec_2025.pdf",
+    "href": "/downloads/Venue_Pack_Littleton_Rec_2025.pdf",
     "action": "download",
     "order": 24
   },
@@ -229,7 +229,7 @@
     "section": "Venue Guides",
     "title": "King George V Playing Fields",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_KGV.pdf",
+    "href": "/downloads/Venue_Pack_KGV.pdf",
     "action": "download",
     "order": 25
   },
@@ -238,7 +238,7 @@
     "section": "Venue Guides",
     "title": "Bar End astro",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_Bar_End.pdf",
+    "href": "/downloads/Venue_Pack_Bar_End.pdf",
     "action": "download",
     "order": 26
   },
@@ -247,7 +247,7 @@
     "section": "Venue Guides",
     "title": "The Garrison Ground",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_Garrison.pdf",
+    "href": "/downloads/Venue_Pack_Garrison.pdf",
     "action": "download",
     "order": 27
   },
@@ -256,7 +256,7 @@
     "section": "Venue Guides",
     "title": "The Henry Beaufort School",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_Henry_Beaufort.pdf",
+    "href": "/downloads/Venue_Pack_Henry_Beaufort.pdf",
     "action": "download",
     "order": 28
   },
@@ -265,7 +265,7 @@
     "section": "Venue Guides",
     "title": "St Peter's Catholic Primary",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_St_Peters.pdf",
+    "href": "/downloads/Venue_Pack_St_Peters.pdf",
     "action": "download",
     "order": 29
   },
@@ -274,7 +274,7 @@
     "section": "Venue Guides",
     "title": "River Park Astro",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_River_Park.pdf",
+    "href": "/downloads/Venue_Pack_River_Park.pdf",
     "action": "download",
     "order": 30
   },
@@ -283,7 +283,7 @@
     "section": "Venue Guides",
     "title": "North Walls Recreation Ground",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_North_Walls.pdf",
+    "href": "/downloads/Venue_Pack_North_Walls.pdf",
     "action": "download",
     "order": 31
   },
@@ -292,7 +292,7 @@
     "section": "Venue Guides",
     "title": "Hunter Park",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_Hunter_Park.pdf",
+    "href": "/downloads/Venue_Pack_Hunter_Park.pdf",
     "action": "download",
     "order": 32
   },
@@ -301,7 +301,7 @@
     "section": "Venue Guides",
     "title": "Sir John Moore Barracks",
     "description": "Including location and emergency action plan.",
-    "href": "/images/downloads/Venue_Pack_ATR.pdf",
+    "href": "/downloads/Venue_Pack_ATR.pdf",
     "action": "download",
     "order": 33
   },
@@ -310,7 +310,7 @@
     "section": "Kit ordering",
     "title": "Instructions",
     "description": "Instructions for ordering LJFC kit.",
-    "href": "/images/downloads/LJFC_Kit_2024-25.pdf",
+    "href": "/downloads/LJFC_Kit_2024-25.pdf",
     "action": "download",
     "order": 34
   },
@@ -328,7 +328,7 @@
     "section": "Kit ordering",
     "title": "Macron order form",
     "description": "Order form for managers to order match kit (read instructions above first).",
-    "href": "/images/downloads/Macron_bespoke_order_form_2024.pdf",
+    "href": "/downloads/Macron_bespoke_order_form_2024.pdf",
     "action": "download",
     "order": 36
   },
@@ -346,7 +346,7 @@
     "section": "Kit ordering",
     "title": "Match kit size guide",
     "description": "Macron size charts.",
-    "href": "/images/downloads/LJFC_MACRON_SIZE_CHART_2022.pdf",
+    "href": "/downloads/LJFC_MACRON_SIZE_CHART_2022.pdf",
     "action": "download",
     "order": 38
   }

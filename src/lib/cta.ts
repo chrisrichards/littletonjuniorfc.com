@@ -7,7 +7,7 @@
  * link to our own /schedule and it opened in a new tab.
  *
  * So: only links that actually leave the site open a new tab. Same-origin pages
- * ("/schedule") and same-origin downloads ("images/downloads/x.pdf") stay in the
+ * ("/schedule") and same-origin downloads ("/downloads/x.pdf") stay in the
  * current tab, and mailto: hands off to a mail client rather than a tab.
  */
 export function isExternal(href: string): boolean {

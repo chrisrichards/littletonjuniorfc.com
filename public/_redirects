@@ -1,8 +1,11 @@
-# Legacy Joomla URL redirects — fill in once we have the final URL map
-# Format: <from> <to> <status>
+# Redirects served by Cloudflare Workers static assets.
 #
-# /component/users/*  /              301
-# /index.php          /              301
+# Legacy Joomla URLs (index.php?option=com_*, /component/*) are deliberately
+# NOT redirected — decided 2026-09-02, they 404 after cutover. See STATUS.md
+# "Decisions / workarounds worth knowing".
 #
-# Decided 2026-09-02: we are NOT adding legacy Joomla redirects. Old paths
-# 404 after cutover. Left in place only as a record of the decision.
+# The one exception: the PDFs moved from Joomla's /images/downloads/ to
+# /downloads/ on 2026-09-02. These files get linked directly from emails and
+# WhatsApp groups and indexed by search engines, so the old paths must keep
+# working — this is why moving them was safe.
+/images/downloads/* /downloads/:splat 301
