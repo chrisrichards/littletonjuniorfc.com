@@ -3,12 +3,12 @@
 ## Target stack
 
 - **Framework:** Astro
-- **Hosting:** Cloudflare Pages
+- **Hosting:** Cloudflare Workers (static assets, built by Workers Builds)
 - **Database (bookings):** Cloudflare D1
 - **Auth (bookings):** Cloudflare Access with email allowlist
-- **CMS:** Pages CMS (pagescms.org — hosted, Git-based; unrelated to Cloudflare
-  Pages above). Schema in `.pages.yml`, content stays in this repo. Editors are
-  invited by email and don't need GitHub accounts.
+- **CMS:** Pages CMS (pagescms.org — hosted, Git-based; nothing to do with
+  Cloudflare, despite the name). Schema in `.pages.yml`, content stays in this
+  repo. Editors are invited by email and don't need GitHub accounts.
 - **Cost target:** £0/month (vs current ~£6/month on AWS Lightsail)
 
 ---
@@ -186,7 +186,7 @@ SELECT email FROM joomla_users WHERE block = 0 AND id IN (
 
 ## Phase 5: Build and verify
 
-Build the Astro site, deploy to Cloudflare Pages on a preview URL (e.g. `preview.littletonjuniorfc.com` or just the default `*.pages.dev` URL Cloudflare gives you).
+Build the Astro site and deploy it to a preview URL (e.g. `preview.littletonjuniorfc.com`, or just the default `*.workers.dev` URL Cloudflare gives you — this is currently https://littletonjuniorfc.yellowfeather.workers.dev).
 
 ### Verification checklist
 
@@ -214,7 +214,7 @@ Build the Astro site, deploy to Cloudflare Pages on a preview URL (e.g. `preview
 rather than 301 to `/`. `public/_redirects` stays as placeholder comments.
 The original suggestion was:
 
-For legacy URLs, set up redirects in Cloudflare Pages `_redirects` file:
+For legacy URLs, set up redirects in `public/_redirects`:
 
 ```
 /component/users/* /  301
@@ -230,7 +230,7 @@ Once the preview site looks identical and works correctly:
 1. **Lower the DNS TTL** on the current `littletonjuniorfc.com` records to 5 minutes, at least 24 hours before cutover. This lets you switch back quickly if needed.
 2. **Schedule the cutover for a low-traffic window** — probably a weekday morning, definitely not a Friday evening before matches.
 3. **Final database sync** — re-run the booking migration against the latest data, since people may have made bookings since your first migration.
-4. **Switch DNS** to point at Cloudflare Pages. Use Cloudflare as your nameservers if not already.
+4. **Switch DNS** to point at the Worker. Use Cloudflare as your nameservers if not already.
 5. **Keep the Lightsail server running for ~2 weeks** before tearing it down. Cheap insurance.
 6. **Add Cloudflare Access** to the manager accounts and send them onboarding instructions.
 
@@ -331,7 +331,7 @@ littletonjuniorfc/
 │       └── global.css
 ├── .pages.yml                      # ← Pages CMS schema (no code, no route)
 ├── astro.config.mjs
-├── wrangler.toml                   # Cloudflare Pages + D1 binding
+├── wrangler.jsonc                  # Worker config + D1 binding
 ├── package.json
 └── tsconfig.json
 ```
