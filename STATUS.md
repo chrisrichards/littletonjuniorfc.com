@@ -293,7 +293,7 @@ launch blocker.
 | 1. Understand what to rebuild | ✅ | Documented in `inventory.md` |
 | 2. Recreate styling | ✅ | Started as Approach A (vendored YOOtheme CSS); superseded 2026-06-02 by the UIkit→Tailwind migration. All CSS is now one hand-authored `src/styles/app.css`. |
 | 3. Migrate content | ✅ | `scripts/migrate-from-joomla.mjs` + content collections + all 8 navigable pages ported |
-| 4. Booking system | ✅ | Schema, `/schedule`, booking form, endpoints, roles and import all built and deployed. Access application live (One-time PIN, 49 addresses); 100 bookings imported from 2026-09-01. Two club-side follow-ups remain (below) — neither is engineering work. |
+| 4. Booking system | ✅ | Schema, `/schedule`, booking form, endpoints, roles and import all built and deployed. Access application live (One-time PIN; addresses come from the `LJFC Emails` Cloudflare list, seeded with 49); 100 bookings imported from 2026-09-01. Two club-side follow-ups remain (below) — neither is engineering work. |
 | 5. Build + verify | ✅ | Full visual diff against live (8 pages × 7 widths) plus links, images, PDFs, JS behaviour and head metadata all checked 2026-09-02. Four regressions found and fixed — three layout (`91ee803`), plus 27 broken PDF downloads (`82d2063`). |
 | 6. Cutover | ❌ | DNS still on Lightsail. Phase 4 has shipped, so this is now gated only on the club resolving the 10 review bookings. |
 | 7. Decommission | ❌ | Blocked on Phase 6 |
@@ -323,7 +323,11 @@ launch blocker.
   `wrangler pages project list`
 - D1 database: `ljfc-bookings`, id `38d3059f-cb06-45e2-a38b-23641ea1d19d`
 - D1 binding (`DB`) declared in `wrangler.jsonc`, which Workers Builds reads from the repo
-- Cloudflare Access: **live** over `/schedule/book*` + `/api/bookings*` — One-time PIN, 49 addresses
+- Cloudflare Access: **live** over `/schedule/book*` + `/api/bookings*` — One-time PIN. The
+  policy does **not** hold addresses inline: it reads the `LJFC Emails` Cloudflare list
+  (dashboard → Zero Trust → Reusable components → Lists), seeded with the 49 from
+  `allowlist()`. Add or remove people there, in one place. See README "Where the Access
+  allowlist actually lives" for how this drifts from the app-side role check.
 
 ### Content collections (`src/content.config.ts`)
 - `pages/*.md` — long-form copy
@@ -395,7 +399,8 @@ eight pages stay prerendered.
 _Both original blockers — a fresh `mysqldump` and the Access application — are
 resolved. The dump was taken, 100 bookings imported from 2026-09-01, and the
 Access application is live over `/schedule/book*` + `/api/bookings*` with the
-One-time PIN allowlist from `allowlist()` in `src/lib/squads.ts` (49 addresses),
+One-time PIN, reading the `LJFC Emails` list seeded from `allowlist()` in
+`src/lib/squads.ts` (49 addresses),
 plus `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` on the Worker._
 
 What remains is club-side, not engineering:
@@ -484,7 +489,7 @@ go-live".)
 - [x] Allowlist — taken from `teams.json` + `people.json`, not the Joomla users table, which held
       only 5 accounts and one shared `coach` login
 - [x] Cloudflare Access application over `schedule/book`, `schedule/book/` and `api/bookings*`,
-      One-time PIN, 49 addresses
+      One-time PIN, reading the `LJFC Emails` Cloudflare list (seeded with 49 addresses)
 - [x] Public `/schedule`, Access-gated `/schedule/book`, per-booking `/schedule/booking/<id>`
 - [x] Create, edit and delete, scoped by role
 - [x] 100 bookings imported from 2026-09-01 onwards
