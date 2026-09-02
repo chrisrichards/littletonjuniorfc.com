@@ -244,7 +244,7 @@ launch blocker.
 | 2. Recreate styling | ✅ | Approach A (vendored YOOtheme CSS) validated by home-page spike |
 | 3. Migrate content | ✅ | `scripts/migrate-from-joomla.mjs` + content collections + all 8 navigable pages ported |
 | 4. Booking system | 🟡 | Schema, `/schedule`, booking form, endpoints and import script all built and tested locally. Blocked on: a fresh dump, and the Access application. |
-| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Remaining: `_redirects` policy for Joomla legacy URLs. |
+| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Verification itself is complete; the remaining Phase 5 items are the two visual nits under "Pre-launch polish". |
 | 6. Cutover | ❌ | DNS still on Lightsail; cannot do this until Phase 4 ships |
 | 7. Decommission | ❌ | Blocked on Phase 6 |
 
@@ -351,12 +351,13 @@ eight pages stay prerendered.
 ## What's deferred / known issues
 
 ### Functional gaps (block public cutover)
-1. **Legacy URL redirects.** `public/_redirects` is placeholders. Anyone hitting an old Joomla URL
-   (`index.php?…`, `/component/users/*`) 404s.
-2. **10 bookings need a decision from the club** — `scripts/out/bookings-review.txt`. Nine are
+1. **10 bookings need a decision from the club** — `scripts/out/bookings-review.txt`. Nine are
    Typhoons U13, a team that books pitches but appears nowhere on the website, so those bookings
    have no manager email and only committee members can change them. The tenth is one booking made
    for two squads at once (U14 Vipers/Cobras).
+
+_(Legacy URL redirects were here; they are now a closed decision — see
+"Decisions / workarounds worth knowing".)_
 
 _(Phase 4 and the Access application are done — see the 2026-09-02 entry above.)_
 
@@ -385,6 +386,10 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 4. **Schedule article (id=1, alias `pitch-bookings`)** deliberately excluded from migration — that page is rebuilt against D1.
 5. **Membership card alternation** (Our Subs dark / Joining Us blue / Paying Subs dark / Your Details blue) differs from `custom.css`'s rule (which would put 1+4 blue). Patched in `overrides.css` to match what the live site renders today.
 6. **Nav alignment**: `.tm-header .uk-navbar-nav > li > a { align-items: flex-start; padding-top: 26px }` in overrides.css gives top-aligned text with the right gap below the white underline.
+7. **Legacy URL redirects: decided against (2026-09-02).** `public/_redirects`
+   stays as placeholder comments. Old Joomla paths (`index.php?option=com_…`,
+   `/component/*`) will 404 after cutover rather than 301 to `/`. This was
+   previously logged as a cutover blocker; it is not one.
 
 ## What's next (suggested order)
 
@@ -392,7 +397,7 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 - [x] Verify mobile breakpoints on every ported page — done 2026-09-02 via the live diff
 - [ ] Fix the Resources Forms & Guides grid gap
 - [ ] Add contact-us bottom image + testimonial
-- [ ] Decide on `_redirects` policy for Joomla legacy URLs (e.g. `/index.php* → /`, `/component/*  → /`)
+- [x] ~~Decide on `_redirects` policy for Joomla legacy URLs~~ **Decided 2026-09-02: skip them** (see Decisions #7)
 
 ### Phase 4: booking system — done
 - [x] D1 schema (`migrations/0001_bookings.sql`), applied local and remote

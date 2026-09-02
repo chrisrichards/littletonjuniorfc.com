@@ -208,6 +208,10 @@ Build the Astro site, deploy to Cloudflare Pages on a preview URL (e.g. `preview
 - Form submissions (no PHP backend anymore)
 - Any embedded Joomla modules or plugins on pages that aren't replicated
 
+**Decided 2026-09-02: not doing this.** Old Joomla paths will 404 after cutover
+rather than 301 to `/`. `public/_redirects` stays as placeholder comments.
+The original suggestion was:
+
 For legacy URLs, set up redirects in Cloudflare Pages `_redirects` file:
 
 ```

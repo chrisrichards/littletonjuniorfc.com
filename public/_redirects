@@ -3,3 +3,6 @@
 #
 # /component/users/*  /              301
 # /index.php          /              301
+#
+# Decided 2026-09-02: we are NOT adding legacy Joomla redirects. Old paths
+# 404 after cutover. Left in place only as a record of the decision.
