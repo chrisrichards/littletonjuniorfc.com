@@ -19,7 +19,8 @@ visual diff doesn't cover. One serious find.
 causes, either of which alone would have broken most of them:
 
 1. **The files were never migrated.** `public/images/downloads/` held exactly one
-   PDF. The other 27 were sitting in the wget capture at
+   PDF (the directory has since moved to `public/downloads/` — see Decisions #8).
+   The other 27 were sitting in the wget capture at
    `../current/littletonjuniorfc.com/images/downloads/` and had never been copied
    across. 26 recovered from there; `Macron_bespoke_order_form_2024.pdf` is not in
    the capture (added to live after it was taken) and was pulled from live.
@@ -37,7 +38,8 @@ Comparing every Resources card href against live also caught an **off-by-one**:
 
 | check | result |
 |---|---|
-| Internal links (37, incl. 28 PDFs) | 0 broken on workers.dev |
+| Internal links (52, incl. 28 PDFs) | 0 broken on workers.dev — the count covers the `/schedule` routes, which a local static server cannot serve |
+| Old `/images/downloads/*` paths | 301 → `/downloads/*` (added when the PDFs moved) |
 | Pages returning non-200 | none across all 9 routes |
 | Images failing to decode | none |
 | Teams "More" panel + close button | pass |
@@ -448,10 +450,18 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 4. **Schedule article (id=1, alias `pitch-bookings`)** deliberately excluded from migration — that page is rebuilt against D1.
 5. **Membership card alternation** (Our Subs dark / Joining Us blue / Paying Subs dark / Your Details blue) differs from the old `custom.css` rule (which would put 1+4 blue). Reproduced in `src/styles/app.css` (`#membership > div > div:nth-child(…)`) to match what the live site renders today.
 6. **Nav alignment**: the nav links use `align-items: flex-start` with a top padding so the text sits high with the right gap below the white underline. Now in `src/styles/app.css` (~line 1130).
-7. **Legacy URL redirects: decided against (2026-09-02).** `public/_redirects`
-   stays as placeholder comments. Old Joomla paths (`index.php?option=com_…`,
-   `/component/*`) will 404 after cutover rather than 301 to `/`. This was
-   previously logged as a cutover blocker; it is not one.
+7. **Legacy URL redirects: decided against (2026-09-02),** with one deliberate
+   exception. Old Joomla paths (`index.php?option=com_…`, `/component/*`) will
+   404 after cutover rather than 301 to `/`. This was previously logged as a
+   cutover blocker; it is not one.
+8. **PDFs moved to `/downloads/` (2026-09-02), and this one *is* redirected.**
+   They were at `/images/downloads/`, inherited from Joomla putting every asset
+   under `/images/`. `public/_redirects` carries a single rule —
+   `/images/downloads/* /downloads/:splat 301`. Unlike the open-ended Joomla
+   legacy patterns, these are 28 known files that get linked directly from
+   emails and WhatsApp groups and are indexed by search engines, so the old
+   paths have to keep working. Without the rule the move would have silently
+   broken every shared link at cutover.
 
 ## What's next (suggested order)
 

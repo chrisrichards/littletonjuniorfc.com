@@ -189,9 +189,9 @@ Build the Astro site, deploy to Cloudflare Pages on a preview URL (e.g. `preview
 ### Verification checklist
 
 - [x] Visual diff every page against the live site at desktop and mobile widths — done 2026-09-02, 8 pages × 7 widths
-- [x] All internal links work — 37 checked, 0 broken
+- [x] All internal links work — 52 checked on the deploy, 0 broken (incl. 28 PDFs and the `/schedule` routes)
 - [x] All images load — no decode failures across all 9 routes
-- [x] All PDFs are accessible — **27 of 28 were 404ing**; fixed in `82d2063`
+- [x] All PDFs are accessible — **27 of 28 were 404ing**; fixed in `82d2063`. Subsequently moved from `/images/downloads/` to `/downloads/` (`61f543d`) with a `/images/downloads/* /downloads/:splat 301` rule so shared and indexed links keep working.
 - [x] ~~Contact form works~~ **N/A — the live site has no form.** Verified 2026-09-02: zero `<form>`/`<input>`/`<textarea>` elements on any of the 8 live pages. Contact is entirely email links, obfuscated by Joomla's `cloak…` script (20 addresses on contact-us alone), which the port renders as plain `mailto:`. No Formspree/Resend/Postmark needed.
 - [x] Schedule renders correctly with migrated bookings — 100 bookings from 2026-09-01
 - [x] Authorised managers can log in via Cloudflare Access and create bookings — One-time PIN, 49 addresses
