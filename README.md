@@ -152,8 +152,8 @@ npx wrangler d1 execute ljfc-bookings --remote --file=./path/to/schema.sql   # p
 npx wrangler d1 execute ljfc-bookings --remote --command="SELECT * FROM bookings LIMIT 5"
 ```
 
-The bookings schema is not written yet — see `migration-plan.md` §4 for the proposed shape
-and `STATUS.md` for what remains.
+The schema lives in `migrations/0001_bookings.sql` and is applied to both the local and
+remote databases — see the next section for the commands.
 
 ### Pitch bookings (D1)
 
@@ -195,15 +195,43 @@ in `teams.json`, admins from three places, in order of privacy:
 including those from the secret. Note that being on the Access policy is not enough on its
 own: Access proves who you are, and this list decides what you may do.
 
-### Not yet wired up
+#### Where the Access allowlist actually lives
 
-These are prerequisites for pointing the public domain at this site, and none of them are
-done — see `STATUS.md`:
+The addresses are **not** inline in the Access policy. They are held in a Cloudflare list
+named **`LJFC Emails`**, in the dashboard under:
 
-- **Cloudflare Access** — no policy on `/schedule/book`, no manager email allowlist
-- **Legacy redirects** — `public/_redirects` is still commented-out placeholders, so old
-  Joomla URLs will 404
-- **Booking system** — `/schedule` is a "coming soon" placeholder
+> **Zero Trust → Reusable components → Lists**
+
+The Access application for `/schedule/book*` and `/api/bookings*` references that list, so
+adding or removing someone is done there, in one place, rather than by editing the policy.
+
+**These are two separate gates, and they drift.** The list decides who may *reach* the
+Worker; `roleFor()` in `src/lib/squads.ts` decides what they may *do* once they arrive, and
+it reads `teams.json`, `people.json`, `settings/bookings.json` and the `ADMIN_EMAILS` secret.
+Adding someone to `LJFC Emails` alone gets them past Access and then straight into
+*"<email> is not on the list of team managers."* Changing a manager in `teams.json` and
+redeploying does not touch the list. Whenever you change one, check the other:
+
+```sh
+node scripts/print-allowlist.mjs        # 49 addresses, one per line
+```
+
+That reimplements `allowlist()` against the JSON directly — `squads.ts` itself imports
+`cloudflare:workers` and cannot run outside a Worker. It therefore prints everything except
+addresses held only in the `ADMIN_EMAILS` secret, which by design are not in this repo.
+
+### Still open before cutover
+
+Everything in this section used to list Access, redirects and the booking system as unbuilt.
+All three are done — see `STATUS.md` for the detail. What actually remains:
+
+- **10 review bookings** need a decision from the club (`scripts/out/bookings-review.txt`) —
+  the only real cutover blocker
+- **Keystatic** was never built and is deliberately deferred until after go-live; content is
+  edited by changing files in this repo
+- **Legacy Joomla URLs** (`index.php?option=com_*`, `/component/*`) are deliberately *not*
+  redirected and will 404. The one exception is the PDFs, which moved from
+  `/images/downloads/` to `/downloads/` and carry a 301 in `public/_redirects`
 
 ### Cutover (not done)
 
