@@ -6,7 +6,9 @@ Living document — update this when something material changes (phase completes
 
 ## TL;DR
 
-Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is built but not yet live: Cloudflare Access is unconfigured and the bookings still need importing from a fresh Joomla dump.
+Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev, and as of 2026-09-02 has been **diffed against the live site** at 8 pages × 7 widths with the three regressions that found now fixed. The pitch booking system (**Phase 4 is complete**) is deployed: Cloudflare Access is live with a 49-address One-time PIN allowlist, and 100 bookings are imported from 2026-09-01.
+
+**DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The one thing standing between here and cutover is the club resolving 10 review bookings (`scripts/out/bookings-review.txt`). Keystatic was never built and is deliberately deferred until after go-live.
 
 ## 2026-09-02 — First visual diff against the live Joomla site
 
@@ -243,9 +245,9 @@ launch blocker.
 | 1. Understand what to rebuild | ✅ | Documented in `inventory.md` |
 | 2. Recreate styling | ✅ | Approach A (vendored YOOtheme CSS) validated by home-page spike |
 | 3. Migrate content | ✅ | `scripts/migrate-from-joomla.mjs` + content collections + all 8 navigable pages ported |
-| 4. Booking system | 🟡 | Schema, `/schedule`, booking form, endpoints and import script all built and tested locally. Blocked on: a fresh dump, and the Access application. |
-| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Verification itself is complete and pre-launch polish is clear. Still unverified since the port: PDFs, Keystatic, mobile menu, counters, OG/favicon/titles. |
-| 6. Cutover | ❌ | DNS still on Lightsail; cannot do this until Phase 4 ships |
+| 4. Booking system | ✅ | Schema, `/schedule`, booking form, endpoints, roles and import all built and deployed. Access application live (One-time PIN, 49 addresses); 100 bookings imported from 2026-09-01. Two club-side follow-ups remain (below) — neither is engineering work. |
+| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Verification itself is complete and pre-launch polish is clear. Still unverified since the port: PDFs, mobile menu, counters, OG/favicon/titles. |
+| 6. Cutover | ❌ | DNS still on Lightsail. Phase 4 has shipped, so this is now gated only on the club resolving the 10 review bookings. |
 | 7. Decommission | ❌ | Blocked on Phase 6 |
 
 ## What works
@@ -341,14 +343,29 @@ eight pages stay prerendered.
 
 ### Blocked on
 
-1. **A fresh `mysqldump`.** `../current/ljfc-db.sql` is from 2026-05-14 and contains exactly
-   one booking on/after the 2026-09-01 cutoff (a 2028-09-09 row that looks like a typo).
-   Nothing to import until the live Lightsail database is dumped again.
-2. **The Access application** on `/schedule/book*` + `/api/bookings*`, with the One-time PIN
-   allowlist from `allowlist()` in `src/lib/squads.ts`, plus `ACCESS_TEAM_DOMAIN` and
-   `ACCESS_AUD` vars on the Worker.
+_Both original blockers — a fresh `mysqldump` and the Access application — are
+resolved. The dump was taken, 100 bookings imported from 2026-09-01, and the
+Access application is live over `/schedule/book*` + `/api/bookings*` with the
+One-time PIN allowlist from `allowlist()` in `src/lib/squads.ts` (49 addresses),
+plus `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` on the Worker._
+
+What remains is club-side, not engineering:
+
+1. **The 10 review bookings** (`scripts/out/bookings-review.txt`). Nine are Typhoons
+   U13 — a team that books pitches but appears nowhere on the website, so those
+   bookings have no manager email and only committee members can change them. The
+   tenth is one booking made for two squads at once (U14 Vipers/Cobras).
+2. **Whether Typhoons U13 joins `teams.json`** — needs Chris Howes's email address.
 
 ## What's deferred / known issues
+
+### Deferred to after go-live
+- **Keystatic CMS is not built.** No `keystatic.config.ts`, no `/keystatic` route,
+  no dependency — it is in migration-plan.md's target stack but was never
+  implemented. Decided 2026-09-02 that it does not gate go-live: content is
+  edited by changing files in this repo, which is how it has been done
+  throughout. Revisit once the site is live and a non-technical editor actually
+  needs it.
 
 ### Functional gaps (block public cutover)
 1. **10 bookings need a decision from the club** — `scripts/out/bookings-review.txt`. Nine are
@@ -401,8 +418,9 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 
 Nothing outstanding here. The remaining Phase 5 work is the part of
 migration-plan.md's checklist that has not been re-verified since the port:
-PDFs reachable, Keystatic editor usable by a content editor, mobile menu,
-counters, and Open Graph tags / favicon / page titles.
+PDFs reachable, mobile menu, counters, and Open Graph tags / favicon / page
+titles. (Keystatic is deferred to after go-live — see "Deferred to after
+go-live".)
 
 ### Phase 4: booking system — done
 - [x] D1 schema (`migrations/0001_bookings.sql`), applied local and remote

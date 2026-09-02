@@ -196,7 +196,7 @@ Build the Astro site, deploy to Cloudflare Pages on a preview URL (e.g. `preview
 - [ ] Schedule renders correctly with migrated bookings
 - [ ] Authorised managers can log in via Cloudflare Access and create bookings
 - [ ] Non-authorised emails get rejected by Access
-- [ ] Keystatic editor works for at least one of your content editors
+- [ ] ~~Keystatic editor works for at least one of your content editors~~ **Deferred 2026-09-02 — does not gate go-live.** Keystatic was never built (no config, route or dependency); content is edited directly in the repo. Revisit post-launch.
 - [ ] Mobile menu works
 - [ ] Counters/stats display correctly
 - [ ] Open Graph tags, favicon, page titles all match
