@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { ctaBlank } from '../lib/cta';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
 import CardGrid from '../components/CardGrid.astro';
@@ -113,7 +114,7 @@ const sponsors: Sponsor[] = [
               width: s.width,
               height: s.height,
             };
-            const cta = s.cta ? { label: s.cta.label, href: s.cta.href, blank: true } : undefined;
+            const cta = s.cta ? { label: s.cta.label, href: s.cta.href, blank: ctaBlank(s.cta.href) } : undefined;
             // Only the populated sponsor has a body — placeholders are image-only,
             // so don't pass a slot (which would emit an empty el-content div).
             return s.body ? (

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { ctaBlank } from '../lib/cta';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
 import CardGrid from '../components/CardGrid.astro';
@@ -22,7 +23,7 @@ const cards = [
     cta: {
       label: 'Pay subs',
       href: 'https://www.pitchero.com/clubs/littletonjuniorfc/payments',
-      blank: true,
+      blank: ctaBlank('https://www.pitchero.com/clubs/littletonjuniorfc/payments'),
     },
     tag: 'PAY-SUBS',
   },
@@ -32,7 +33,7 @@ const cards = [
     cta: {
       label: 'See your details',
       href: 'https://pitchero.com/clubs/littletonjuniorfc',
-      blank: true,
+      blank: ctaBlank('https://pitchero.com/clubs/littletonjuniorfc'),
     },
     tag: 'See-Your-Details',
   },

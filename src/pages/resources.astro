@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { ctaBlank } from '../lib/cta';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
 import CardGrid from '../components/CardGrid.astro';
@@ -74,7 +75,7 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
             cta={{
               label: 'Visit',
               href: r.data.href,
-              blank: r.data.action !== 'download',
+              blank: ctaBlank(r.data.href),
             }}
           />
         ))
@@ -128,7 +129,7 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
                 cta={{
                   label: buttonLabel(r.data.action),
                   href: r.data.href,
-                  blank: r.data.action !== 'download',
+                  blank: ctaBlank(r.data.href),
                 }}
               />
             ))}
