@@ -49,11 +49,20 @@ const maxDate = addDays(now, settings.maxWeeksAhead * 7);
 // Admins may book for any squad; a manager only for the squads they run.
 const mine = user ? (user.role === 'admin' ? squads : squadsForEmail(user.email)) : [];
 
-// Their upcoming bookings, for the cancel list.
+/*
+ * Just this person's own bookings — the ones they are the manager for, plus any
+ * they made on someone else's behalf. Admins used to get every booking in the
+ * club here, which is a long list and not a personal one; they still reach
+ * anyone's booking from the schedule, where each entry links to a page offering
+ * Edit and Delete.
+ *
+ * Imported Joomla rows have booked_by NULL and manager_email set, so a manager
+ * still sees the bookings that were migrated for their squad.
+ */
 const upcoming =
   user && user.role !== 'none'
     ? (await listRange(env.DB, now, maxDate)).filter(
-        (b) => user.role === 'admin' || b.manager_email === user.email
+        (b) => b.manager_email === user.email || b.booked_by === user.email
       )
     : [];
 
@@ -192,11 +201,12 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
               </div>
             </form>
 
-            <h5 class="sched-upcoming-title">
-              {user.role === 'admin' ? 'All upcoming bookings' : 'Your upcoming bookings'}
-            </h5>
+            <h5 class="sched-upcoming-title">Your upcoming bookings</h5>
             {upcoming.length === 0 ? (
-              <p>No upcoming bookings.</p>
+              <p>
+                You have no upcoming bookings. Every team's bookings are on the{' '}
+                <a href="/schedule#schedule">schedule</a>.
+              </p>
             ) : (
               <ul class="sched-list">
                 {upcoming.map((b) => (
