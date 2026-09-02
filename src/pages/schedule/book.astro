@@ -48,144 +48,146 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
   <Hero variant="image" image="/images/heros/teams.jpg" title="Book a<br>Pitch" />
 
   <Section width="full">
-    {ok && <p class="sched-msg is-ok">{ok}</p>}
-    {err && <p class="sched-msg is-err">{err}</p>}
+    <div class="sched-page">
+      {ok && <p class="sched-msg is-ok">{ok}</p>}
+      {err && <p class="sched-msg is-err">{err}</p>}
 
-    {
-      !user ? (
-        import.meta.env.DEV ? (
-          <>
-            <h5>Not signed in</h5>
-            <p>
-              On the live site Cloudflare Access handles this: it asks for your email address,
-              emails you a one-time code, and only then lets you through to this page. Access
-              does not run in front of a local dev server, so pick an identity instead:
-            </p>
-            <ul class="sched-devsignin">
-              <li>
-                <a href={`/schedule/book?as=${squads[0].managerEmail}`}>
-                  {squads[0].managerEmail}
-                </a>{' '}
-                — team manager ({squads[0].label})
-              </li>
-              <li>
-                <a href={`/schedule/book?as=${adminExample()}`}>{adminExample()}</a> — committee,
-                can book for any team
-              </li>
-              <li>
-                <a href="/schedule/book?as=nobody@example.com">nobody@example.com</a> — not on the
-                allowlist, to check it is refused
-              </li>
-            </ul>
-            <p>
-              Add <code>?as=</code> to any URL to switch, or{' '}
-              <a href="/schedule/book?as=">sign out</a>. This only exists in dev — it is compiled
-              out of the deployed site.
-            </p>
-          </>
+      {
+        !user ? (
+          import.meta.env.DEV ? (
+            <>
+              <h5>Not signed in</h5>
+              <p>
+                On the live site Cloudflare Access handles this: it asks for your email address,
+                emails you a one-time code, and only then lets you through to this page. Access
+                does not run in front of a local dev server, so pick an identity instead:
+              </p>
+              <ul class="sched-devsignin">
+                <li>
+                  <a href={`/schedule/book?as=${squads[0].managerEmail}`}>
+                    {squads[0].managerEmail}
+                  </a>{' '}
+                  — team manager ({squads[0].label})
+                </li>
+                <li>
+                  <a href={`/schedule/book?as=${adminExample()}`}>{adminExample()}</a> — committee,
+                  can book for any team
+                </li>
+                <li>
+                  <a href="/schedule/book?as=nobody@example.com">nobody@example.com</a> — not on the
+                  allowlist, to check it is refused
+                </li>
+              </ul>
+              <p>
+                Add <code>?as=</code> to any URL to switch, or{' '}
+                <a href="/schedule/book?as=">sign out</a>. This only exists in dev — it is compiled
+                out of the deployed site.
+              </p>
+            </>
+          ) : (
+            <>
+              <h5>Not signed in</h5>
+              <p>
+                Booking is only open to team managers, and sign-in is handled by Cloudflare Access
+                before you reach this page — so seeing this message usually means the sign-in did
+                not complete. Try <a href="/schedule/book">loading the page again</a>; if it keeps
+                happening, contact your Age Group Coordinator on the{' '}
+                <a href="/contact-us">Contact us</a> page.
+              </p>
+            </>
+          )
+        ) : user.role === 'none' ? (
+          <p>
+            <strong>{user.email}</strong> is not on the list of team managers. If you should be,
+            ask your Age Group Coordinator on the <a href="/contact-us">Contact us</a> page.
+          </p>
         ) : (
           <>
-            <h5>Not signed in</h5>
-            <p>
-              Booking is only open to team managers, and sign-in is handled by Cloudflare Access
-              before you reach this page — so seeing this message usually means the sign-in did
-              not complete. Try <a href="/schedule/book">loading the page again</a>; if it keeps
-              happening, contact your Age Group Coordinator on the{' '}
-              <a href="/contact-us">Contact us</a> page.
+            <h5>New booking</h5>
+            <form class="sched-form" method="POST" action="/api/bookings">
+              <label>
+                Team
+                <select name="squad_id" required>
+                  {mine.map((s) => (
+                    <option value={s.id}>{s.label}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Pitch
+                <select name="pitch" required>
+                  {pitches.map((p) => (
+                    <option value={p.id}>{p.label}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Date
+                <input type="date" name="date" required min={now} max={maxDate} value={now} />
+              </label>
+
+              <label>
+                Start
+                <select name="start_time" required>
+                  {times.map((t) => (
+                    <option value={t} selected={t === '09:30'}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Duration
+                <select name="duration" required>
+                  {settings.durations.map((d) => (
+                    <option value={d} selected={d === 120}>
+                      {d % 60 === 0 ? `${d / 60} hours` : `${Math.floor(d / 60)}h ${d % 60}m`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button class="uk-button uk-button-default" type="submit">
+                Book pitch
+              </button>
+            </form>
+
+            <h5 class="sched-upcoming-title">
+              {user.role === 'admin' ? 'All upcoming bookings' : 'Your upcoming bookings'}
+            </h5>
+            {upcoming.length === 0 ? (
+              <p>No upcoming bookings.</p>
+            ) : (
+              <ul class="sched-list">
+                {upcoming.map((b) => (
+                  <li>
+                    <span>
+                      <strong>{b.team_label}</strong> — {pitches.find((p) => p.id === b.pitch)?.label}
+                      , {formatLong(b.date)}, {b.start_time}–{b.end_time}
+                    </span>
+                    <form method="POST" action="/api/bookings">
+                      <input type="hidden" name="action" value="cancel" />
+                      <input type="hidden" name="id" value={b.id} />
+                      <button class="uk-button uk-button-default sched-cancel" type="submit">
+                        Cancel
+                      </button>
+                    </form>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <p class="sched-foot">
+              Signed in as {user.email}
+              {user.role === 'admin' ? ' (committee)' : ''}. <a href="/schedule">Back to the schedule</a>
+              .
             </p>
           </>
         )
-      ) : user.role === 'none' ? (
-        <p>
-          <strong>{user.email}</strong> is not on the list of team managers. If you should be,
-          ask your Age Group Coordinator on the <a href="/contact-us">Contact us</a> page.
-        </p>
-      ) : (
-        <>
-          <h5>New booking</h5>
-          <form class="sched-form" method="POST" action="/api/bookings">
-            <label>
-              Team
-              <select name="squad_id" required>
-                {mine.map((s) => (
-                  <option value={s.id}>{s.label}</option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Pitch
-              <select name="pitch" required>
-                {pitches.map((p) => (
-                  <option value={p.id}>{p.label}</option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Date
-              <input type="date" name="date" required min={now} max={maxDate} value={now} />
-            </label>
-
-            <label>
-              Start
-              <select name="start_time" required>
-                {times.map((t) => (
-                  <option value={t} selected={t === '09:30'}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Duration
-              <select name="duration" required>
-                {settings.durations.map((d) => (
-                  <option value={d} selected={d === 120}>
-                    {d % 60 === 0 ? `${d / 60} hours` : `${Math.floor(d / 60)}h ${d % 60}m`}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <button class="uk-button uk-button-default" type="submit">
-              Book pitch
-            </button>
-          </form>
-
-          <h5 class="sched-upcoming-title">
-            {user.role === 'admin' ? 'All upcoming bookings' : 'Your upcoming bookings'}
-          </h5>
-          {upcoming.length === 0 ? (
-            <p>No upcoming bookings.</p>
-          ) : (
-            <ul class="sched-list">
-              {upcoming.map((b) => (
-                <li>
-                  <span>
-                    <strong>{b.team_label}</strong> — {pitches.find((p) => p.id === b.pitch)?.label}
-                    , {formatLong(b.date)}, {b.start_time}–{b.end_time}
-                  </span>
-                  <form method="POST" action="/api/bookings">
-                    <input type="hidden" name="action" value="cancel" />
-                    <input type="hidden" name="id" value={b.id} />
-                    <button class="uk-button uk-button-default sched-cancel" type="submit">
-                      Cancel
-                    </button>
-                  </form>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <p class="sched-foot">
-            Signed in as {user.email}
-            {user.role === 'admin' ? ' (committee)' : ''}. <a href="/schedule">Back to the schedule</a>
-            .
-          </p>
-        </>
-      )
-    }
+      }
+    </div>
   </Section>
 </BaseLayout>

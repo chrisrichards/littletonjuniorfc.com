@@ -1223,6 +1223,9 @@
      their gap. Padding cannot collapse, so all four sides stay equal. The
      trailing margin is dropped so the footer's own 20px doesn't add to it. */
   .sched-page { padding: 1rem; }
+  /* The base reset covers h1-h4 but not h5, so a leading <h5> brings the
+     browser's own top margin and the gap reads wider than the other sides. */
+  .sched-page > :first-child { margin-top: 0; }
   .sched-page > :last-child { margin-bottom: 0; }
 
   .sched-head {
