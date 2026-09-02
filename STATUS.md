@@ -244,7 +244,7 @@ launch blocker.
 | 2. Recreate styling | ✅ | Approach A (vendored YOOtheme CSS) validated by home-page spike |
 | 3. Migrate content | ✅ | `scripts/migrate-from-joomla.mjs` + content collections + all 8 navigable pages ported |
 | 4. Booking system | 🟡 | Schema, `/schedule`, booking form, endpoints and import script all built and tested locally. Blocked on: a fresh dump, and the Access application. |
-| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Remaining: contact form, `_redirects` policy. |
+| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Remaining: `_redirects` policy for Joomla legacy URLs. |
 | 6. Cutover | ❌ | DNS still on Lightsail; cannot do this until Phase 4 ships |
 | 7. Decommission | ❌ | Blocked on Phase 6 |
 

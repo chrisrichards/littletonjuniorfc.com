@@ -192,7 +192,7 @@ Build the Astro site, deploy to Cloudflare Pages on a preview URL (e.g. `preview
 - [ ] All internal links work
 - [ ] All images load
 - [ ] All PDFs are accessible
-- [ ] Contact form works (you'll need a solution for this — Cloudflare Pages doesn't run PHP; use a service like Formspree, or a Worker that emails via Resend/Postmark)
+- [x] ~~Contact form works~~ **N/A — the live site has no form.** Verified 2026-09-02: zero `<form>`/`<input>`/`<textarea>` elements on any of the 8 live pages. Contact is entirely email links, obfuscated by Joomla's `cloak…` script (20 addresses on contact-us alone), which the port renders as plain `mailto:`. No Formspree/Resend/Postmark needed.
 - [ ] Schedule renders correctly with migrated bookings
 - [ ] Authorised managers can log in via Cloudflare Access and create bookings
 - [ ] Non-authorised emails get rejected by Access
