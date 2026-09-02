@@ -104,7 +104,11 @@ Local vars live in `.dev.vars` (gitignored):
 ```
 ACCESS_TEAM_DOMAIN=yellowfeather
 ACCESS_AUD=<the Access application's AUD tag>
+ADMIN_EMAILS=someone@example.com,another@example.com
 ```
+
+On the Worker these are secrets, set with `npx wrangler secret put <NAME>`.
+Secrets survive a deploy; dashboard-set plaintext variables can be wiped by one.
 
 Because Access does not sit in front of a local dev server, `astro dev` fakes a sign-in.
 Add `?as=` to any URL to become that person; the address is kept in a cookie from then on:
@@ -180,9 +184,16 @@ the old system never enforced it and this import writes SQL directly — so read
 file and resolve those rows before applying to `--remote`.
 
 Who may book is derived from content, not a separate list: managers come from the 45 squads
-in `teams.json`, admins from the committee group in `people.json` plus
-`adminEmails` in `settings/bookings.json`. `allowlist()` in `src/lib/squads.ts` returns every
-address the Access policy should admit.
+in `teams.json`, admins from three places, in order of privacy:
+
+1. the committee group in `people.json` — already published on the club website
+2. `adminEmails` in `settings/bookings.json` — addresses you don't mind committing
+3. the `ADMIN_EMAILS` secret on the Worker — comma-separated, for addresses that must not
+   appear in this **public** repo
+
+`allowlist()` in `src/lib/squads.ts` returns every address the Access policy should admit,
+including those from the secret. Note that being on the Access policy is not enough on its
+own: Access proves who you are, and this list decides what you may do.
 
 ### Not yet wired up
 

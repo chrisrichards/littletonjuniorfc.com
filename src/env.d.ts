@@ -9,18 +9,23 @@
  * is what these vars must land on. (Astro.locals.runtime.env was removed in
  * Astro 6 — the cloudflare:workers import replaces it.)
  *
- * ACCESS_* are plain vars, not secrets: a team domain and an Access
- * application's AUD tag are both non-sensitive. Set them in `.dev.vars`
- * locally, and on the Worker in the dashboard for production.
+ * All three are set with `wrangler secret put` on the Worker, and in `.dev.vars`
+ * locally. ACCESS_* are not really sensitive — the team domain and AUD tag are
+ * both visible in the Access login redirect — but secrets survive a deploy,
+ * whereas dashboard-set plaintext vars can be wiped by one. ADMIN_EMAILS is a
+ * secret for a stronger reason: this repo is public.
  */
 declare namespace Cloudflare {
   interface Env {
     ACCESS_TEAM_DOMAIN: string;
     ACCESS_AUD: string;
+    /** Comma-separated extra admin addresses, kept out of this public repo. */
+    ADMIN_EMAILS?: string;
   }
 }
 
 interface Env {
   ACCESS_TEAM_DOMAIN: string;
   ACCESS_AUD: string;
+  ADMIN_EMAILS?: string;
 }

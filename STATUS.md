@@ -207,7 +207,9 @@ eight pages stay prerendered.
   single IdP fits). `src/lib/access.ts` verifies the `CF_Authorization` JWT against the Access
   certs endpoint rather than trusting `Cf-Access-Authenticated-User-Email`, which anything
   could set on a request that bypasses Access. Managers book for their own squads; the
-  committee (from `people.json`) can book and cancel for anyone.
+  committee (from `people.json`) can book and cancel for anyone. Extra admins who should not
+  be named in this public repo go in the `ADMIN_EMAILS` secret on the Worker (comma-separated)
+  rather than in `settings/bookings.json`.
 - **Every booking on the schedule links to its own page** (`/schedule/booking/<id>`). That page
   is deliberately **outside** the Access-protected `/schedule/book*` path, because it hangs off
   the public schedule and has to be readable by anyone; it renders the edit form and a delete

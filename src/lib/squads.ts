@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers';
 import teams from '../content/teams.json';
 import people from '../content/people.json';
 import bookings from '../content/settings/bookings.json';
@@ -52,31 +53,51 @@ export function squadsForEmail(email: string): Squad[] {
 export type Role = 'admin' | 'manager' | 'none';
 
 /*
- * Admins are the committee (from people.json, the single source of truth for
- * club roles) plus any explicit extras in settings/bookings.json. They can book
- * and cancel for any squad; managers only for their own.
+ * Admins can book and cancel for any squad; managers only for their own.
+ *
+ * Three sources, in order of privacy:
+ *   1. the committee group in people.json — already published on the website
+ *   2. adminEmails in settings/bookings.json — for addresses you don't mind
+ *      committing (this repo is public)
+ *   3. the ADMIN_EMAILS secret on the Worker — comma-separated, for anyone whose
+ *      address should NOT appear in a public repo
+ *
+ * Resolved lazily and cached: `env` is not reliably readable at module scope,
+ * and every route that imports this file is server-rendered, so the first call
+ * happens inside a request.
  */
-const adminEmails = new Set<string>([
-  ...people
-    .filter((p) => bookings.adminGroupsFromPeople.includes(p.group))
-    .map((p) => p.email.toLowerCase()),
-  ...bookings.adminEmails.map((e: string) => e.toLowerCase()),
-]);
+let adminCache: Set<string> | null = null;
+
+function adminEmailSet(): Set<string> {
+  if (adminCache) return adminCache;
+  const fromSecret = String(env.ADMIN_EMAILS ?? '')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  adminCache = new Set<string>([
+    ...people
+      .filter((p) => bookings.adminGroupsFromPeople.includes(p.group))
+      .map((p) => p.email.toLowerCase()),
+    ...bookings.adminEmails.map((e: string) => e.toLowerCase()),
+    ...fromSecret,
+  ]);
+  return adminCache;
+}
 
 export function roleFor(email: string | null | undefined): Role {
   if (!email) return 'none';
   const e = email.toLowerCase();
-  if (adminEmails.has(e)) return 'admin';
+  if (adminEmailSet().has(e)) return 'admin';
   if (squads.some((s) => s.managerEmail === e)) return 'manager';
   return 'none';
 }
 
 /** An example admin address, for the local sign-in panel. */
 export function adminExample(): string {
-  return [...adminEmails][0] ?? 'chair@littletonjuniorfc.com';
+  return [...adminEmailSet()][0] ?? 'chair@littletonjuniorfc.com';
 }
 
 /** Every address Cloudflare Access should admit — paste into the Access policy. */
 export function allowlist(): string[] {
-  return [...new Set([...squads.map((s) => s.managerEmail), ...adminEmails])].sort();
+  return [...new Set([...squads.map((s) => s.managerEmail), ...adminEmailSet()])].sort();
 }
