@@ -14,7 +14,15 @@ import Section from '../../components/Section.astro';
 import { listRange, pitches, type Booking } from '../../lib/bookings';
 import { squadById } from '../../lib/squads';
 import { getUser } from '../../lib/access';
-import { today, weekStart, weekDays, addDays, formatDay, isValidDate } from '../../lib/dates';
+import {
+  today,
+  weekStart,
+  weekDays,
+  addDays,
+  formatDay,
+  formatDayRange,
+  isValidDate,
+} from '../../lib/dates';
 
 
 const requested = Astro.url.searchParams.get('week');
@@ -54,7 +62,7 @@ const label = (b: Booking) => squadById(b.squad_id)?.label ?? b.team_label;
   <Section width="full">
     <div class="sched-page">
       <div class="sched-head">
-        <h5 class="sched-title">Week of {formatDay(start)}</h5>
+        <h2 class="sched-title">{formatDayRange(start, end)}</h2>
         <nav class="sched-nav">
           <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, -7)}`}
             >&larr; Previous</a

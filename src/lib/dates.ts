@@ -81,3 +81,24 @@ const longFmt = new Intl.DateTimeFormat('en-GB', {
 export function formatLong(date: string): string {
   return longFmt.format(toUtcNoon(date));
 }
+
+const weekdayFmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long' });
+const monthFmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, month: 'long' });
+
+/** 1 -> '1st', 2 -> '2nd', 3 -> '3rd', 4 -> '4th', 11-13 -> 'th', 21 -> '21st'. */
+export function ordinal(n: number): string {
+  const tens = n % 100;
+  if (tens >= 11 && tens <= 13) return `${n}th`;
+  return `${n}${['th', 'st', 'nd', 'rd'][n % 10] ?? 'th'}`;
+}
+
+/** 'Monday 31st August' */
+export function formatDayOrdinal(date: string): string {
+  const dt = toUtcNoon(date);
+  return `${weekdayFmt.format(dt)} ${ordinal(Number(date.slice(8, 10)))} ${monthFmt.format(dt)}`;
+}
+
+/** 'Monday 31st August – Sunday 6th September' */
+export function formatDayRange(from: string, to: string): string {
+  return `${formatDayOrdinal(from)} \u2013 ${formatDayOrdinal(to)}`;
+}

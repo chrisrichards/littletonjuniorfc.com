@@ -1236,7 +1236,14 @@
     justify-content: space-between;
     margin-bottom: 20px;
   }
-  .sched-title { margin: 0; }
+  .sched-title {
+    margin: 0;
+    font-size: 28px;
+    line-height: 1.2;
+  }
+  @media (width>=640px) {
+    .sched-title { font-size: 34px; }
+  }
   .sched-nav { display: flex; flex-wrap: wrap; gap: 8px; }
   .sched-nav .uk-button { font-size: 16px; line-height: 34px; padding: 0 14px; }
 
