@@ -174,12 +174,12 @@ const self = `/schedule/booking/${booking.id}`;
         ) : user ? (
           <p class="sched-readonly">
             This booking belongs to another team, so it is shown read-only. Managers can change
-            their own bookings from <a href="/schedule/book">the booking page</a>.
+            their own bookings from <a href="/schedule/book#schedule">the booking page</a>.
           </p>
         ) : (
           <p class="sched-readonly">
             Signed-in team managers can change their own bookings.{' '}
-            <a href="/schedule/book">Sign in to manage a booking</a>.
+            <a href="/schedule/book#schedule">Sign in to manage a booking</a>.
           </p>
         )
       }

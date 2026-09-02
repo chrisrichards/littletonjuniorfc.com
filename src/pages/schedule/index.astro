@@ -118,12 +118,12 @@ const label = (b: Booking) => squadById(b.squad_id)?.label ?? b.team_label;
       <p class="sched-foot">
         {
           canBook ? (
-            <a class="uk-button uk-button-default" href="/schedule/book">
+            <a class="uk-button uk-button-default" href="/schedule/book#schedule">
               Book a pitch
             </a>
           ) : (
             <>
-              Team managers can <a href="/schedule/book">book a pitch</a> after signing in. For
+              Team managers can <a href="/schedule/book#schedule">book a pitch</a> after signing in. For
               anything else, contact your Age Group Coordinator on the{' '}
               <a href="/contact-us">Contact us</a> page.
             </>
