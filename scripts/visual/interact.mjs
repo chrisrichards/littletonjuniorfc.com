@@ -33,15 +33,15 @@ let fail = 0;
   await ctx.close();
 }
 
-// 2. Mobile off-canvas menu opens (adds .uk-open to #tm-mobile).
+// 2. Mobile drawer opens (adds .is-open to #mobile-drawer).
 {
   const ctx = await browser.newContext({ viewport: { width: 375, height: 812 } });
   const page = await ctx.newPage();
   await page.goto(BASE + '/', { waitUntil: 'networkidle' });
-  await page.click('.uk-navbar-toggle');
+  await page.click('[data-drawer-open]');
   await page.waitForTimeout(700);
-  const open = await page.evaluate(() => document.getElementById('tm-mobile')?.classList.contains('uk-open'));
-  out.push(`[${open ? 'PASS' : 'FAIL'}] mobile off-canvas opens`);
+  const open = await page.evaluate(() => document.getElementById('mobile-drawer')?.classList.contains('is-open'));
+  out.push(`[${open ? 'PASS' : 'FAIL'}] mobile drawer opens`);
   if (!open) fail++;
   await ctx.close();
 }
