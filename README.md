@@ -106,9 +106,19 @@ ACCESS_TEAM_DOMAIN=yellowfeather
 ACCESS_AUD=<the Access application's AUD tag>
 ```
 
-Because Access does not sit in front of a local dev server, `astro dev` accepts an
-`x-dev-user: someone@example.com` header in place of a sign-in. That path is compiled out of
-production builds (`import.meta.env.DEV`), so it cannot be used against the deployed Worker.
+Because Access does not sit in front of a local dev server, `astro dev` fakes a sign-in.
+Add `?as=` to any URL to become that person; the address is kept in a cookie from then on:
+
+```
+http://localhost:4321/schedule/book?as=mckeown.edward7@gmail.com   # a team manager
+http://localhost:4321/schedule/book?as=chair@littletonjuniorfc.com # committee (admin)
+http://localhost:4321/schedule/book?as=nobody@example.com          # not allowlisted
+http://localhost:4321/schedule?as=                                 # sign out
+```
+
+An `x-dev-user:` header does the same for curl. Both paths live behind
+`import.meta.env.DEV`, which is statically replaced at build time — neither string survives
+into `dist/`, so they cannot be used against the deployed Worker.
 
 ### Bindings and secrets
 

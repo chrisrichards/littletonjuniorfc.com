@@ -112,14 +112,20 @@ export async function verifiedEmail(request: Request): Promise<string | null> {
 /**
  * The caller, with their booking role resolved.
  *
- * In `astro dev` there is no Access in front of us, so an `x-dev-user` header
- * stands in for a sign-in. `import.meta.env.DEV` is statically replaced at build
- * time, so this branch is removed entirely from a production bundle — it cannot
- * be reached on the deployed Worker.
+ * In `astro dev` there is no Access in front of us, so a stand-in identity is
+ * taken from an `x-dev-user` header (handy for curl) or the `dev_user` cookie
+ * that src/middleware.ts sets from `?as=email` (handy in a browser).
+ * `import.meta.env.DEV` is statically replaced at build time, so this branch is
+ * removed entirely from a production bundle — it cannot be reached on the
+ * deployed Worker.
  */
 export async function getUser(request: Request): Promise<AccessUser | null> {
   if (import.meta.env.DEV) {
-    const dev = request.headers.get('x-dev-user');
+    const dev =
+      request.headers.get('x-dev-user') ??
+      decodeURIComponent(
+        request.headers.get('Cookie')?.match(/(?:^|;\s*)dev_user=([^;]*)/)?.[1] ?? ''
+      );
     if (dev) return { email: dev.toLowerCase(), role: roleFor(dev) };
   }
   const email = await verifiedEmail(request);
