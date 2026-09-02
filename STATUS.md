@@ -1,12 +1,103 @@
 # Project status
 
-Last updated: 2026-06-03.
+Last updated: 2026-09-02.
 
 Living document — update this when something material changes (phase completes, decision made, blocker found). For the original detailed plan see [`migration-plan.md`](./migration-plan.md); for the page-by-page audit see [`inventory.md`](./inventory.md).
 
 ## TL;DR
 
 Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is built but not yet live: Cloudflare Access is unconfigured and the bookings still need importing from a fresh Joomla dump.
+
+## 2026-09-02 — First visual diff against the live Joomla site
+
+**This check had never actually been run.** The pixel-diff harness has always
+compared the Astro site against *its own* earlier builds (a `main` / `fbcec00`
+baseline), which catches refactor regressions but is blind by construction to
+anything mis-ported from Joomla in the first place — those diffs are baked into
+both sides. Shooting the live site and diffing against it is a different check.
+It found three real regressions, all now fixed in `91ee803`.
+
+**Method.** `shoot.mjs` takes a base URL, so no new tooling was needed:
+
+```bash
+node scripts/visual/shoot.mjs https://littletonjuniorfc.com               .visual/live
+node scripts/visual/shoot.mjs https://littletonjuniorfc.yellowfeather.workers.dev .visual/new
+node scripts/visual/diff.mjs  .visual/live .visual/new .visual/diff-live
+```
+
+Two gotchas worth keeping:
+
+- **Live 403s any non-browser UA** ("Malware detected" — a Joomla firewall
+  extension). `curl` needs a browser `-A`; Playwright's headless UA passes fine.
+- **Live gates content behind an on-scroll fade.** A capture without
+  `reducedMotion: 'reduce'` *and* a full autoscroll silently under-reports live's
+  content — the first text comparison looked like live was missing half its
+  cards. Both sides must scroll before you compare anything.
+
+**A live diff never reaches 0/56, and shouldn't.** Images are AVIF/WebP
+re-encodes by design, the social-icon placeholders and GA are deliberately
+dropped, and the terms fee was intentionally updated. The signal is *layout* —
+per-page height deltas and column counts — not the pixel percentage.
+
+### Fixed (commit `91ee803`)
+
+| | before | after | live |
+|---|---|---|---|
+| contact-us grid @768 | 2 cols | **4 cols** | 4 cols |
+| official-info grid @768 | 2 cols | **4 cols** | 4 cols |
+| `.contacts h4` transform | none | **uppercase** | uppercase |
+| privacy/terms h1 top @375 | 274px | **74px** | 74px |
+| contact-us page height @768 | +2914px | **+15px** | — |
+| official-info @768 | +2259px | **−60px** | — |
+| privacy-policy @375 | +220px | **+20px** | — |
+| terms-conditions @375 | +243px | **+43px** | — |
+
+1. **Grid breakpoint off by one step.** contact-us and official-info used
+   `md:grid-cols-4`, but `md` is 960px while live's `uk-child-width-1-4@s` is
+   **640px**. Across the whole 640–959 band those pages rendered 2 columns where
+   live renders 4 — contact-us@768 was 4850px tall against live's 1936px. Both
+   now use `min-[640px]:`, as `resources.astro` already did. (The 2026-06-03
+   entry notes "the one `@s`=640 case uses `min-[640px]:`" — there were three,
+   not one.)
+2. **Action-card `h4` lost `text-transform: uppercase`.** Live renders
+   "ETHU CRORIE" / "YEARS R-1"; we rendered "Ethu Crorie" / "Years R-1". Live
+   applies it to the `.blue`, `.grey`, `.contacts` and `.offinfo4x4` variants
+   alike, so the rule now covers all four.
+3. **Privacy/terms banner was a flat 300px.** Live *swaps the source image*
+   rather than scaling it — 100px below `@m`, 300px from `@m` up — so our h1 sat
+   200px low at every width under 960. Now a media query; the h1 lands on live's
+   exact y at all seven widths.
+
+### Checked and deliberately not changed
+
+**Teams squad counts.** Live's card labels disagree with live's *own* MORE
+panels (it labels U10 "5 Squads" above a 4-squad panel). `teams.json` matches
+the panels at all 13 age groups and its labels match its own arrays. This is the
+already-documented `applyTeamCorrections` fix — see "Data-quality issues" below.
+Live is stale here; we are right. The remaining roster differences
+(Kites/Ospreys U14→U15, Sporting U15→U16, Torpedo U16→U17) are a season roll-up
+for the club to confirm, not a porting bug.
+
+### Residual differences (traced to a cause, not fixed)
+
+- **official-info is ~510px taller than live at 375 and ~622px at 450.** The
+  largest outstanding item. Live's card headings carry hard `<br/>`s and
+  lowercase source text (`<h3>safeguarding<br/>guidance</h3>`,
+  `<h3>fa<br/>safeguarding<br/>team</h3>`) plus empty `<p></p>` fillers; our port
+  normalised all of that to single-line title case, which changes both the wrap
+  and the look.
+- **resources runs 75–140px short** at every width; **home runs 10px short**;
+  **privacy is a flat +20px**. Not chased to a root cause.
+- **terms-conditions**: every block matches to the pixel through y=636; the only
+  difference is the intentionally-updated fee sentence (2019/20 £160 → 2025/26
+  £200/£180) and the 20px it adds. The 6.5% pixel figure at 768 is an artifact
+  of the page being only 900px tall.
+- **Typography**: live uses curly apostrophes (`Association’s`) throughout
+  official-info where ours are straight, and a non-breaking space in teams'
+  "Year 2" (which prevents a wrap at narrow widths).
+- **Copy fixes we made** that live still has wrong: `DOWLOAD`→`DOWNLOAD`,
+  `anti-bulling`→`anti-bullying`, "ensure sure everyone"→"ensure everyone",
+  "supporter"→"supporters".
 
 ## 2026-06-03 — uk-* markup → Tailwind grid + utilities (branch `tailwind-migration`)
 
@@ -153,7 +244,7 @@ launch blocker.
 | 2. Recreate styling | ✅ | Approach A (vendored YOOtheme CSS) validated by home-page spike |
 | 3. Migrate content | ✅ | `scripts/migrate-from-joomla.mjs` + content collections + all 8 navigable pages ported |
 | 4. Booking system | 🟡 | Schema, `/schedule`, booking form, endpoints and import script all built and tested locally. Blocked on: a fresh dump, and the Access application. |
-| 5. Build + verify | 🟡 | Build passes; visual fidelity vs. live is close at desktop but mobile breakpoints unverified |
+| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Remaining: contact form, `_redirects` policy. |
 | 6. Cutover | ❌ | DNS still on Lightsail; cannot do this until Phase 4 ships |
 | 7. Decommission | ❌ | Blocked on Phase 6 |
 
@@ -279,12 +370,13 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
    own "More" button), and shows a `.closeMe` × button top-right of the panel
    (`/images/close.png`). CSS in `app.css` ("Teams More open state").
 3. **Contact-us page** omits the closing testimonial blockquote + bottom image present on the live site.
-4. **Mobile breakpoints unverified** — CSS has them via `@media` but I haven't visually tested the ported pages on narrow widths.
+4. ~~**Mobile breakpoints unverified**~~ **Resolved (2026-09-02):** all 8 pages diffed against live at 375/450/640/768/960/1024/1280. Three narrow-width regressions found and fixed; see the 2026-09-02 entry for the residuals.
 5. **Resources featured cards** (Our Ethos + Player Development) use `uk-img` lazy loading. Visible in real browsers; headless screenshots may show blank cards.
 
 ### Data-quality issues (already fixed in code, documented here for context)
 - **U10/U11 squad boundary**: source DB labels were wrong (5 vs 4 swap). Astros belongs to U11, not U10. Fixed in `scripts/migrate-from-joomla.mjs#applyTeamCorrections`.
 - **U17 missing squads**: source labels said 2 squads but Legends + Rebels appear after Kings before U18 nav. Re-added in the same function.
+- Both corrections were **re-confirmed independently by the 2026-09-02 live diff**: live’s own MORE panels agree with `teams.json`, and it is live’s card *labels* that are wrong.
 
 ### Decisions / workarounds worth knowing
 1. **Approach A chosen** (vendor the YOOtheme CSS verbatim) over Approach B (rebuild with Tailwind). The home spike confirmed this gets to pixel-close fidelity in hours not days.
@@ -297,7 +389,7 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 ## What's next (suggested order)
 
 ### Pre-launch polish (1–2 hours total)
-- [ ] Verify mobile breakpoints on every ported page (resize browser to ~375px / ~768px and screenshot)
+- [x] Verify mobile breakpoints on every ported page — done 2026-09-02 via the live diff
 - [ ] Fix the Resources Forms & Guides grid gap
 - [ ] Add contact-us bottom image + testimonial
 - [ ] Decide on `_redirects` policy for Joomla legacy URLs (e.g. `/index.php* → /`, `/component/*  → /`)
@@ -315,7 +407,7 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 - [ ] Decide whether Typhoons U13 should be added to `teams.json` (needs Chris Howes's email)
 
 ### Phase 5–6: verify + cutover
-- [ ] Full visual diff every page against live at desktop + mobile
+- [x] Full visual diff every page against live at desktop + mobile — done 2026-09-02 (`91ee803`); residuals listed in that entry
 - [ ] Lower DNS TTL on littletonjuniorfc.com 24h ahead of cutover
 - [ ] Switch DNS to Cloudflare (low-traffic window, not Fri evening)
 - [ ] Keep Lightsail running ~2 weeks as fallback
