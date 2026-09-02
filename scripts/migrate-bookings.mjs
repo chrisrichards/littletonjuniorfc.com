@@ -61,6 +61,7 @@ const COL = {
   id: 0,
   title: 1,
   cat_id: 3,
+  published: 9,
   description: 11,
   created: 15,
   created_by: 16,
@@ -228,6 +229,16 @@ for (const r of events) {
   const reject = (reason) => unmapped.push({ id, title, date, reason });
 
   if (!date || date < CUTOFF) continue;
+
+  /*
+   * Joomla's publish state: 1 published, 0 unpublished, -2 trashed. The live
+   * site shows only published rows, so anything else is a booking that was
+   * cancelled or deleted and must not be carried across — importing them
+   * resurrects bookings the club has already dropped, and manufactures clashes
+   * against slots nobody actually holds. Skipped silently: a deleted booking is
+   * not a problem for anyone to review.
+   */
+  if (r[COL.published] !== '1') continue;
   if (date < SANE_FROM || date >= SANE_TO) {
     reject(`${date} is beyond the ${HORIZON_MONTHS}-month horizon (to ${SANE_TO})`);
     continue;

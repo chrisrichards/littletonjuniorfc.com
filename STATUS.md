@@ -217,10 +217,16 @@ eight pages stay prerendered.
   one in `scripts/out/bookings-conflicts.csv`. Those need resolving by hand at import time;
   the app will refuse to create any new overlap.
 - **Import.** `scripts/migrate-bookings.mjs` reads the Joomla dump and writes SQL; it never
-  touches a database. Dry-run over the 2025/26 season: 410 kept, 409/410 matched to a squad
-  and a manager, 12 rejected, 8 imported with a note. `enddate` is frequently transposed
-  (2025-12-01 ending 2025-01-12) and is ignored when it precedes the start, since dropping
-  those rows would lose real bookings over a typo.
+  touches a database. Against the 2026-09-02 dump, cutoff 2026-09-01: **100 bookings kept**
+  (2026-09-01 to 2027-04-11), 91 matched to a squad, 10 rejected, 0 pitch clashes.
+  `scripts/out/bookings-review.txt` is the date-ordered list for the club.
+- **Only `published = 1` rows are imported.** Joomla marks deleted bookings `-2` (trashed)
+  and hidden ones `0`; the live site shows neither. Ignoring that column imported 15 deleted
+  bookings, which resurrected slots the club had dropped and manufactured 4 clashes against
+  bookings nobody holds — every clash in the first review pass was false. Caught by comparing
+  the output against the live site's 6 September listing.
+- `enddate` is frequently transposed (2025-12-01 ending 2025-01-12) and is ignored when it
+  precedes the start, since dropping those rows would lose real bookings over a typo.
 - **Verified locally:** 17 authorisation/validation cases (overlap, touching slots, squad
   ownership, admin override, non-allowlisted, past dates, opening hours, horizon, cancel
   permissions, rebooking a cancelled slot). The 8 existing pages are byte-identical to the
