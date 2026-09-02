@@ -4,24 +4,21 @@
     "role": "Chairman",
     "name": "Ethu Crorie",
     "email": "chair@littletonjuniorfc.com",
-    "group": "committee",
-    "order": 0
+    "group": "committee"
   },
   {
     "id": "treasurers-stephen-porter-emilie-dumoulin",
     "role": "Treasurers",
     "name": "Stephen Porter <br>& Emilie Dumoulin",
     "email": "treasurer@littletonjuniorfc.com",
-    "group": "committee",
-    "order": 1
+    "group": "committee"
   },
   {
     "id": "development-officer-simon-fletcher",
     "role": "Development Officer",
     "name": "Simon Fletcher",
     "email": "development@littletonjuniorfc.com",
-    "group": "committee",
-    "order": 2
+    "group": "committee"
   },
   {
     "id": "secretary-mike-knowles",
@@ -29,8 +26,7 @@
     "name": "Mike Knowles",
     "email": "secretary@littletonjuniorfc.com",
     "group": "committee",
-    "note": "If you would like to join the club, please contact the relevant Age Group Coordinator listed below.",
-    "order": 3
+    "note": "If you would like to join the club, please contact the relevant Age Group Coordinator listed below."
   },
   {
     "id": "welfare-officer-adam-stacey",
@@ -39,32 +35,28 @@
     "email": "cwo@littletonjuniorfc.com",
     "phone": "07784 692766",
     "group": "committee",
-    "note": "Welfare calls only",
-    "order": 4
+    "note": "Welfare calls only"
   },
   {
     "id": "vice-chair-facilities-coaches-paul-burgess",
     "role": "Vice Chair, facilities & coaches",
     "name": "Paul Burgess",
     "email": "paul@burgeagency.com",
-    "group": "committee",
-    "order": 5
+    "group": "committee"
   },
   {
     "id": "vice-chair-kit-equipment-sean-mcpike",
     "role": "Vice chair, Kit & Equipment",
     "name": "Sean McPike",
     "email": "sean.mcpike@hotmail.co.uk",
-    "group": "committee",
-    "order": 6
+    "group": "committee"
   },
   {
     "id": "parish-council-liaison-ian-davies",
     "role": "Parish Council Liaison",
     "name": "Ian Davies",
     "email": "eon_line@hotmail.com",
-    "group": "committee",
-    "order": 7
+    "group": "committee"
   },
   {
     "id": "u6-coordinator-phil-denny",
@@ -73,8 +65,7 @@
     "email": "littletonjuniorfc25@gmail.com",
     "group": "coordinator",
     "ageGroup": "U6",
-    "yearLabel": "Years R-1",
-    "order": 8
+    "yearLabel": "Years R-1"
   },
   {
     "id": "u7-coordinator-ed-green-wilkinson",
@@ -83,8 +74,7 @@
     "email": "littletonjuniorfc24@gmail.com",
     "group": "coordinator",
     "ageGroup": "U7",
-    "yearLabel": "Year 2",
-    "order": 9
+    "yearLabel": "Year 2"
   },
   {
     "id": "u8-coordinator-eddie-mckeown",
@@ -93,8 +83,7 @@
     "email": "mckeown.edward7@gmail.com",
     "group": "coordinator",
     "ageGroup": "U8",
-    "yearLabel": "Year 3",
-    "order": 10
+    "yearLabel": "Year 3"
   },
   {
     "id": "u9-coordinator-stephen-porter",
@@ -103,8 +92,7 @@
     "email": "stephenjohnporter@outlook.com",
     "group": "coordinator",
     "ageGroup": "U9",
-    "yearLabel": "Year 4",
-    "order": 11
+    "yearLabel": "Year 4"
   },
   {
     "id": "u10-coordinator-adam-stacey",
@@ -113,8 +101,7 @@
     "email": "ajwstacey@icloud.com",
     "group": "coordinator",
     "ageGroup": "U10",
-    "yearLabel": "Year 5",
-    "order": 12
+    "yearLabel": "Year 5"
   },
   {
     "id": "u11-coordinator-simon-fletcher",
@@ -123,8 +110,7 @@
     "email": "fletchdownunder@gmail.com",
     "group": "coordinator",
     "ageGroup": "U11",
-    "yearLabel": "Year 6",
-    "order": 13
+    "yearLabel": "Year 6"
   },
   {
     "id": "u12-coordinator-andy-vertannes",
@@ -133,8 +119,7 @@
     "email": "andyvertannes@hotmail.co.uk",
     "group": "coordinator",
     "ageGroup": "U12",
-    "yearLabel": "Year 7",
-    "order": 14
+    "yearLabel": "Year 7"
   },
   {
     "id": "u13-coordinator-andrew-johnson",
@@ -143,8 +128,7 @@
     "email": "ajingwell@googlemail.com",
     "group": "coordinator",
     "ageGroup": "U13",
-    "yearLabel": "Year 8",
-    "order": 15
+    "yearLabel": "Year 8"
   },
   {
     "id": "u14-coordinator-chris-edwards",
@@ -153,8 +137,7 @@
     "email": "Chris@christash.co.uk",
     "group": "coordinator",
     "ageGroup": "U14",
-    "yearLabel": "Year 9",
-    "order": 16
+    "yearLabel": "Year 9"
   },
   {
     "id": "u15-coordinator-tom-luker",
@@ -163,8 +146,7 @@
     "email": "tomluker@hotmail.com",
     "group": "coordinator",
     "ageGroup": "U15",
-    "yearLabel": "Year 10",
-    "order": 17
+    "yearLabel": "Year 10"
   },
   {
     "id": "u16-coordinator-mike-knowles",
@@ -173,8 +155,7 @@
     "email": "secretary@littletonjuniorfc.com",
     "group": "coordinator",
     "ageGroup": "U16",
-    "yearLabel": "Year 11",
-    "order": 18
+    "yearLabel": "Year 11"
   },
   {
     "id": "u18-coordinator-ian-davies",
@@ -183,7 +164,6 @@
     "email": "eon_line@hotmail.com",
     "group": "coordinator",
     "ageGroup": "U18",
-    "yearLabel": "Years 12–13",
-    "order": 19
+    "yearLabel": "Years 12–13"
   }
 ]

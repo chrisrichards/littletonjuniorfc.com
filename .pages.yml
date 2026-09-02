@@ -1,11 +1,12 @@
 # Pages CMS configuration — https://pagescms.org/docs
 #
 # Scope: the two files the committee actually edits. Both are bare top-level
-# JSON arrays and stay that way — no change to their shape on disk, and no
-# change to the `file()` loaders in src/content.config.ts.
+# JSON arrays and stay that way — the CMS edits them in place, with no change
+# to their shape on disk.
 #
-# Three things were verified against the pages-cms source (commit 6f4e860)
-# rather than the docs, because getting them wrong fails silently:
+# Notes on why this config looks the way it does. Points 1, 2, 3 and 5 were
+# verified against the pages-cms source (commit 6f4e860) rather than the docs,
+# because getting them wrong fails silently:
 #
 #  1. `list: true` on a `type: file` entry edits a bare root array. It must be
 #     literally `true`: components/entry/entry.tsx tests `schema?.list === true`
@@ -20,7 +21,11 @@
 #
 #  3. Field order here becomes key order in the written JSON.
 #
-#  4. No `extension:` key on a `file` entry — the config schema is strict and
+#  4. There is no `order` field: display order is the row order in this editor.
+#     src/content.config.ts derives `order` from the array position, so dragging
+#     a row here does reorder the published page.
+#
+#  5. No `extension:` key on a `file` entry — the config schema is strict and
 #     rejects it; the extension is inferred from `path`, which also picks the
 #     `json` format. `format: json` is stated anyway for the next reader.
 
@@ -92,14 +97,6 @@ content:
         label: Note
         type: text
 
-      - name: order
-        label: Display order
-        type: number
-        required: true
-        description: >-
-          Controls the order on the page. Dragging rows in this editor does NOT
-          change the published order — edit this number instead. Lowest first.
-
   - name: teams
     label: Teams & squads
     description: Published on /teams. Manager emails also grant booking access for that squad.
@@ -161,11 +158,3 @@ content:
               This address grants booking access for this squad. Changing it does
               NOT update the Cloudflare Access allowlist — run
               `node scripts/print-allowlist.mjs` and update the LJFC Emails list.
-
-      - name: order
-        label: Display order
-        type: number
-        required: true
-        description: >-
-          Controls the order on the page. Dragging rows in this editor does NOT
-          change the published order — edit this number instead. Lowest first.
