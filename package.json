@@ -14,12 +14,9 @@
     "generate-types": "wrangler types"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.5.3",
-    "astro": "^6.3.6",
+    "@astrojs/cloudflare": "^14.2.6",
+    "astro": "^7.2.10",
     "wrangler": "^4.93.1"
-  },
-  "overrides": {
-    "vite": "^7"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",
@@ -27,7 +24,7 @@
     "pixelmatch": "^7.2.0",
     "playwright": "^1.60.0",
     "pngjs": "^7.0.0",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4.3.0",
     "turndown": "^7.2.4"
   }
