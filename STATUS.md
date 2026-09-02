@@ -8,7 +8,7 @@ Living document — update this when something material changes (phase completes
 
 Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev, and as of 2026-09-02 has been **fully verified against the live site** — visual diff at 8 pages × 7 widths, plus links, images, PDFs, JS behaviour and head metadata. Four regressions found and fixed, including 27 PDF downloads that were 404ing. **Phase 5 is complete.** The pitch booking system (**Phase 4 is complete**) is deployed: Cloudflare Access is live with a 49-address One-time PIN allowlist, and 100 bookings are imported from 2026-09-01.
 
-**DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The one thing standing between here and cutover is the club resolving 10 review bookings (`scripts/out/bookings-review.txt`). Keystatic was never built and is deliberately deferred until after go-live.
+**DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The one thing standing between here and cutover is the club resolving 10 review bookings (`scripts/out/bookings-review.txt`). No CMS is in use yet: Keystatic was dropped in favour of Pages CMS (see Decisions #9), whose config is on branch `spike/pages-cms` but has not been opened by an editor. Deferred until after go-live either way.
 
 ## 2026-09-02 — Phase 5 close-out (links, PDFs, behaviour, metadata)
 
@@ -414,12 +414,15 @@ What remains is club-side, not engineering:
 ## What's deferred / known issues
 
 ### Deferred to after go-live
-- **Keystatic CMS is not built.** No `keystatic.config.ts`, no `/keystatic` route,
-  no dependency — it is in migration-plan.md's target stack but was never
-  implemented. Decided 2026-09-02 that it does not gate go-live: content is
-  edited by changing files in this repo, which is how it has been done
-  throughout. Revisit once the site is live and a non-technical editor actually
-  needs it.
+- **No CMS is in use yet.** Keystatic was never built — no config, route or
+  dependency — and on 2026-09-02 was dropped in favour of Pages CMS
+  (Decisions #9). `.pages.yml` exists on branch `spike/pages-cms`, covering
+  `people.json` and `teams.json`; it passes the Pages CMS config schema and a
+  replayed save leaves both files byte-identical. Not yet merged, and nobody
+  has opened it in the Pages CMS UI or been invited as an editor. Does not gate
+  go-live: content is edited by changing files in this repo, which is how it
+  has been done throughout. Revisit once the site is live and a non-technical
+  editor actually needs it.
 
 ### Functional gaps (block public cutover)
 1. **10 bookings need a decision from the club** — `scripts/out/bookings-review.txt`. Nine are
@@ -469,6 +472,30 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
    emails and WhatsApp groups and are indexed by search engines, so the old
    paths have to keep working. Without the rule the move would have silently
    broken every shared link at cutover.
+9. **CMS: Pages CMS instead of Keystatic (2026-09-02).** The deciding factor was
+   sign-in, not the content model. Keystatic runs inside the app — React, a
+   server-rendered `/keystatic` route on the Worker, a GitHub App — and every
+   editor needs a GitHub account with `write` access to this repo. Pages CMS is
+   hosted, adds only `.pages.yml` to the repo, and invites editors by email with
+   no GitHub account. It also edits `people.json` and `teams.json` in place as
+   bare top-level JSON arrays, which is what Astro's `file()` loader already
+   wants; Keystatic cannot write a bare root array and would have forced either
+   a `{ "people": [...] }` wrapper or one file per record, plus changes to
+   `src/content.config.ts`, `src/lib/squads.ts` and `scripts/print-allowlist.mjs`.
+
+   Two things to know before editing `.pages.yml` (both verified against the
+   pages-cms source, not the docs — they fail silently):
+   - **Every key in the data must be declared in `.pages.yml`.** On save the
+     record is rebuilt from the declared fields and undeclared keys are dropped,
+     and the `settings.content.merge` safety net is skipped for root-level lists.
+   - **`list` must be literally `true`** on a file entry. The editor tests
+     `schema?.list === true` while the API tests truthiness, so
+     `list: {collapsible: …}` would wrap on save and not wrap in the UI.
+
+   Editing a `managerEmail` through the CMS changes app-side booking access but
+   **not** the Cloudflare Access allowlist — the two-gate drift described under
+   "Where the Access allowlist actually lives" in README.md. Re-run
+   `node scripts/print-allowlist.mjs` after any manager change.
 
 ## What's next (suggested order)
 
@@ -481,7 +508,7 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 Nothing outstanding here. The remaining Phase 5 work is the part of
 migration-plan.md's checklist that has not been re-verified since the port:
 PDFs reachable, mobile menu, counters, and Open Graph tags / favicon / page
-titles. (Keystatic is deferred to after go-live — see "Deferred to after
+titles. (The CMS is deferred to after go-live — see "Deferred to after
 go-live".)
 
 ### Phase 4: booking system — done

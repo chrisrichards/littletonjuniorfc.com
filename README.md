@@ -8,7 +8,8 @@ Migration of [littletonjuniorfc.com](https://littletonjuniorfc.com) from Joomla 
 - **Cloudflare Workers** (static assets) — hosting, built by Workers Builds
 - **Cloudflare D1** — pitch bookings database
 - **Cloudflare Access** — email allowlist auth for booking managers
-- **Keystatic** — Git-based CMS (to be added)
+- **Pages CMS** — Git-based CMS for `people.json` and `teams.json`, configured in
+  `.pages.yml` (hosted at pagescms.org; nothing to deploy, no dependency)
 
 ## Local development
 
@@ -282,8 +283,10 @@ All three are done — see `STATUS.md` for the detail. What actually remains:
 
 - **10 review bookings** need a decision from the club (`scripts/out/bookings-review.txt`) —
   the only real cutover blocker
-- **Keystatic** was never built and is deliberately deferred until after go-live; content is
-  edited by changing files in this repo
+- **The CMS has not been used by an editor yet.** Keystatic was dropped in favour of
+  Pages CMS; `.pages.yml` covers `people.json` and `teams.json`, but nobody has opened
+  it in the Pages CMS UI or been invited as an editor. Not a cutover blocker — content
+  is edited by changing files in this repo, which is how it has been done throughout
 - **Legacy Joomla URLs** (`index.php?option=com_*`, `/component/*`) are deliberately *not*
   redirected and will 404. The one exception is the PDFs, which moved from
   `/images/downloads/` to `/downloads/` and carry a 301 in `public/_redirects`
