@@ -260,9 +260,14 @@ eight pages stay prerendered.
 ## What's deferred / known issues
 
 ### Functional gaps (block public cutover)
-1. **Pitch booking system.** Phase 4 entirely unbuilt. D1 schema not written, no booking endpoints, no Access policy, no manager UI.
-2. **Legacy URL redirects.** `public/_redirects` is placeholders. Anyone hitting an old Joomla URL (`index.php?…`, `/component/users/*`) 404s.
-3. **Cloudflare Access** allowlist not built. Will need to extract manager emails from the Joomla `_users` + `_user_usergroup_map` tables when wiring `/schedule/book`.
+1. **Legacy URL redirects.** `public/_redirects` is placeholders. Anyone hitting an old Joomla URL
+   (`index.php?…`, `/component/users/*`) 404s.
+2. **10 bookings need a decision from the club** — `scripts/out/bookings-review.txt`. Nine are
+   Typhoons U13, a team that books pitches but appears nowhere on the website, so those bookings
+   have no manager email and only committee members can change them. The tenth is one booking made
+   for two squads at once (U14 Vipers/Cobras).
+
+_(Phase 4 and the Access application are done — see the 2026-09-02 entry above.)_
 
 ### Visual nits to polish (not blocking)
 1. **Resources page** has a vertical gap in the Forms & Guides section between row 2 (Littleton Rec / Other Pitch Bookings) and row 3 (Incident Form / Expense Claims). Likely a `uk-grid-match` row-matching artifact.
@@ -297,20 +302,25 @@ eight pages stay prerendered.
 - [ ] Add contact-us bottom image + testimonial
 - [ ] Decide on `_redirects` policy for Joomla legacy URLs (e.g. `/index.php* → /`, `/component/*  → /`)
 
-### Phase 4: booking system
-- [ ] Write D1 schema (see migration-plan.md §4 for the proposed shape — bookings table)
-- [ ] Extract manager email list from Joomla SQL: `SELECT email FROM josbg_users WHERE block = 0 AND id IN (SELECT user_id FROM josbg_user_usergroup_map WHERE group_id = X)`
-- [ ] Configure Cloudflare Access self-hosted app on `/schedule/book` with email allowlist
-- [ ] Build read-only `/schedule` showing existing bookings from D1
-- [ ] Build `/schedule/book` with POST endpoint for creating bookings (Access-protected)
-- [ ] Optionally migrate historical bookings (the plan suggests skipping; up to you)
+### Phase 4: booking system — done
+- [x] D1 schema (`migrations/0001_bookings.sql`), applied local and remote
+- [x] Allowlist — taken from `teams.json` + `people.json`, not the Joomla users table, which held
+      only 5 accounts and one shared `coach` login
+- [x] Cloudflare Access application over `schedule/book`, `schedule/book/` and `api/bookings*`,
+      One-time PIN, 49 addresses
+- [x] Public `/schedule`, Access-gated `/schedule/book`, per-booking `/schedule/booking/<id>`
+- [x] Create, edit and delete, scoped by role
+- [x] 100 bookings imported from 2026-09-01 onwards
+- [ ] Resolve the 10 review items with the club (`scripts/out/bookings-review.txt`)
+- [ ] Decide whether Typhoons U13 should be added to `teams.json` (needs Chris Howes's email)
 
 ### Phase 5–6: verify + cutover
 - [ ] Full visual diff every page against live at desktop + mobile
 - [ ] Lower DNS TTL on littletonjuniorfc.com 24h ahead of cutover
 - [ ] Switch DNS to Cloudflare (low-traffic window, not Fri evening)
 - [ ] Keep Lightsail running ~2 weeks as fallback
-- [ ] Send Cloudflare Access onboarding instructions to managers
+- [ ] Send Access onboarding instructions to managers — they sign in with a one-time code emailed
+      to the address the club holds for them; no password, no account to create
 
 ### Phase 7: decommission
 - [ ] Final Lightsail backup
