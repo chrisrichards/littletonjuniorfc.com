@@ -44,8 +44,10 @@ content:
         required: true
         pattern:
           regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          message: Lowercase letters, numbers and hyphens only (e.g. secretary-mike-knowles)
-        description: Unique, and must stay stable — it is the entry key for the site build.
+          message: Lowercase letters, numbers and hyphens only (e.g. secretary)
+        description: >-
+          The role, not the person — post-holders change, the role doesn't.
+          Unique, and must stay stable: it is the entry key for the site build.
 
       - name: role
         label: Role

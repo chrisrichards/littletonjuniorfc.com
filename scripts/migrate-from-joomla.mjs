@@ -286,9 +286,9 @@ function extractTeams($) {
     current.remaining -= 1;
   });
 
-  return Array.from(teams.values())
-    .filter((t) => t.squads.length > 0)
-    .map((t, i) => ({ ...t, order: i }));
+  // No `order` field: display order is the array position, derived by the
+  // file() loader in src/content.config.ts.
+  return Array.from(teams.values()).filter((t) => t.squads.length > 0);
 }
 
 /** Walk the contact-us page and return [{ role, name, email, phone?, group, ... }].
@@ -299,7 +299,6 @@ function extractTeams($) {
  */
 function extractPeople($) {
   const people = [];
-  let order = 0;
   const seenIds = new Set();
 
   $('ul').each((_i, ul) => {
@@ -345,8 +344,15 @@ function extractPeople($) {
 
       if (!name) return;
 
-      const id = slug(`${role}-${name}`);
-      if (seenIds.has(id)) return;
+      // The id is the role, not the person: post-holders change, the role
+      // doesn't, and the id is the content collection key. Roles are unique on
+      // the source page — warn rather than silently dropping anyone if that
+      // ever stops being true.
+      const id = slug(role);
+      if (seenIds.has(id)) {
+        console.warn(`  ! duplicate role "${role}" (${name}) — skipped, id "${id}" is taken`);
+        return;
+      }
       seenIds.add(id);
 
       people.push({
@@ -359,7 +365,6 @@ function extractPeople($) {
         ...(ageGroup && { ageGroup }),
         ...(yearLabel && { yearLabel }),
         ...(note && { note }),
-        order: order++,
       });
     });
   });
