@@ -1,0 +1,171 @@
+# Pages CMS configuration — https://pagescms.org/docs
+#
+# Scope: the two files the committee actually edits. Both are bare top-level
+# JSON arrays and stay that way — no change to their shape on disk, and no
+# change to the `file()` loaders in src/content.config.ts.
+#
+# Three things were verified against the pages-cms source (commit 6f4e860)
+# rather than the docs, because getting them wrong fails silently:
+#
+#  1. `list: true` on a `type: file` entry edits a bare root array. It must be
+#     literally `true`: components/entry/entry.tsx tests `schema?.list === true`
+#     while the API route tests truthiness, so `list: {collapsible: ...}` would
+#     make the API wrap the array and the editor not wrap it. As a consequence
+#     the top-level rows get no summary/collapse options — only nested lists
+#     (squads, below) can have them.
+#
+#  2. Every key present in the data MUST be declared here. On save the entry is
+#     rebuilt from these fields and undeclared keys are dropped, and the
+#     `settings.content.merge` safety net is explicitly skipped for root lists.
+#
+#  3. Field order here becomes key order in the written JSON.
+#
+#  4. No `extension:` key on a `file` entry — the config schema is strict and
+#     rejects it; the extension is inferred from `path`, which also picks the
+#     `json` format. `format: json` is stated anyway for the next reader.
+
+content:
+  - name: people
+    label: Committee & coordinators
+    description: Published on /contact-us. Committee emails also grant booking admin.
+    type: file
+    path: src/content/people.json
+    format: json
+    list: true
+    fields:
+      - name: id
+        label: ID
+        type: string
+        required: true
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: Lowercase letters, numbers and hyphens only (e.g. secretary-mike-knowles)
+        description: Unique, and must stay stable — it is the entry key for the site build.
+
+      - name: role
+        label: Role
+        type: string
+        required: true
+
+      - name: name
+        label: Name
+        type: string
+        required: true
+        description: 'Rendered as HTML: use <br> to force a line break for a shared role.'
+
+      - name: email
+        label: Email
+        type: string
+        required: true
+        pattern:
+          regex: "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+          message: Must be a valid email address
+
+      - name: phone
+        label: Phone
+        type: string
+
+      - name: group
+        label: Group
+        type: select
+        required: true
+        options:
+          values:
+            - committee
+            - coordinator
+        description: >-
+          Committee members are booking admins (see adminGroupsFromPeople in
+          src/content/settings/bookings.json) — changing this changes who can
+          manage every pitch booking.
+
+      - name: ageGroup
+        label: Age group
+        type: string
+        description: Coordinators only (e.g. U11).
+
+      - name: yearLabel
+        label: Year label
+        type: string
+        description: Coordinators only (e.g. Year 6).
+
+      - name: note
+        label: Note
+        type: text
+
+      - name: order
+        label: Display order
+        type: number
+        required: true
+        description: >-
+          Controls the order on the page. Dragging rows in this editor does NOT
+          change the published order — edit this number instead. Lowest first.
+
+  - name: teams
+    label: Teams & squads
+    description: Published on /teams. Manager emails also grant booking access for that squad.
+    type: file
+    path: src/content/teams.json
+    format: json
+    list: true
+    fields:
+      - name: id
+        label: ID
+        type: string
+        required: true
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: Lowercase letters, numbers and hyphens only (e.g. u11, pan)
+        description: Unique, and must stay stable — booking squad ids are derived from it.
+
+      - name: age
+        label: Age group
+        type: string
+        required: true
+        description: e.g. U11, Pan-disability
+
+      - name: yearLabel
+        label: Year label
+        type: string
+        required: true
+        description: e.g. 4 Squads / Year 6
+
+      - name: squads
+        label: Squads
+        type: object
+        required: true
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: "{name} — {managerName}"
+        fields:
+          - name: name
+            label: Squad name
+            type: string
+            required: true
+            description: Must stay stable — the booking squad id is derived from it.
+
+          - name: managerName
+            label: Manager
+            type: string
+            required: true
+
+          - name: managerEmail
+            label: Manager email
+            type: string
+            required: true
+            pattern:
+              regex: "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+              message: Must be a valid email address
+            description: >-
+              This address grants booking access for this squad. Changing it does
+              NOT update the Cloudflare Access allowlist — run
+              `node scripts/print-allowlist.mjs` and update the LJFC Emails list.
+
+      - name: order
+        label: Display order
+        type: number
+        required: true
+        description: >-
+          Controls the order on the page. Dragging rows in this editor does NOT
+          change the published order — edit this number instead. Lowest first.
