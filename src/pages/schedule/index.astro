@@ -60,16 +60,18 @@ const label = (b: Booking) => squadById(b.squad_id)?.label ?? b.team_label;
   <Hero variant="image" image="/images/heros/teams.jpg" title="Pitch<br>Bookings" />
 
   <Section width="full">
-    <div class="sched-page">
+    <div class="sched-page" id="schedule">
       <div class="sched-head">
         <h2 class="sched-title">{formatDayRange(start, end)}</h2>
         <nav class="sched-nav">
-          <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, -7)}`}
-            >&larr; Previous</a
+          <a
+            class="uk-button uk-button-default"
+            href={`/schedule?week=${addDays(start, -7)}#schedule`}>&larr; Previous</a
           >
-          <a class="uk-button uk-button-default" href="/schedule">This week</a>
-          <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, 7)}`}
-            >Next &rarr;</a
+          <a class="uk-button uk-button-default" href="/schedule#schedule">This week</a>
+          <a
+            class="uk-button uk-button-default"
+            href={`/schedule?week=${addDays(start, 7)}#schedule`}>Next &rarr;</a
           >
         </nav>
       </div>

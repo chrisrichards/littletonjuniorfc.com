@@ -1222,7 +1222,13 @@
      footer ends up flush against the edge while the other three sides keep
      their gap. Padding cannot collapse, so all four sides stay equal. The
      trailing margin is dropped so the footer's own 20px doesn't add to it. */
-  .sched-page { padding: 1rem; }
+  .sched-page {
+    padding: 1rem;
+    /* The week nav links carry #schedule so paging keeps the table in view
+       instead of jumping to the top of the page; this keeps a little air above
+       the heading when the browser lands on it. */
+    scroll-margin-top: 1rem;
+  }
   /* The base reset covers h1-h4 but not h5, so a leading <h5> brings the
      browser's own top margin and the gap reads wider than the other sides. */
   .sched-page > :first-child { margin-top: 0; }
