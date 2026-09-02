@@ -38,10 +38,20 @@ const argOf = (name, fallback) => {
 const CUTOFF = argOf('cutoff', '2026-09-01');
 const DUMP = path.resolve(ROOT, argOf('dump', '../current/ljfc-db.sql'));
 
-// Anything outside this window is a data-entry error, not a booking. The dump
-// carries a 1937-02-09 row and a 2028-09-09 row.
+/*
+ * Anything outside this window is a data-entry error, not a booking. The dump
+ * carries a 1937-02-09 row, and a 2028-09-09 "U11 Rangers" row that has been
+ * sitting there since at least May — two years beyond the cutoff, for an age
+ * group that will have moved on twice by then. Real bookings run about two
+ * seasons ahead at most, so anything past the horizon is reported, not imported.
+ */
+const HORIZON_MONTHS = Number(argOf('horizon-months', '18'));
 const SANE_FROM = '2019-01-01';
-const SANE_TO = '2030-01-01';
+const SANE_TO = (() => {
+  const [y, m, d] = CUTOFF.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1 + HORIZON_MONTHS, d, 12));
+  return dt.toISOString().slice(0, 10);
+})();
 
 // josbg_jux_timetable_eventcategories -> our pitch ids
 const PITCH_BY_CAT = { 52: 'nursery', 53: 'top', 54: 'middle', 55: 'bottom' };
@@ -162,6 +172,19 @@ function matchSquad(title) {
   return byName.length === 1 ? byName[0] : null;
 }
 
+/*
+ * Some bookings are titled with the manager's name rather than the team —
+ * "Max Downey" instead of "Ospreys U15". Where the title is exactly a manager
+ * who runs a single squad, that is unambiguous, so resolve it to the team.
+ * Managers with more than one squad are skipped: guessing which is wrong.
+ */
+function matchSquadByManagerName(title) {
+  const t = norm(title);
+  if (!t) return null;
+  const hits = squads.filter((s) => norm(s.managerName) === t);
+  return hits.length === 1 ? hits[0] : null;
+}
+
 function matchManager(description) {
   const text = norm(stripTags(description));
   if (!text) return null;
@@ -206,7 +229,7 @@ for (const r of events) {
 
   if (!date || date < CUTOFF) continue;
   if (date < SANE_FROM || date >= SANE_TO) {
-    reject(`date outside ${SANE_FROM}..${SANE_TO}`);
+    reject(`${date} is beyond the ${HORIZON_MONTHS}-month horizon (to ${SANE_TO})`);
     continue;
   }
   /*
@@ -242,7 +265,15 @@ for (const r of events) {
     continue;
   }
 
-  const squad = matchSquad(title);
+  let squad = matchSquad(title);
+  let renamedFrom = null;
+  if (!squad) {
+    const byManager = matchSquadByManagerName(title);
+    if (byManager) {
+      squad = byManager;
+      renamedFrom = title;
+    }
+  }
   const manager = squad ?? matchManager(r[COL.description] ?? '');
   if (!squad) reject(`no squad matched title "${title}" (imported with squad_id NULL)`);
 
@@ -254,11 +285,15 @@ for (const r of events) {
     start_time: start,
     end_time: end,
     squad_id: squad?.id ?? null,
-    team_label: title.trim() || 'Booking',
+    team_label: squad && renamedFrom ? squad.label : title.trim() || 'Booking',
     manager_email: manager?.managerEmail ?? null,
     manager_name: manager?.managerName ?? (stripTags(r[COL.description] ?? '').slice(0, 80) || null),
     joomla_id: id,
+    renamedFrom,
   });
+  if (renamedFrom) {
+    notes.push({ id, title, date, reason: `title was a manager name — imported as "${squad.label}"` });
+  }
 }
 
 /*
@@ -362,6 +397,105 @@ const csv = [
 ].join('\n');
 fs.writeFileSync(path.join(OUT_DIR, 'bookings-unmapped.csv'), csv);
 
+/*
+ * A plain-text, date-ordered list of everything a human has to decide, meant to
+ * be pasted into an email to the club. Three kinds of item: two teams booked
+ * over each other, a booking whose team could not be identified, and a booking
+ * that was not imported at all.
+ */
+const PITCH_LABEL = Object.fromEntries(
+  JSON.parse(fs.readFileSync(path.join(ROOT, 'src/content/settings/bookings.json'), 'utf8'))
+    .pitches.map((p) => [p.id, p.label])
+);
+
+const longDate = (d) => {
+  const [y, m, day] = d.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, day, 12));
+  const wd = dt.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short' });
+  const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m - 1];
+  return `${wd} ${day} ${mon} ${y}`;
+};
+
+const items = [];
+
+for (const [a, b] of conflicts) {
+  items.push({
+    date: a.date,
+    sort: `${a.date} ${a.start_time}`,
+    head: `${longDate(a.date).padEnd(16)} ${(PITCH_LABEL[a.pitch] ?? a.pitch).padEnd(14)} CLASH`,
+    body: [
+      `    ${a.start_time}-${a.end_time}  ${a.team_label}${a.manager_name ? ` — ${a.manager_name}` : ''}`,
+      `    ${b.start_time}-${b.end_time}  ${b.team_label}${b.manager_name ? ` — ${b.manager_name}` : ''}`,
+    ],
+  });
+}
+
+for (const b of kept.filter((k) => !k.squad_id)) {
+  items.push({
+    date: b.date,
+    sort: `${b.date} ${b.start_time}`,
+    head: `${longDate(b.date).padEnd(16)} ${(PITCH_LABEL[b.pitch] ?? b.pitch).padEnd(14)} UNKNOWN TEAM`,
+    body: [
+      `    ${b.start_time}-${b.end_time}  ${b.team_label}${b.manager_name ? ` — ${b.manager_name}` : ' — no contact given'}`,
+    ],
+  });
+}
+
+// The CSV keeps the technical reason; the email needs plain English.
+const plainReason = (r) => {
+  if (/unknown pitch category/.test(r)) return 'no pitch was recorded against it';
+  if (/end .* not after start/.test(r)) return 'the start and end times are the same';
+  if (/beyond the .*horizon/.test(r)) return 'dated years ahead — it looks like a typing error';
+  if (/spans multiple days/.test(r)) return 'it runs across more than one day';
+  if (/unreadable time/.test(r)) return 'the times could not be read';
+  return r;
+};
+
+for (const u of unmapped.filter((x) => !/imported with squad_id NULL/.test(x.reason))) {
+  items.push({
+    date: u.date,
+    sort: `${u.date} 00:00`,
+    head: `${longDate(u.date).padEnd(16)} ${''.padEnd(14)} NOT IMPORTED`,
+    body: [`    ${u.title} — ${plainReason(u.reason)}`],
+  });
+}
+
+items.sort((x, y) => x.sort.localeCompare(y.sort));
+
+const rule = '-'.repeat(72);
+const reviewText = [
+  'Littleton Junior FC — pitch bookings needing a decision',
+  '',
+  `Taken from the Joomla booking system on ${new Date().toISOString().slice(0, 10)},`,
+  `covering bookings from ${CUTOFF} onwards.`,
+  '',
+  `${kept.length} bookings transfer across with no problem. The ${items.length} below need a`,
+  'decision before the new booking system goes live, in date order.',
+  '',
+  'CLASH         Two teams hold the same pitch at the same time. The new system',
+  '              allows only one team per pitch, which the old one did not',
+  '              enforce, so one of the two has to move.',
+  '',
+  'UNKNOWN TEAM  The team is not listed on the website, so the booking cannot be',
+  '              tied to a manager who could later change or cancel it. It will',
+  '              still show on the schedule.',
+  '',
+  'NOT IMPORTED  Could not be carried across at all — the reason is given.',
+  '',
+  rule,
+  '',
+  ...items.flatMap((it) => [it.head, ...it.body, '']),
+  rule,
+  '',
+  duplicates.length
+    ? `For information: ${duplicates.length} booking(s) had been saved more than once and were ` +
+      'automatically reduced to a single booking. No action needed.'
+    : '',
+  '',
+].join('\n');
+
+fs.writeFileSync(path.join(OUT_DIR, 'bookings-review.txt'), reviewText);
+
 const withSquad = kept.filter((b) => b.squad_id).length;
 const withManager = kept.filter((b) => b.manager_email).length;
 
@@ -379,6 +513,8 @@ if (Object.keys(byMonth).length) {
   console.log('By month:');
   for (const m of Object.keys(byMonth).sort()) console.log(`  ${m}  ${byMonth[m]}`);
 }
+console.log('');
+console.log(`Wrote scripts/out/bookings-review.txt — ${items.length} item(s) for the club to decide.`);
 console.log('');
 console.log('Wrote scripts/out/bookings-import.sql — apply it with:');
 console.log('  npx wrangler d1 execute ljfc-bookings --local  --file=./scripts/out/bookings-import.sql');
