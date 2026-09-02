@@ -1216,6 +1216,15 @@
  * eight pre-existing pages (guarded by the pixel harness).
  */
 @layer components {
+  /* 1rem of space around the schedule as a whole — header, table and footer.
+     Padding rather than margin: the section wrapper has no padding or border of
+     its own, so a bottom margin here collapses straight through it and the
+     footer ends up flush against the edge while the other three sides keep
+     their gap. Padding cannot collapse, so all four sides stay equal. The
+     trailing margin is dropped so the footer's own 20px doesn't add to it. */
+  .sched-page { padding: 1rem; }
+  .sched-page > :last-child { margin-bottom: 0; }
+
   .sched-head {
     display: flex;
     flex-wrap: wrap;

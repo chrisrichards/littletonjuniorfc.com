@@ -52,72 +52,74 @@ const label = (b: Booking) => squadById(b.squad_id)?.label ?? b.team_label;
   <Hero variant="image" image="/images/heros/teams.jpg" title="Pitch<br>Bookings" />
 
   <Section width="full">
-    <div class="sched-head">
-      <h5 class="sched-title">Week of {formatDay(start)}</h5>
-      <nav class="sched-nav">
-        <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, -7)}`}
-          >&larr; Previous</a
-        >
-        <a class="uk-button uk-button-default" href="/schedule">This week</a>
-        <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, 7)}`}
-          >Next &rarr;</a
-        >
-      </nav>
-    </div>
+    <div class="sched-page">
+      <div class="sched-head">
+        <h5 class="sched-title">Week of {formatDay(start)}</h5>
+        <nav class="sched-nav">
+          <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, -7)}`}
+            >&larr; Previous</a
+          >
+          <a class="uk-button uk-button-default" href="/schedule">This week</a>
+          <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, 7)}`}
+            >Next &rarr;</a
+          >
+        </nav>
+      </div>
 
-    <div class="sched-scroll">
-      <table class="sched">
-        <thead>
-          <tr>
-            <th scope="col">Day</th>
-            {pitches.map((p) => <th scope="col">{p.label}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {
-            days.map((day) => (
-              <tr class={day === todayIso ? 'is-today' : undefined}>
-                <th scope="row">{formatDay(day)}</th>
-                {pitches.map((p) => {
-                  const booked = cells.get(`${day}|${p.id}`) ?? [];
-                  return (
-                    <td>
-                      {booked.length === 0 ? (
-                        <span class="sched-free">&mdash;</span>
-                      ) : (
-                        booked.map((b) => (
-                          <div class="sched-booking">
-                            <span class="sched-time">
-                              {b.start_time}&ndash;{b.end_time}
-                            </span>
-                            <span class="sched-team">{label(b)}</span>
-                          </div>
-                        ))
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-    </div>
+      <div class="sched-scroll">
+        <table class="sched">
+          <thead>
+            <tr>
+              <th scope="col">Day</th>
+              {pitches.map((p) => <th scope="col">{p.label}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              days.map((day) => (
+                <tr class={day === todayIso ? 'is-today' : undefined}>
+                  <th scope="row">{formatDay(day)}</th>
+                  {pitches.map((p) => {
+                    const booked = cells.get(`${day}|${p.id}`) ?? [];
+                    return (
+                      <td>
+                        {booked.length === 0 ? (
+                          <span class="sched-free">&mdash;</span>
+                        ) : (
+                          booked.map((b) => (
+                            <div class="sched-booking">
+                              <span class="sched-time">
+                                {b.start_time}&ndash;{b.end_time}
+                              </span>
+                              <span class="sched-team">{label(b)}</span>
+                            </div>
+                          ))
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
 
-    <p class="sched-foot">
-      {
-        canBook ? (
-          <a class="uk-button uk-button-default" href="/schedule/book">
-            Book a pitch
-          </a>
-        ) : (
-          <>
-            Team managers can <a href="/schedule/book">book a pitch</a> after signing in. For
-            anything else, contact your Age Group Coordinator on the{' '}
-            <a href="/contact-us">Contact us</a> page.
-          </>
-        )
-      }
-    </p>
+      <p class="sched-foot">
+        {
+          canBook ? (
+            <a class="uk-button uk-button-default" href="/schedule/book">
+              Book a pitch
+            </a>
+          ) : (
+            <>
+              Team managers can <a href="/schedule/book">book a pitch</a> after signing in. For
+              anything else, contact your Age Group Coordinator on the{' '}
+              <a href="/contact-us">Contact us</a> page.
+            </>
+          )
+        }
+      </p>
+    </div>
   </Section>
 </BaseLayout>
