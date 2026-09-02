@@ -220,6 +220,61 @@ That reimplements `allowlist()` against the JSON directly — `squads.ts` itself
 `cloudflare:workers` and cannot run outside a Worker. It therefore prints everything except
 addresses held only in the `ADMIN_EMAILS` secret, which by design are not in this repo.
 
+#### Adding and removing people (do this every season)
+
+**Every change is two places.** The Cloudflare list decides who gets *in*; the repo decides
+what they may *do*. Doing only one is the most likely mistake, and each half fails
+differently:
+
+| Did only… | Symptom |
+|---|---|
+| the `LJFC Emails` list | They sign in fine, then see *"… is not on the list of team managers."* |
+| the repo | Access refuses them at the login page; they never reach the site |
+
+**A squad changes manager** (the common case):
+
+1. Edit that squad's `managerEmail` and `managerName` in `src/content/teams.json`, then
+   commit and push. Workers Builds deploys it. This also updates the Teams page, which reads
+   the same file. It does **not** touch Contact Us — that page is built from `people.json`
+   (committee + age-group coordinators), a separate list. A coordinator is not a squad
+   manager and gets no booking rights from being on it.
+2. In the dashboard, add the new address to **`LJFC Emails`** and remove the old one —
+   unless the old one still appears elsewhere in `node scripts/print-allowlist.mjs` (someone
+   may manage two squads, or also sit on the committee).
+
+**Someone joins or leaves the committee** (admins can book for any squad):
+
+- If their address is already published on the club website, add them to the committee group
+  in `src/content/people.json`.
+- If not, but you don't mind it being in this **public** repo, use `adminEmails` in
+  `src/content/settings/bookings.json`.
+- If it must not be public, use the Worker secret:
+
+  ```sh
+  npx wrangler secret put ADMIN_EMAILS      # comma-separated
+  ```
+
+  **This replaces the whole value — it does not append.** You cannot read the current value
+  back, so paste the full list including the existing addresses. Keep a record somewhere
+  outside the repo.
+
+Then add or remove them in `LJFC Emails` as above.
+
+**Removing someone in a hurry:** take them out of `LJFC Emails` first. That is the gate that
+stops them reaching the Worker at all, and it takes effect without a deploy. Tidy up the repo
+side afterwards. Note that removal from the list does not tear down a session they already
+hold — revoke it under the user in Zero Trust if that matters.
+
+##### One thing that catches people out
+
+A booking stores the squad's manager email *as it was when the booking was written*
+(`manager_email`, from `teams.json` — see `api/bookings.ts`), not the address of whoever was
+signed in. So after a manager handover, that squad's **existing** bookings still carry the
+old manager's address and the new manager cannot edit them — `canManage()` refuses. A
+committee admin can edit anything, and doing so rewrites `manager_email` to the current
+manager. So after a handover, have an admin open and re-save any of that squad's future
+bookings, or leave them for the admin to manage.
+
 ### Still open before cutover
 
 Everything in this section used to list Access, redirects and the booking system as unbuilt.
