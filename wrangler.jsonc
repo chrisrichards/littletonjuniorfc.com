@@ -10,6 +10,16 @@
 	"observability": {
 		"enabled": true
 	},
+	// Astro's session store. The Cloudflare adapter enables sessions and, with no
+	// id here, tries to CREATE this namespace on every deploy — which fails once
+	// it exists ("a namespace with this account ID and title already exists").
+	// Naming the existing namespace makes the deploy bind it instead.
+	"kv_namespaces": [
+	  {
+	    "binding": "SESSION",
+	    "id": "208ef9ae3e4c4e199052d56dc552b2f8"
+	  }
+	],
 	"d1_databases": [
 	  {
 	    "binding": "DB",
