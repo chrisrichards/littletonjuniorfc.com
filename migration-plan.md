@@ -6,7 +6,9 @@
 - **Hosting:** Cloudflare Pages
 - **Database (bookings):** Cloudflare D1
 - **Auth (bookings):** Cloudflare Access with email allowlist
-- **CMS:** Keystatic (Git-based, stores content in GitHub repo)
+- **CMS:** Pages CMS (pagescms.org — hosted, Git-based; unrelated to Cloudflare
+  Pages above). Schema in `.pages.yml`, content stays in this repo. Editors are
+  invited by email and don't need GitHub accounts.
 - **Cost target:** £0/month (vs current ~£6/month on AWS Lightsail)
 
 ---
@@ -196,7 +198,7 @@ Build the Astro site, deploy to Cloudflare Pages on a preview URL (e.g. `preview
 - [x] Schedule renders correctly with migrated bookings — 100 bookings from 2026-09-01
 - [x] Authorised managers can log in via Cloudflare Access and create bookings — One-time PIN, 49 addresses
 - [x] Non-authorised emails get rejected by Access — **confirmed 2026-09-02.** Unauthenticated requests to `/schedule/book` and `/api/bookings` 302 to the Access login with `auth_status: NONE` while `/schedule/` stays public, and a real login attempt with a personal address held in none of the three admin sources was refused. The app-side role gate (`roleFor()` → `none`) was checked separately via the `astro dev` `?as=` shim.
-- [ ] ~~Keystatic editor works for at least one of your content editors~~ **Deferred 2026-09-02 — does not gate go-live.** Keystatic was never built (no config, route or dependency); content is edited directly in the repo. Revisit post-launch.
+- [ ] CMS editor works for at least one of your content editors — **not yet.** Keystatic was dropped in favour of Pages CMS (no server routes, no React, and editors don't need GitHub accounts). `.pages.yml` covers people.json and teams.json on branch `spike/pages-cms`; it passes the Pages CMS config schema and a replayed save leaves both files byte-identical, but nobody has opened it in the Pages CMS UI yet. Does not gate go-live — content can still be edited directly in the repo.
 - [x] Mobile menu works — `interact.mjs` drawer test passes
 - [x] Counters/stats display correctly — 614/113/43/1, identical to live
 - [x] Open Graph tags, favicon, page titles — favicon and meta description match; **neither site has any OG tags**; page titles deliberately differ (see STATUS.md 2026-09-02 close-out)
@@ -319,17 +321,15 @@ littletonjuniorfc/
 │   │   ├── schedule/
 │   │   │   ├── index.astro         # /schedule  (public read-only view)
 │   │   │   └── book.astro          # /schedule/book  (protected by Access)
-│   │   ├── api/
-│   │   │   ├── bookings.ts         # POST/GET bookings (uses D1)
-│   │   │   └── bookings/[id].ts    # DELETE a booking
-│   │   └── keystatic/
-│   │       └── [...params].astro   # Mounts the Keystatic UI
+│   │   └── api/
+│   │       ├── bookings.ts         # POST/GET bookings (uses D1)
+│   │       └── bookings/[id].ts    # DELETE a booking
 │   ├── lib/
 │   │   ├── db.ts                   # D1 helpers
 │   │   └── auth.ts                 # Reads Cf-Access-Authenticated-User-Email
 │   └── styles/
 │       └── global.css
-├── keystatic.config.ts             # ← Keystatic schema
+├── .pages.yml                      # ← Pages CMS schema (no code, no route)
 ├── astro.config.mjs
 ├── wrangler.toml                   # Cloudflare Pages + D1 binding
 ├── package.json
