@@ -6,7 +6,7 @@ Living document — update this when something material changes (phase completes
 
 ## TL;DR
 
-Migration from Joomla to Astro on Cloudflare Pages. Visitor-facing site is **content-complete and deployable** to the `*.pages.dev` preview URL. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is unbuilt.
+Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is unbuilt.
 
 ## 2026-06-03 — uk-* markup → Tailwind grid + utilities (branch `tailwind-migration`)
 
@@ -173,9 +173,13 @@ launch blocker.
 ### Cloudflare wiring
 - Account: set up
 - GitHub repo: github.com/chrisrichards/littletonjuniorfc.com
-- Pages project: connected to repo, auto-deploys from `main`
+- Worker: `littletonjuniorfc`, served at `littletonjuniorfc.yellowfeather.workers.dev`
+- Workers Builds: connected to the repo, builds + deploys on every push to `main`
+- **Not a Pages project** — `wrangler.jsonc` is a Worker-with-static-assets config (`main` +
+  `assets`). `wrangler pages …` commands do not apply; the site does not appear in
+  `wrangler pages project list`
 - D1 database: `ljfc-bookings`, id `38d3059f-cb06-45e2-a38b-23641ea1d19d`
-- D1 binding (`DB`) declared in `wrangler.jsonc` and in Pages dashboard
+- D1 binding (`DB`) declared in `wrangler.jsonc`, which Workers Builds reads from the repo
 - Cloudflare Access: **not yet configured**
 
 ### Content collections (`src/content.config.ts`)

@@ -2,7 +2,7 @@
 
 Migrating https://littletonjuniorfc.com from Joomla (Bitnami on AWS Lightsail) to:
 - Astro static site
-- Cloudflare Pages hosting
+- Cloudflare Workers hosting (static assets, built by Workers Builds — not Pages)
 - Cloudflare D1 for pitch bookings
 - Cloudflare Access for booking auth (email allowlist)
 - Keystatic CMS (Git-based, content in this repo)
