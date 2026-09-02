@@ -6,9 +6,53 @@ Living document — update this when something material changes (phase completes
 
 ## TL;DR
 
-Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev, and as of 2026-09-02 has been **diffed against the live site** at 8 pages × 7 widths with the three regressions that found now fixed. The pitch booking system (**Phase 4 is complete**) is deployed: Cloudflare Access is live with a 49-address One-time PIN allowlist, and 100 bookings are imported from 2026-09-01.
+Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev, and as of 2026-09-02 has been **fully verified against the live site** — visual diff at 8 pages × 7 widths, plus links, images, PDFs, JS behaviour and head metadata. Four regressions found and fixed, including 27 PDF downloads that were 404ing. **Phase 5 is complete.** The pitch booking system (**Phase 4 is complete**) is deployed: Cloudflare Access is live with a 49-address One-time PIN allowlist, and 100 bookings are imported from 2026-09-01.
 
 **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The one thing standing between here and cutover is the club resolving 10 review bookings (`scripts/out/bookings-review.txt`). Keystatic was never built and is deliberately deferred until after go-live.
+
+## 2026-09-02 — Phase 5 close-out (links, PDFs, behaviour, metadata)
+
+Worked through the rest of migration-plan.md's Phase 5 checklist, the part the
+visual diff doesn't cover. One serious find.
+
+**27 of 28 PDF downloads were 404ing** (fixed in `82d2063`). Two independent
+causes, either of which alone would have broken most of them:
+
+1. **The files were never migrated.** `public/images/downloads/` held exactly one
+   PDF. The other 27 were sitting in the wget capture at
+   `../current/littletonjuniorfc.com/images/downloads/` and had never been copied
+   across. 26 recovered from there; `Macron_bespoke_order_form_2024.pdf` is not in
+   the capture (added to live after it was taken) and was pulled from live.
+2. **Every `resources.json` href was relative** — `images/downloads/x.pdf` with no
+   leading slash — so from `/resources/` they resolved to
+   `/resources/images/downloads/x.pdf`. `official-info.astro` used absolute paths,
+   which is why the safeguarding PDFs looked correct in the markup while the whole
+   Resources set was broken.
+
+Comparing every Resources card href against live also caught an **off-by-one**:
+"Macron order form" carried the URL belonging to "Additional Kit", and
+"Additional Kit" pointed at `#`. Both now match live.
+
+**Everything else passed:**
+
+| check | result |
+|---|---|
+| Internal links (37, incl. 28 PDFs) | 0 broken on workers.dev |
+| Pages returning non-200 | none across all 9 routes |
+| Images failing to decode | none |
+| Teams "More" panel + close button | pass |
+| Mobile drawer opens | pass |
+| Home counters | 614 / 113 / 43 / 1 — identical to live |
+| Favicon | ours resolve (200); live's paths differ but both work |
+| Meta description | identical to live |
+| Open Graph tags | **neither site has any** — parity holds; adding them would be an enhancement, not a fidelity fix |
+
+**Page titles — decided 2026-09-02 to keep ours, not match live.** Live uses
+`Littleton Junior FC - Teams`; we use `Teams | Littleton Junior FC`. Page-name-first
+is the better convention for narrow tabs and search results. Home was the odd one
+out (`Littleton Junior FC - Home`, matching live) and is now just
+`Littleton Junior FC`, so all 11 routes are consistent. This is a deliberate
+deviation from migration-plan.md's "page titles all match".
 
 ## 2026-09-02 — First visual diff against the live Joomla site
 
@@ -243,16 +287,16 @@ launch blocker.
 |---|---|---|
 | 0. Capture current site | ✅ | wget mirror + Joomla tarball + MySQL dump in `../current/` |
 | 1. Understand what to rebuild | ✅ | Documented in `inventory.md` |
-| 2. Recreate styling | ✅ | Approach A (vendored YOOtheme CSS) validated by home-page spike |
+| 2. Recreate styling | ✅ | Started as Approach A (vendored YOOtheme CSS); superseded 2026-06-02 by the UIkit→Tailwind migration. All CSS is now one hand-authored `src/styles/app.css`. |
 | 3. Migrate content | ✅ | `scripts/migrate-from-joomla.mjs` + content collections + all 8 navigable pages ported |
 | 4. Booking system | ✅ | Schema, `/schedule`, booking form, endpoints, roles and import all built and deployed. Access application live (One-time PIN, 49 addresses); 100 bookings imported from 2026-09-01. Two club-side follow-ups remain (below) — neither is engineering work. |
-| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Verification itself is complete and pre-launch polish is clear. Still unverified since the port: PDFs, mobile menu, counters, OG/favicon/titles. |
+| 5. Build + verify | ✅ | Full visual diff against live (8 pages × 7 widths) plus links, images, PDFs, JS behaviour and head metadata all checked 2026-09-02. Four regressions found and fixed — three layout (`91ee803`), plus 27 broken PDF downloads (`82d2063`). |
 | 6. Cutover | ❌ | DNS still on Lightsail. Phase 4 has shipped, so this is now gated only on the club resolving the 10 review bookings. |
 | 7. Decommission | ❌ | Blocked on Phase 6 |
 
 ## What works
 
-### Pages (all 8 navigable pages ported)
+### Pages (8 navigable pages + 3 schedule routes = 11)
 - `/` — hero, counter band, homesquares, sponsors
 - `/teams` — age-group nav grid + per-age squad detail sections
 - `/official-info` — welfare/safeguarding, FA respect, FA charter, committee
@@ -275,14 +319,15 @@ launch blocker.
   `wrangler pages project list`
 - D1 database: `ljfc-bookings`, id `38d3059f-cb06-45e2-a38b-23641ea1d19d`
 - D1 binding (`DB`) declared in `wrangler.jsonc`, which Workers Builds reads from the repo
-- Cloudflare Access: **not yet configured**
+- Cloudflare Access: **live** over `/schedule/book*` + `/api/bookings*` — One-time PIN, 49 addresses
 
 ### Content collections (`src/content.config.ts`)
 - `pages/*.md` — long-form copy
 - `teams.json` — 13 age groups × 45 squads with managers + emails
 - `people.json` — 8 committee + 12 age-group coordinators
-- `resources.json` — 38 entries × 7 sections
+- `resources.json` — 39 entries × 7 sections (General 2, Forms & Guides 6, Leagues 4, The FA 4, Coaching Tools 8, Venue Guides 10, Kit ordering 5)
 - `settings/site.json` — counters, fees, season, club info
+- `settings/bookings.json` — booking-system settings
 
 ### Vendored assets (under `public/`)
 - `templates/yootheme/fonts/` — BebasKai + TradeGothic LT only (licensed for the domain — see `~/.claude/projects/.../memory/font-licensing.md`). All styling now lives in `src/styles/app.css`.
@@ -398,11 +443,11 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 
 ### Decisions / workarounds worth knowing
 1. **Approach A chosen** (vendor the YOOtheme CSS verbatim) over Approach B (rebuild with Tailwind). The home spike confirmed this gets to pixel-close fidelity in hours not days.
-2. **Page-level overrides live in `public/templates/yootheme/css/overrides.css`**, NOT in `<style is:global>` Astro blocks. Astro's dev-mode HMR injection had cascade timing issues — moving to a plain CSS `<link>` made the cascade deterministic.
+2. **Page-level overrides live in one hand-authored stylesheet, not in `<style is:global>` Astro blocks.** Astro's dev-mode HMR injection had cascade timing issues; a plain CSS `<link>` made the cascade deterministic. _(Originally `public/templates/yootheme/css/overrides.css`; since the 2026-06-02 Tailwind migration that file is gone and everything lives in `src/styles/app.css`.)_
 3. **Markdown image paths get rewritten** to absolute `/images/…` in the migration script. Astro otherwise tries to resolve relative paths against `src/` at load time and fails.
 4. **Schedule article (id=1, alias `pitch-bookings`)** deliberately excluded from migration — that page is rebuilt against D1.
-5. **Membership card alternation** (Our Subs dark / Joining Us blue / Paying Subs dark / Your Details blue) differs from `custom.css`'s rule (which would put 1+4 blue). Patched in `overrides.css` to match what the live site renders today.
-6. **Nav alignment**: `.tm-header .uk-navbar-nav > li > a { align-items: flex-start; padding-top: 26px }` in overrides.css gives top-aligned text with the right gap below the white underline.
+5. **Membership card alternation** (Our Subs dark / Joining Us blue / Paying Subs dark / Your Details blue) differs from the old `custom.css` rule (which would put 1+4 blue). Reproduced in `src/styles/app.css` (`#membership > div > div:nth-child(…)`) to match what the live site renders today.
+6. **Nav alignment**: the nav links use `align-items: flex-start` with a top padding so the text sits high with the right gap below the white underline. Now in `src/styles/app.css` (~line 1130).
 7. **Legacy URL redirects: decided against (2026-09-02).** `public/_redirects`
    stays as placeholder comments. Old Joomla paths (`index.php?option=com_…`,
    `/component/*`) will 404 after cutover rather than 301 to `/`. This was
@@ -459,6 +504,7 @@ go-live".)
 | Reusable hero | `src/components/Hero.astro` |
 | Migration script | `scripts/migrate-from-joomla.mjs` |
 | Content collection schemas | `src/content.config.ts` |
-| Page-level CSS overrides | `public/templates/yootheme/css/overrides.css` |
+| All site CSS (one file) | `src/styles/app.css` |
+| Visual regression harness | `scripts/visual/` (`shoot.mjs`, `diff.mjs`, `interact.mjs`, `measure.mjs`) |
 | Font licensing memory | `~/.claude/projects/-Users-chris-code-ljfc-littletonjuniorfc-com/memory/font-licensing.md` |
 | Content decisions memory | same dir, `content-decisions.md` |

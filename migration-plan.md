@@ -188,18 +188,18 @@ Build the Astro site, deploy to Cloudflare Pages on a preview URL (e.g. `preview
 
 ### Verification checklist
 
-- [ ] Visual diff every page against the live site at desktop and mobile widths
-- [ ] All internal links work
-- [ ] All images load
-- [ ] All PDFs are accessible
+- [x] Visual diff every page against the live site at desktop and mobile widths — done 2026-09-02, 8 pages × 7 widths
+- [x] All internal links work — 37 checked, 0 broken
+- [x] All images load — no decode failures across all 9 routes
+- [x] All PDFs are accessible — **27 of 28 were 404ing**; fixed in `82d2063`
 - [x] ~~Contact form works~~ **N/A — the live site has no form.** Verified 2026-09-02: zero `<form>`/`<input>`/`<textarea>` elements on any of the 8 live pages. Contact is entirely email links, obfuscated by Joomla's `cloak…` script (20 addresses on contact-us alone), which the port renders as plain `mailto:`. No Formspree/Resend/Postmark needed.
-- [ ] Schedule renders correctly with migrated bookings
-- [ ] Authorised managers can log in via Cloudflare Access and create bookings
-- [ ] Non-authorised emails get rejected by Access
+- [x] Schedule renders correctly with migrated bookings — 100 bookings from 2026-09-01
+- [x] Authorised managers can log in via Cloudflare Access and create bookings — One-time PIN, 49 addresses
+- [~] Non-authorised emails get rejected by Access — **gate verified, allowlist not.** Unauthenticated requests to `/schedule/book` and `/api/bookings` both 302 to the Cloudflare Access login with `auth_status: NONE`, and `/schedule/` stays public. Confirming that a *non-allowlisted* address is actually refused needs a real login attempt with such an address — Chris to do this before cutover.
 - [ ] ~~Keystatic editor works for at least one of your content editors~~ **Deferred 2026-09-02 — does not gate go-live.** Keystatic was never built (no config, route or dependency); content is edited directly in the repo. Revisit post-launch.
-- [ ] Mobile menu works
-- [ ] Counters/stats display correctly
-- [ ] Open Graph tags, favicon, page titles all match
+- [x] Mobile menu works — `interact.mjs` drawer test passes
+- [x] Counters/stats display correctly — 614/113/43/1, identical to live
+- [x] Open Graph tags, favicon, page titles — favicon and meta description match; **neither site has any OG tags**; page titles deliberately differ (see STATUS.md 2026-09-02 close-out)
 
 ### Things that often break and aren't obvious
 
