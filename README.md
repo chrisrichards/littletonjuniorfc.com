@@ -88,15 +88,27 @@ npx wrangler versions list         # version ids, timestamps, authors
 npx wrangler deployments list      # what is actually serving
 ```
 
-### Local preview against the real runtime
+### Local development with bindings
+
+`npm run dev` runs the site inside workerd via `@cloudflare/vite-plugin`, so D1 and vars are
+available in dev — `import { env } from 'cloudflare:workers'` works there exactly as it does
+in production. (`Astro.locals.runtime.env` was removed in Astro 6; the import replaces it.)
 
 ```sh
-npm run build
-npm run preview     # runs the built Worker under workerd, with bindings from wrangler.jsonc
+npm run dev         # workerd + local D1, http://localhost:4321
+npm run build && npm run preview   # the built Worker, closest to production
 ```
 
-`npm run dev` is faster for markup and styling work, but it does not run the Worker, so
-anything touching D1 or Access headers needs `npm run preview`.
+Local vars live in `.dev.vars` (gitignored):
+
+```
+ACCESS_TEAM_DOMAIN=yellowfeather
+ACCESS_AUD=<the Access application's AUD tag>
+```
+
+Because Access does not sit in front of a local dev server, `astro dev` accepts an
+`x-dev-user: someone@example.com` header in place of a sign-in. That path is compiled out of
+production builds (`import.meta.env.DEV`), so it cannot be used against the deployed Worker.
 
 ### Bindings and secrets
 
@@ -128,6 +140,33 @@ npx wrangler d1 execute ljfc-bookings --remote --command="SELECT * FROM bookings
 
 The bookings schema is not written yet — see `migration-plan.md` §4 for the proposed shape
 and `STATUS.md` for what remains.
+
+### Pitch bookings (D1)
+
+`/schedule` is public and server-rendered from D1; `/schedule/book` and `/api/bookings` are
+behind Cloudflare Access. Schema lives in `migrations/`:
+
+```sh
+npx wrangler d1 execute ljfc-bookings --local  --file=./migrations/0001_bookings.sql
+npx wrangler d1 execute ljfc-bookings --local  --file=./scripts/seed-bookings.sql   # dev rows
+npx wrangler d1 execute ljfc-bookings --remote --file=./migrations/0001_bookings.sql
+```
+
+Importing the old Joomla bookings — reads the dump, writes SQL, touches no database:
+
+```sh
+node scripts/migrate-bookings.mjs                       # defaults: cutoff 2026-08-01
+node scripts/migrate-bookings.mjs --cutoff 2025-09-01 --dump ../current/ljfc-db.sql
+npx wrangler d1 execute ljfc-bookings --local --file=./scripts/out/bookings-import.sql
+```
+
+It reports what it kept, what it rejected, and what it imported with a caveat
+(`scripts/out/bookings-unmapped.csv`). Read that file before applying to `--remote`.
+
+Who may book is derived from content, not a separate list: managers come from the 45 squads
+in `teams.json`, admins from the committee group in `people.json` plus
+`adminEmails` in `settings/bookings.json`. `allowlist()` in `src/lib/squads.ts` returns every
+address the Access policy should admit.
 
 ### Not yet wired up
 

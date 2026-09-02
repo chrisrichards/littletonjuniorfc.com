@@ -1,0 +1,123 @@
+---
+/*
+ * Public pitch schedule — a week at a time, read-only.
+ *
+ * The first server-rendered page on the site: every other route is prerendered
+ * into static assets at build time, but this one reads D1 per request.
+ */
+export const prerender = false;
+
+import { env } from 'cloudflare:workers';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Section from '../../components/Section.astro';
+import { listRange, pitches, type Booking } from '../../lib/bookings';
+import { squadById } from '../../lib/squads';
+import { getUser } from '../../lib/access';
+import { today, weekStart, weekDays, addDays, formatDay, isValidDate } from '../../lib/dates';
+
+
+const requested = Astro.url.searchParams.get('week');
+const start = weekStart(requested && isValidDate(requested) ? requested : today());
+const days = weekDays(start);
+const end = days[days.length - 1];
+
+const rows = await listRange(env.DB, start, end);
+
+// Index by day + pitch so the grid can look each cell up directly.
+const cells = new Map<string, Booking[]>();
+for (const b of rows) {
+  const key = `${b.date}|${b.pitch}`;
+  cells.set(key, [...(cells.get(key) ?? []), b]);
+}
+
+// Signed-in managers get a Book button; everyone else just reads. Access only
+// guards /schedule/book, so an anonymous visitor here is expected, not an error.
+let canBook = false;
+try {
+  const user = await getUser(Astro.request);
+  canBook = user?.role === 'manager' || user?.role === 'admin';
+} catch {
+  canBook = false; // ACCESS_* unconfigured — degrade to the public view
+}
+
+const todayIso = today();
+const label = (b: Booking) => squadById(b.squad_id)?.label ?? b.team_label;
+---
+
+<BaseLayout
+  title="Pitch Bookings | Littleton Junior FC"
+  description="Which teams have booked the Littleton Recreation Ground pitches, week by week."
+>
+  <Hero variant="image" image="/images/heros/teams.jpg" title="Pitch<br>Bookings" />
+
+  <Section width="full">
+    <div class="sched-head">
+      <h5 class="sched-title">Week of {formatDay(start)}</h5>
+      <nav class="sched-nav">
+        <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, -7)}`}
+          >&larr; Previous</a
+        >
+        <a class="uk-button uk-button-default" href="/schedule">This week</a>
+        <a class="uk-button uk-button-default" href={`/schedule?week=${addDays(start, 7)}`}
+          >Next &rarr;</a
+        >
+      </nav>
+    </div>
+
+    <div class="sched-scroll">
+      <table class="sched">
+        <thead>
+          <tr>
+            <th scope="col">Day</th>
+            {pitches.map((p) => <th scope="col">{p.label}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            days.map((day) => (
+              <tr class={day === todayIso ? 'is-today' : undefined}>
+                <th scope="row">{formatDay(day)}</th>
+                {pitches.map((p) => {
+                  const booked = cells.get(`${day}|${p.id}`) ?? [];
+                  return (
+                    <td>
+                      {booked.length === 0 ? (
+                        <span class="sched-free">&mdash;</span>
+                      ) : (
+                        booked.map((b) => (
+                          <div class="sched-booking">
+                            <span class="sched-time">
+                              {b.start_time}&ndash;{b.end_time}
+                            </span>
+                            <span class="sched-team">{label(b)}</span>
+                          </div>
+                        ))
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <p class="sched-foot">
+      {
+        canBook ? (
+          <a class="uk-button uk-button-default" href="/schedule/book">
+            Book a pitch
+          </a>
+        ) : (
+          <>
+            Team managers can <a href="/schedule/book">book a pitch</a> after signing in. For
+            anything else, contact your Age Group Coordinator on the{' '}
+            <a href="/contact-us">Contact us</a> page.
+          </>
+        )
+      }
+    </p>
+  </Section>
+</BaseLayout>

@@ -6,7 +6,7 @@ Living document — update this when something material changes (phase completes
 
 ## TL;DR
 
-Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is unbuilt.
+Migration from Joomla to Astro on Cloudflare Workers (static assets, built by Workers Builds). Visitor-facing site is **content-complete and deployed** at https://littletonjuniorfc.yellowfeather.workers.dev. **DNS is not switched** — public littletonjuniorfc.com still serves the old Joomla site on AWS Lightsail. The pitch booking system (Phase 4) is built but not yet live: Cloudflare Access is unconfigured and the bookings still need importing from a fresh Joomla dump.
 
 ## 2026-06-03 — uk-* markup → Tailwind grid + utilities (branch `tailwind-migration`)
 
@@ -152,7 +152,7 @@ launch blocker.
 | 1. Understand what to rebuild | ✅ | Documented in `inventory.md` |
 | 2. Recreate styling | ✅ | Approach A (vendored YOOtheme CSS) validated by home-page spike |
 | 3. Migrate content | ✅ | `scripts/migrate-from-joomla.mjs` + content collections + all 8 navigable pages ported |
-| 4. Booking system | ❌ | D1 schema unwritten, Cloudflare Access not configured, no `/schedule` UI |
+| 4. Booking system | 🟡 | Schema, `/schedule`, booking form, endpoints and import script all built and tested locally. Blocked on: a fresh dump, and the Access application. |
 | 5. Build + verify | 🟡 | Build passes; visual fidelity vs. live is close at desktop but mobile breakpoints unverified |
 | 6. Cutover | ❌ | DNS still on Lightsail; cannot do this until Phase 4 ships |
 | 7. Decommission | ❌ | Blocked on Phase 6 |
@@ -168,7 +168,8 @@ launch blocker.
 - `/contact-us` — committee + coordinator bands
 - `/privacy-policy` — long-form markdown body
 - `/terms-conditions` — long-form markdown body, fee corrected to 2025/26
-- `/schedule` — **placeholder only** ("coming soon")
+- `/schedule` — public week view, server-rendered from D1
+- `/schedule/book` — booking form + cancel list, behind Access
 
 ### Cloudflare wiring
 - Account: set up
@@ -193,6 +194,45 @@ launch blocker.
 - `templates/yootheme/fonts/` — BebasKai + TradeGothic LT only (licensed for the domain — see `~/.claude/projects/.../memory/font-licensing.md`). All styling now lives in `src/styles/app.css`.
 - `images/heros/`, `images/home/`, `images/contacts/`, etc.
 - _(removed in the Tailwind migration: theme/custom/overrides.css, uikit\*.js, yootheme theme.js.)_
+
+## 2026-09-02 — Phase 4: pitch bookings
+
+Built against D1: `migrations/0001_bookings.sql`, `src/lib/{bookings,access,squads,dates}.ts`,
+a public `/schedule` week view, an Access-gated `/schedule/book`, and `POST /api/bookings`
+for create/cancel. These are the **first server-rendered routes** on the site; the other
+eight pages stay prerendered.
+
+- **Auth.** Cloudflare Access One-time PIN (the 44 manager addresses span 17 domains, so no
+  single IdP fits). `src/lib/access.ts` verifies the `CF_Authorization` JWT against the Access
+  certs endpoint rather than trusting `Cf-Access-Authenticated-User-Email`, which anything
+  could set on a request that bypasses Access. Managers book for their own squads; the
+  committee (from `people.json`) can book and cancel for anyone.
+- **Times** are stored as local wall-clock `date` + `HH:MM`, not UTC instants — it mirrors the
+  Joomla shape, makes overlap a string comparison, and removes DST conversion bugs.
+- **Pitch sharing is real.** The old data has 66 overlapping pairs and 35 slots with two or
+  three teams on one pitch at once — apparently normal for small-sided games, not corruption.
+  A unique index on (pitch, date, start_time) was therefore removed from the schema; the limit
+  is `maxConcurrentPerPitch` in `settings/bookings.json`, currently **1 (any overlap refused)**.
+  **Open question for the club: should sharing be allowed?**
+- **Import.** `scripts/migrate-bookings.mjs` reads the Joomla dump and writes SQL; it never
+  touches a database. Dry-run over the 2025/26 season: 410 kept, 409/410 matched to a squad
+  and a manager, 12 rejected, 8 imported with a note. `enddate` is frequently transposed
+  (2025-12-01 ending 2025-01-12) and is ignored when it precedes the start, since dropping
+  those rows would lose real bookings over a typo.
+- **Verified locally:** 17 authorisation/validation cases (overlap, touching slots, squad
+  ownership, admin override, non-allowlisted, past dates, opening hours, horizon, cancel
+  permissions, rebooking a cancelled slot). The 8 existing pages are byte-identical to the
+  pre-Phase-4 build apart from the CSS bundle's content hash, and the new CSS is provably
+  additive (bundle minus `.sched*` rules == old bundle). `interact.mjs` ALL PASS.
+
+### Blocked on
+
+1. **A fresh `mysqldump`.** `../current/ljfc-db.sql` is from 2026-05-14 and contains exactly
+   one booking on/after 2026-08-01 (a 2028-09-09 row that looks like a typo). Nothing to
+   import until the live Lightsail database is dumped again.
+2. **The Access application** on `/schedule/book*` + `/api/bookings*`, with the One-time PIN
+   allowlist from `allowlist()` in `src/lib/squads.ts`, plus `ACCESS_TEAM_DOMAIN` and
+   `ACCESS_AUD` vars on the Worker.
 
 ## What's deferred / known issues
 

@@ -35,3 +35,6 @@ worker-configuration.d.ts
 
 # visual-regression harness output (scripts/visual/*) — scripts tracked, PNGs not
 .visual/
+
+# generated migration output (regenerate with scripts/migrate-bookings.mjs)
+scripts/out/

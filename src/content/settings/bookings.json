@@ -1,0 +1,16 @@
+{
+  "pitches": [
+    { "id": "nursery", "label": "Nursery Pitch", "joomlaCatId": 52 },
+    { "id": "top", "label": "Top Pitch", "joomlaCatId": 53 },
+    { "id": "middle", "label": "Middle Pitch", "joomlaCatId": 54 },
+    { "id": "bottom", "label": "Bottom Pitch", "joomlaCatId": 55 }
+  ],
+  "openingTime": "08:00",
+  "closingTime": "20:00",
+  "slotMinutes": 15,
+  "durations": [60, 90, 120, 150, 180],
+  "maxWeeksAhead": 12,
+  "maxConcurrentPerPitch": 1,
+  "adminEmails": [],
+  "adminGroupsFromPeople": ["committee"]
+}
