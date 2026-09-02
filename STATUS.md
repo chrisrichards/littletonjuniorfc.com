@@ -244,7 +244,7 @@ launch blocker.
 | 2. Recreate styling | ✅ | Approach A (vendored YOOtheme CSS) validated by home-page spike |
 | 3. Migrate content | ✅ | `scripts/migrate-from-joomla.mjs` + content collections + all 8 navigable pages ported |
 | 4. Booking system | 🟡 | Schema, `/schedule`, booking form, endpoints and import script all built and tested locally. Blocked on: a fresh dump, and the Access application. |
-| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Verification itself is complete; the remaining Phase 5 items are the two visual nits under "Pre-launch polish". |
+| 5. Build + verify | 🟡 | Build passes. Full visual diff against live done 2026-09-02 at 8 pages × 7 widths — three regressions found and fixed (`91ee803`); residuals traced and listed. Verification itself is complete and pre-launch polish is clear. Still unverified since the port: PDFs, Keystatic, mobile menu, counters, OG/favicon/titles. |
 | 6. Cutover | ❌ | DNS still on Lightsail; cannot do this until Phase 4 ships |
 | 7. Decommission | ❌ | Blocked on Phase 6 |
 
@@ -362,7 +362,7 @@ _(Legacy URL redirects were here; they are now a closed decision — see
 _(Phase 4 and the Access application are done — see the 2026-09-02 entry above.)_
 
 ### Visual nits to polish (not blocking)
-1. **Resources page** has a vertical gap in the Forms & Guides section between row 2 (Littleton Rec / Other Pitch Bookings) and row 3 (Incident Form / Expense Claims). Likely a `uk-grid-match` row-matching artifact.
+1. ~~**Resources page** has a vertical gap in the Forms & Guides section between row 2 (Littleton Rec / Other Pitch Bookings) and row 3 (Incident Form / Expense Claims).~~ **Resolved (verified 2026-09-02):** those are two separate grids and the gap between them matches live at every width (6px @1280, 5px @960, 5px @640); row pitch inside the first grid is 301px on both. Fixed at some point during the Tailwind work and never ticked off.
 2. ~~**Teams page** omits the collapsible squad-detail panels.~~ **Resolved
    (2026-06-03):** the `.hiddenbox` squad panels are collapsible (slide
    open/close via the teams.astro inline JS), and the live-site open state is
@@ -370,7 +370,7 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
    dark-grey, `.dim`), marks the open card `.notdim` (stays blue, hides its
    own "More" button), and shows a `.closeMe` × button top-right of the panel
    (`/images/close.png`). CSS in `app.css` ("Teams More open state").
-3. **Contact-us page** omits the closing testimonial blockquote + bottom image present on the live site.
+3. ~~**Contact-us page** omits the closing testimonial blockquote + bottom image present on the live site.~~ **Resolved (verified 2026-09-02):** the `.quoteimage` band renders at 572px on both live and ours, same "Stan has not only developed as a footballer…" quote.
 4. ~~**Mobile breakpoints unverified**~~ **Resolved (2026-09-02):** all 8 pages diffed against live at 375/450/640/768/960/1024/1280. Three narrow-width regressions found and fixed; see the 2026-09-02 entry for the residuals.
 5. **Resources featured cards** (Our Ethos + Player Development) use `uk-img` lazy loading. Visible in real browsers; headless screenshots may show blank cards.
 
@@ -393,11 +393,16 @@ _(Phase 4 and the Access application are done — see the 2026-09-02 entry above
 
 ## What's next (suggested order)
 
-### Pre-launch polish (1–2 hours total)
+### Pre-launch polish — done
 - [x] Verify mobile breakpoints on every ported page — done 2026-09-02 via the live diff
-- [ ] Fix the Resources Forms & Guides grid gap
-- [ ] Add contact-us bottom image + testimonial
+- [x] Fix the Resources Forms & Guides grid gap — was already fixed; verified against live 2026-09-02
+- [x] Add contact-us bottom image + testimonial — was already present; verified against live 2026-09-02
 - [x] ~~Decide on `_redirects` policy for Joomla legacy URLs~~ **Decided 2026-09-02: skip them** (see Decisions #7)
+
+Nothing outstanding here. The remaining Phase 5 work is the part of
+migration-plan.md's checklist that has not been re-verified since the port:
+PDFs reachable, Keystatic editor usable by a content editor, mobile menu,
+counters, and Open Graph tags / favicon / page titles.
 
 ### Phase 4: booking system — done
 - [x] D1 schema (`migrations/0001_bookings.sql`), applied local and remote
