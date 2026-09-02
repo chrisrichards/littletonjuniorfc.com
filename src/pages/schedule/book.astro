@@ -12,7 +12,7 @@ import { env } from 'cloudflare:workers';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import Section from '../../components/Section.astro';
-import { listRange, pitches } from '../../lib/bookings';
+import { listRange, byId, pitches, type Booking } from '../../lib/bookings';
 import { getUser } from '../../lib/access';
 import { squads, squadsForEmail, adminExample } from '../../lib/squads';
 import { today, addDays, formatLong } from '../../lib/dates';
@@ -22,6 +22,26 @@ const user = await getUser(Astro.request);
 
 const ok = Astro.url.searchParams.get('ok');
 const err = Astro.url.searchParams.get('err');
+
+/*
+ * ?edit=<id> turns the form into an edit of that booking. Loaded and permission
+ * -checked here so the form can be pre-filled; the endpoint checks again on
+ * submit, since a URL is not authorisation.
+ */
+const editId = Number(Astro.url.searchParams.get('edit'));
+let editing: Booking | null = null;
+if (user && user.role !== 'none' && Number.isInteger(editId) && editId > 0) {
+  const b = await byId(env.DB, editId);
+  const mayManage =
+    b && !b.cancelled_at &&
+    (user.role === 'admin' || (b.manager_email !== null && b.manager_email === user.email));
+  editing = mayManage ? b : null;
+}
+
+const durationOf = (b: Booking) => {
+  const mins = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+  return mins(b.end_time) - mins(b.start_time);
+};
 
 const now = today();
 const maxDate = addDays(now, settings.maxWeeksAhead * 7);
@@ -103,13 +123,18 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
           </p>
         ) : (
           <>
-            <h5>New booking</h5>
+            <h5>{editing ? `Edit booking — ${editing.team_label}` : 'New booking'}</h5>
             <form class="sched-form" method="POST" action="/api/bookings">
+              {editing && <input type="hidden" name="action" value="update" />}
+              {editing && <input type="hidden" name="id" value={editing.id} />}
+
               <label>
                 Team
                 <select name="squad_id" required>
                   {mine.map((s) => (
-                    <option value={s.id}>{s.label}</option>
+                    <option value={s.id} selected={editing?.squad_id === s.id}>
+                      {s.label}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -118,21 +143,30 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
                 Pitch
                 <select name="pitch" required>
                   {pitches.map((p) => (
-                    <option value={p.id}>{p.label}</option>
+                    <option value={p.id} selected={editing?.pitch === p.id}>
+                      {p.label}
+                    </option>
                   ))}
                 </select>
               </label>
 
               <label>
                 Date
-                <input type="date" name="date" required min={now} max={maxDate} value={now} />
+                <input
+                  type="date"
+                  name="date"
+                  required
+                  min={now}
+                  max={maxDate}
+                  value={editing?.date ?? now}
+                />
               </label>
 
               <label>
                 Start
                 <select name="start_time" required>
                   {times.map((t) => (
-                    <option value={t} selected={t === '09:30'}>
+                    <option value={t} selected={t === (editing?.start_time ?? '09:30')}>
                       {t}
                     </option>
                   ))}
@@ -143,16 +177,19 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
                 Duration
                 <select name="duration" required>
                   {settings.durations.map((d) => (
-                    <option value={d} selected={d === 120}>
+                    <option value={d} selected={d === (editing ? durationOf(editing) : 120)}>
                       {d % 60 === 0 ? `${d / 60} hours` : `${Math.floor(d / 60)}h ${d % 60}m`}
                     </option>
                   ))}
                 </select>
               </label>
 
-              <button class="uk-button uk-button-default" type="submit">
-                Book pitch
-              </button>
+              <div class="sched-form-actions">
+                <button class="uk-button uk-button-default" type="submit">
+                  {editing ? 'Save changes' : 'Book pitch'}
+                </button>
+                {editing && <a href="/schedule/book">Cancel edit</a>}
+              </div>
             </form>
 
             <h5 class="sched-upcoming-title">
@@ -168,13 +205,21 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
                       <strong>{b.team_label}</strong> — {pitches.find((p) => p.id === b.pitch)?.label}
                       , {formatLong(b.date)}, {b.start_time}–{b.end_time}
                     </span>
-                    <form method="POST" action="/api/bookings">
-                      <input type="hidden" name="action" value="cancel" />
-                      <input type="hidden" name="id" value={b.id} />
-                      <button class="uk-button uk-button-default sched-cancel" type="submit">
-                        Cancel
-                      </button>
-                    </form>
+                    <span class="sched-rowactions">
+                      <a
+                        class="uk-button uk-button-default sched-edit"
+                        href={`/schedule/book?edit=${b.id}`}
+                      >
+                        Edit
+                      </a>
+                      <form method="POST" action="/api/bookings">
+                        <input type="hidden" name="action" value="delete" />
+                        <input type="hidden" name="id" value={b.id} />
+                        <button class="uk-button uk-button-default sched-cancel" type="submit">
+                          Delete
+                        </button>
+                      </form>
+                    </span>
                   </li>
                 ))}
               </ul>

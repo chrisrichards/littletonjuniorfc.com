@@ -82,9 +82,10 @@ export async function overlapping(
   return results ?? [];
 }
 
-export type CreateResult =
+export type WriteResult =
   | { ok: true; id: number }
-  | { ok: false; reason: 'overlap'; existing: Booking[] };
+  | { ok: false; reason: 'overlap'; existing: Booking[] }
+  | { ok: false; reason: 'gone' };
 
 /*
  * Club policy (decided 2026-09-02): one team per pitch at a time — no sharing.
@@ -92,7 +93,7 @@ export type CreateResult =
  * rather than in the schema, because SQLite cannot express interval exclusion
  * as a constraint and the migrated Joomla data predates the rule.
  */
-export async function create(db: D1Database, b: NewBooking): Promise<CreateResult> {
+export async function create(db: D1Database, b: NewBooking): Promise<WriteResult> {
   const clashes = await overlapping(db, b.pitch, b.date, b.start_time, b.end_time);
   if (clashes.length >= settings.maxConcurrentPerPitch) {
     return { ok: false, reason: 'overlap', existing: clashes };
@@ -119,6 +120,55 @@ export async function create(db: D1Database, b: NewBooking): Promise<CreateResul
     )
     .first<{ id: number }>();
   return { ok: true, id: row!.id };
+}
+
+export type UpdateFields = {
+  pitch: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  squad_id: string | null;
+  team_label: string;
+  manager_email: string | null;
+  manager_name: string | null;
+};
+
+/**
+ * Change an existing booking. The overlap check excludes the booking itself,
+ * so moving one 15 minutes later does not collide with where it already is.
+ */
+export async function update(
+  db: D1Database,
+  id: number,
+  f: UpdateFields
+): Promise<WriteResult> {
+  const clashes = await overlapping(db, f.pitch, f.date, f.start_time, f.end_time, id);
+  if (clashes.length >= settings.maxConcurrentPerPitch) {
+    return { ok: false, reason: 'overlap', existing: clashes };
+  }
+
+  const res = await db
+    .prepare(
+      `UPDATE bookings
+          SET pitch = ?, date = ?, start_time = ?, end_time = ?,
+              squad_id = ?, team_label = ?, manager_email = ?, manager_name = ?
+        WHERE id = ? AND cancelled_at IS NULL`
+    )
+    .bind(
+      f.pitch,
+      f.date,
+      f.start_time,
+      f.end_time,
+      f.squad_id,
+      f.team_label,
+      f.manager_email,
+      f.manager_name,
+      id
+    )
+    .run();
+
+  // No row changed means it was cancelled or removed between load and save.
+  return (res.meta?.changes ?? 0) > 0 ? { ok: true, id } : { ok: false, reason: 'gone' };
 }
 
 /** Soft-cancel, so the record of who booked what survives. */

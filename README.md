@@ -154,7 +154,9 @@ and `STATUS.md` for what remains.
 ### Pitch bookings (D1)
 
 `/schedule` is public and server-rendered from D1; `/schedule/book` and `/api/bookings` are
-behind Cloudflare Access. Schema lives in `migrations/`:
+behind Cloudflare Access. Managers can create, edit and delete bookings for their own squads;
+committee members for any. Delete is a soft cancel — the row stays with `cancelled_at` set,
+so the slot frees up but the record of who booked what is kept. Schema lives in `migrations/`:
 
 ```sh
 npx wrangler d1 execute ljfc-bookings --local  --file=./migrations/0001_bookings.sql

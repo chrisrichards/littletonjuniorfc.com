@@ -169,7 +169,7 @@ launch blocker.
 - `/privacy-policy` — long-form markdown body
 - `/terms-conditions` — long-form markdown body, fee corrected to 2025/26
 - `/schedule` — public week view, server-rendered from D1
-- `/schedule/book` — booking form + cancel list, behind Access
+- `/schedule/book` — booking form, edit and delete, behind Access
 
 ### Cloudflare wiring
 - Account: set up
@@ -199,7 +199,7 @@ launch blocker.
 
 Built against D1: `migrations/0001_bookings.sql`, `src/lib/{bookings,access,squads,dates}.ts`,
 a public `/schedule` week view, an Access-gated `/schedule/book`, and `POST /api/bookings`
-for create/cancel. These are the **first server-rendered routes** on the site; the other
+for create/update/delete. These are the **first server-rendered routes** on the site; the other
 eight pages stay prerendered.
 
 - **Auth.** Cloudflare Access One-time PIN (the 44 manager addresses span 17 domains, so no
@@ -207,6 +207,12 @@ eight pages stay prerendered.
   certs endpoint rather than trusting `Cf-Access-Authenticated-User-Email`, which anything
   could set on a request that bypasses Access. Managers book for their own squads; the
   committee (from `people.json`) can book and cancel for anyone.
+- **Managers edit and delete their own bookings; admins any.** `?edit=<id>` reloads the form
+  against an existing booking, checked on the way in and again on submit. Delete is a soft
+  cancel (`cancelled_at`), so the record of who booked what survives while the slot frees up
+  immediately. Editing re-runs every rule a new booking faces, with the overlap check
+  excluding the booking itself so moving one by 15 minutes does not collide with where it
+  already is.
 - **Times** are stored as local wall-clock `date` + `HH:MM`, not UTC instants — it mirrors the
   Joomla shape, makes overlap a string comparison, and removes DST conversion bugs.
 - **No pitch sharing (decided 2026-09-02).** One team per pitch at a time —

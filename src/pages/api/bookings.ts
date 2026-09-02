@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { create, cancel, byId, pitches } from '../../lib/bookings';
+import { create, update, cancel, byId, pitches, type Booking } from '../../lib/bookings';
 import { getUser } from '../../lib/access';
 import { squadById, squadsForEmail } from '../../lib/squads';
 import { isValidDate, isValidTime, addMinutes, today, addDays } from '../../lib/dates';
@@ -9,7 +9,7 @@ import settings from '../../content/settings/bookings.json';
 export const prerender = false;
 
 /*
- * Create and cancel bookings. Plain form POSTs, not JSON, so the booking form
+ * Create, edit and delete bookings. Plain form POSTs, not JSON, so the booking form
  * works without client JS; the reply is a redirect back to the form carrying an
  * `ok` or `err` message.
  *
@@ -23,6 +23,71 @@ const back = (params: Record<string, string>) =>
     headers: { Location: `/schedule/book?${new URLSearchParams(params)}` },
   });
 
+/** Who may change a given booking: admins anything, managers their own. */
+function canManage(user: { email: string; role: string }, b: Booking): boolean {
+  return user.role === 'admin' || (b.manager_email !== null && b.manager_email === user.email);
+}
+
+/*
+ * Shared by create and edit: read the form, check every rule, and return either
+ * a message or the booking fields. Keeping it in one place means an edit cannot
+ * quietly accept something a new booking would reject.
+ */
+function readBooking(
+  form: FormData,
+  user: { email: string; role: string }
+): { err: string } | { fields: NonNullable<Parameters<typeof update>[2]> } {
+  const pitch = String(form.get('pitch') ?? '');
+  const date = String(form.get('date') ?? '');
+  const start = String(form.get('start_time') ?? '');
+  const duration = Number(form.get('duration'));
+  const squadId = String(form.get('squad_id') ?? '');
+
+  if (!pitches.some((p) => p.id === pitch)) return { err: 'Pick a pitch.' };
+  if (!isValidDate(date)) return { err: 'Pick a valid date.' };
+  if (!isValidTime(start)) return { err: 'Pick a valid start time.' };
+  if (!settings.durations.includes(duration)) return { err: 'Pick a duration.' };
+
+  const squad = squadById(squadId);
+  if (!squad) return { err: 'Pick a team.' };
+
+  // A manager books only for their own squads; an admin books for anyone.
+  if (user.role !== 'admin' && !squadsForEmail(user.email).some((s) => s.id === squad.id)) {
+    return { err: `You are not listed as the manager of ${squad.label}.` };
+  }
+
+  const end = addMinutes(start, duration);
+  if (end === '24:00' || end <= start) return { err: 'That booking runs past midnight.' };
+  if (start < settings.openingTime || end > settings.closingTime) {
+    return {
+      err: `Bookings must fall between ${settings.openingTime} and ${settings.closingTime}.`,
+    };
+  }
+
+  const now = today();
+  if (date < now) return { err: 'That date is in the past.' };
+  if (date > addDays(now, settings.maxWeeksAhead * 7)) {
+    return { err: `Bookings open ${settings.maxWeeksAhead} weeks ahead.` };
+  }
+
+  return {
+    fields: {
+      pitch,
+      date,
+      start_time: start,
+      end_time: end,
+      squad_id: squad.id,
+      team_label: squad.label,
+      manager_email: squad.managerEmail,
+      manager_name: squad.managerName,
+    },
+  };
+}
+
+const clashMessage = (pitch: string, existing: Booking[]) =>
+  `${pitches.find((p) => p.id === pitch)!.label} is already booked that day: ` +
+  existing.map((c) => `${c.team_label} ${c.start_time}\u2013${c.end_time}`).join(', ') + '.';
+
 export const POST: APIRoute = async ({ request }) => {
   const user = await getUser(request);
   if (!user) return back({ err: 'Not signed in. Please sign in and try again.' });
@@ -33,7 +98,12 @@ export const POST: APIRoute = async ({ request }) => {
   const form = await request.formData();
   const action = String(form.get('action') ?? 'create');
 
-  if (action === 'cancel') {
+  /*
+   * Delete is a soft cancel: the row stays with cancelled_at set, so the record
+   * of who booked what survives, while the slot frees up immediately and the
+   * booking leaves the schedule.
+   */
+  if (action === 'cancel' || action === 'delete') {
     const id = Number(form.get('id'));
     if (!Number.isInteger(id)) return back({ err: 'That booking could not be found.' });
 
@@ -41,68 +111,51 @@ export const POST: APIRoute = async ({ request }) => {
     if (!existing || existing.cancelled_at) {
       return back({ err: 'That booking could not be found.' });
     }
-    // Managers may only cancel their own; admins may cancel anything.
-    if (user.role !== 'admin' && existing.manager_email !== user.email) {
+    if (!canManage(user, existing)) {
       return back({ err: 'That booking belongs to another manager.' });
     }
     return (await cancel(env.DB, id))
-      ? back({ ok: 'Booking cancelled.' })
-      : back({ err: 'That booking was already cancelled.' });
+      ? back({ ok: `Deleted ${existing.team_label} on ${existing.date}.` })
+      : back({ err: 'That booking was already deleted.' });
   }
 
-  const pitch = String(form.get('pitch') ?? '');
-  const date = String(form.get('date') ?? '');
-  const start = String(form.get('start_time') ?? '');
-  const duration = Number(form.get('duration'));
-  const squadId = String(form.get('squad_id') ?? '');
+  if (action === 'update') {
+    const id = Number(form.get('id'));
+    if (!Number.isInteger(id)) return back({ err: 'That booking could not be found.' });
 
-  if (!pitches.some((p) => p.id === pitch)) return back({ err: 'Pick a pitch.' });
-  if (!isValidDate(date)) return back({ err: 'Pick a valid date.' });
-  if (!isValidTime(start)) return back({ err: 'Pick a valid start time.' });
-  if (!settings.durations.includes(duration)) return back({ err: 'Pick a duration.' });
+    const existing = await byId(env.DB, id);
+    if (!existing || existing.cancelled_at) {
+      return back({ err: 'That booking could not be found.' });
+    }
+    if (!canManage(user, existing)) {
+      return back({ err: 'That booking belongs to another manager.' });
+    }
 
-  const squad = squadById(squadId);
-  if (!squad) return back({ err: 'Pick a team.' });
+    const parsed = readBooking(form, user);
+    if ('err' in parsed) return back({ err: parsed.err, edit: String(id) });
 
-  // A manager books only for their own squads; an admin books for anyone.
-  if (user.role !== 'admin' && !squadsForEmail(user.email).some((s) => s.id === squad.id)) {
-    return back({ err: `You are not listed as the manager of ${squad.label}.` });
-  }
-
-  const end = addMinutes(start, duration);
-  if (end === '24:00' || end <= start) return back({ err: 'That booking runs past midnight.' });
-  if (start < settings.openingTime || end > settings.closingTime) {
+    const result = await update(env.DB, id, parsed.fields);
+    if (!result.ok) {
+      if (result.reason === 'gone') return back({ err: 'That booking could not be found.' });
+      return back({ err: clashMessage(parsed.fields.pitch, result.existing), edit: String(id) });
+    }
+    const f = parsed.fields;
     return back({
-      err: `Bookings must fall between ${settings.openingTime} and ${settings.closingTime}.`,
+      ok: `Updated ${f.team_label} to ${f.date}, ${f.start_time}\u2013${f.end_time}.`,
+      week: f.date,
     });
   }
 
-  const now = today();
-  if (date < now) return back({ err: 'That date is in the past.' });
-  if (date > addDays(now, settings.maxWeeksAhead * 7)) {
-    return back({ err: `Bookings open ${settings.maxWeeksAhead} weeks ahead.` });
-  }
+  const parsed = readBooking(form, user);
+  if ('err' in parsed) return back({ err: parsed.err });
 
-  const result = await create(env.DB, {
-    pitch,
-    date,
-    start_time: start,
-    end_time: end,
-    squad_id: squad.id,
-    team_label: squad.label,
-    manager_email: squad.managerEmail,
-    manager_name: squad.managerName,
-    booked_by: user.email,
-  });
+  const f = parsed.fields;
+  const result = await create(env.DB, { ...f, booked_by: user.email });
 
   if (!result.ok) {
-    const who = result.existing
-      .map((c) => `${c.team_label} ${c.start_time}–${c.end_time}`)
-      .join(', ');
-    return back({
-      err: `${pitches.find((p) => p.id === pitch)!.label} is already booked that day: ${who}.`,
-    });
+    if (result.reason === 'gone') return back({ err: 'That booking could not be saved.' });
+    return back({ err: clashMessage(f.pitch, result.existing) });
   }
 
-  return back({ ok: `Booked ${squad.label} on ${date} at ${start}–${end}.`, week: date });
+  return back({ ok: `Booked ${f.team_label} on ${f.date} at ${f.start_time}\u2013${f.end_time}.`, week: f.date });
 };
