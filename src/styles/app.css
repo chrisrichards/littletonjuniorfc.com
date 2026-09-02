@@ -559,10 +559,12 @@
   }
   .alternates.blue h4,
   .alternates.contacts h4,
-  .alternates.grey h4 {
+  .alternates.grey h4,
+  .offinfo4x4 h4 {
     margin: -6px 0 5px;
     font-size: 24px;
     line-height: 26px;
+    text-transform: uppercase;
   }
   .alternates.blue p,
   .alternates.contacts p,
@@ -875,7 +877,13 @@
 
   /* Hero structural (overrides.css). */
   #hero { margin-top: -246px; }
-  #hero[data-variant='banner'] #hero-bg { background-color: var(--color-dark); height: 300px; }
+  /* Live serves a 100px band below @m and a 300px one from @m up (the source
+     image is swapped, not scaled) — match both or the H1 sits 200px low on
+     privacy/terms at every width under 960. */
+  #hero[data-variant='banner'] #hero-bg { background-color: var(--color-dark); height: 100px; }
+  @media (min-width: 960px) {
+    #hero[data-variant='banner'] #hero-bg { height: 300px; }
+  }
 
   /* Footer (overrides.css). */
   #footer-1 { padding-top: 0; padding-bottom: 0; }

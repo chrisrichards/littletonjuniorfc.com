@@ -191,7 +191,7 @@ const sections: Section[] = [
             <CardGrid
               tw
               wrap={`alternates first ${section.colour} uk-margin text-left`}
-              grid="grid grid-cols-2 md:grid-cols-4"
+              grid="grid grid-cols-2 min-[640px]:grid-cols-4"
             >
               {section.cards.map((card) => (
                 <Card
