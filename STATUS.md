@@ -48,6 +48,8 @@ Comparing every Resources card href against live also caught an **off-by-one**:
 | Favicon | ours resolve (200); live's paths differ but both work |
 | Meta description | identical to live |
 | Open Graph tags | **neither site has any** — parity holds; adding them would be an enhancement, not a fidelity fix |
+| Access rejects a non-allowlisted address | pass — tested 2026-09-02 with a personal address in none of the three admin sources |
+| App-side role gate (`roleFor()` → `none`) | pass — via the `astro dev` `?as=` shim |
 
 **Page titles — decided 2026-09-02 to keep ours, not match live.** Live uses
 `Littleton Junior FC - Teams`; we use `Teams | Littleton Junior FC`. Page-name-first
