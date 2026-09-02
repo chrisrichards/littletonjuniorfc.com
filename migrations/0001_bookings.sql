@@ -26,9 +26,12 @@ CREATE TABLE IF NOT EXISTS bookings (
 CREATE INDEX IF NOT EXISTS idx_bookings_pitch_date ON bookings(pitch, date);
 CREATE INDEX IF NOT EXISTS idx_bookings_date       ON bookings(date);
 
--- Deliberately NO unique index on (pitch, date, start_time): the historic data
--- has 35 slots where two or three teams share a pitch at the same time, which
--- appears to be normal practice for small-sided games rather than corruption.
--- How many teams may share a pitch is a policy question, so it lives in
--- settings/bookings.json (maxConcurrentPerPitch) and is enforced in
--- src/lib/bookings.ts, not baked into the schema.
+-- Deliberately NO unique index on (pitch, date, start_time).
+--
+-- Club policy is one team per pitch at a time, but that rule cannot live here:
+-- SQLite cannot express interval exclusion as a constraint (an index on
+-- start_time would miss 09:30-11:30 against 10:00-12:00), and the imported
+-- Joomla history predates the rule -- it contains 66 overlapping pairs, 55 of
+-- them between different teams. Those import as-is and are listed in
+-- scripts/out/bookings-conflicts.csv for someone to resolve by hand.
+-- New bookings are checked in src/lib/bookings.ts (maxConcurrentPerPitch).

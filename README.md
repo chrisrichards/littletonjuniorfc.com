@@ -155,13 +155,17 @@ npx wrangler d1 execute ljfc-bookings --remote --file=./migrations/0001_bookings
 Importing the old Joomla bookings — reads the dump, writes SQL, touches no database:
 
 ```sh
-node scripts/migrate-bookings.mjs                       # defaults: cutoff 2026-08-01
-node scripts/migrate-bookings.mjs --cutoff 2025-09-01 --dump ../current/ljfc-db.sql
+node scripts/migrate-bookings.mjs                      # cutoff 2026-09-01, ../current/ljfc-db.sql
+node scripts/migrate-bookings.mjs --dump ~/fresh-dump.sql
+node scripts/migrate-bookings.mjs --cutoff 2026-10-01   # override if the cutover slips
 npx wrangler d1 execute ljfc-bookings --local --file=./scripts/out/bookings-import.sql
 ```
 
-It reports what it kept, what it rejected, and what it imported with a caveat
-(`scripts/out/bookings-unmapped.csv`). Read that file before applying to `--remote`.
+It reports what it kept, what it rejected, what it imported with a caveat
+(`scripts/out/bookings-unmapped.csv`), and every pair of bookings that overlap on the same
+pitch (`scripts/out/bookings-conflicts.csv`). Club policy is one team per pitch at a time, but
+the old system never enforced it and this import writes SQL directly — so read the conflicts
+file and resolve those rows before applying to `--remote`.
 
 Who may book is derived from content, not a separate list: managers come from the 45 squads
 in `teams.json`, admins from the committee group in `people.json` plus

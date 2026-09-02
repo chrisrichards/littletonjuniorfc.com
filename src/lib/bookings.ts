@@ -87,10 +87,10 @@ export type CreateResult =
   | { ok: false; reason: 'overlap'; existing: Booking[] };
 
 /*
- * How many teams may share one pitch at one time is club policy, not a database
- * rule — the migrated Joomla data contains slots with two and three teams on the
- * same pitch. `maxConcurrentPerPitch` in settings/bookings.json decides; at 1
- * (the default) any overlap is refused.
+ * Club policy (decided 2026-09-02): one team per pitch at a time — no sharing.
+ * That is `maxConcurrentPerPitch: 1` in settings/bookings.json, enforced here
+ * rather than in the schema, because SQLite cannot express interval exclusion
+ * as a constraint and the migrated Joomla data predates the rule.
  */
 export async function create(db: D1Database, b: NewBooking): Promise<CreateResult> {
   const clashes = await overlapping(db, b.pitch, b.date, b.start_time, b.end_time);

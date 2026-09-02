@@ -209,11 +209,13 @@ eight pages stay prerendered.
   committee (from `people.json`) can book and cancel for anyone.
 - **Times** are stored as local wall-clock `date` + `HH:MM`, not UTC instants — it mirrors the
   Joomla shape, makes overlap a string comparison, and removes DST conversion bugs.
-- **Pitch sharing is real.** The old data has 66 overlapping pairs and 35 slots with two or
-  three teams on one pitch at once — apparently normal for small-sided games, not corruption.
-  A unique index on (pitch, date, start_time) was therefore removed from the schema; the limit
-  is `maxConcurrentPerPitch` in `settings/bookings.json`, currently **1 (any overlap refused)**.
-  **Open question for the club: should sharing be allowed?**
+- **No pitch sharing (decided 2026-09-02).** One team per pitch at a time —
+  `maxConcurrentPerPitch: 1`, enforced in `src/lib/bookings.ts`. The rule cannot be a schema
+  constraint: SQLite can't express interval exclusion, and an index on `start_time` would miss
+  09:30-11:30 against 10:00-12:00. The **old data does not meet this rule** — 66 overlapping
+  pairs in the 2025/26 season, 55 of them between different teams — so the import lists every
+  one in `scripts/out/bookings-conflicts.csv`. Those need resolving by hand at import time;
+  the app will refuse to create any new overlap.
 - **Import.** `scripts/migrate-bookings.mjs` reads the Joomla dump and writes SQL; it never
   touches a database. Dry-run over the 2025/26 season: 410 kept, 409/410 matched to a squad
   and a manager, 12 rejected, 8 imported with a note. `enddate` is frequently transposed
@@ -228,8 +230,8 @@ eight pages stay prerendered.
 ### Blocked on
 
 1. **A fresh `mysqldump`.** `../current/ljfc-db.sql` is from 2026-05-14 and contains exactly
-   one booking on/after 2026-08-01 (a 2028-09-09 row that looks like a typo). Nothing to
-   import until the live Lightsail database is dumped again.
+   one booking on/after the 2026-09-01 cutoff (a 2028-09-09 row that looks like a typo).
+   Nothing to import until the live Lightsail database is dumped again.
 2. **The Access application** on `/schedule/book*` + `/api/bookings*`, with the One-time PIN
    allowlist from `allowlist()` in `src/lib/squads.ts`, plus `ACCESS_TEAM_DOMAIN` and
    `ACCESS_AUD` vars on the Worker.
