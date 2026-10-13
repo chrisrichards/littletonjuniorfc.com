@@ -1101,6 +1101,14 @@
   @media (min-width: 1025px) {
     .alternates.first:is(.blue, .grey) .el-item { padding: 40px; }
   }
+  /* Resources featured cards on live: heading 30px up to 480, and the text
+     block sits flush (no .homesquares 0 5% margin) up to 768. */
+  @media (max-width: 480px) {
+    .homesquares.resources h3 { font-size: 30px; line-height: 30px; }
+  }
+  @media (max-width: 768px) {
+    .homesquares.resources .el-content { margin: 0 !important; }
+  }
   /* Resources featured cards (Our Ethos / Player Development): live keeps
      18/24 except 14/16 at ≤480 and 641–768; beats the 11px homesquares rule. */
   .homesquares.resources .el-content p { font-size: 18px !important; line-height: 24px !important; }
