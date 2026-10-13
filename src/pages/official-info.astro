@@ -1,5 +1,6 @@
 ---
 import { getEntry } from 'astro:content';
+import { officialInfoPeople } from '../lib/content-schemas';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
@@ -45,10 +46,10 @@ async function committee(id: string) {
   if (!entry) throw new Error(`people.json has no "${id}" entry`);
   return entry.data;
 }
-const chair = await committee('chairman');
-const secretary = await committee('secretary');
-const treasurer = await committee('treasurer');
-const welfare = await committee('welfare-officer');
+const chair = await committee(officialInfoPeople.chair);
+const secretary = await committee(officialInfoPeople.secretary);
+const treasurer = await committee(officialInfoPeople.treasurer);
+const welfare = await committee(officialInfoPeople.welfare);
 const mailto = (email: string) => ({ label: 'Email', href: `mailto:${email}` });
 
 const sections: Section[] = [

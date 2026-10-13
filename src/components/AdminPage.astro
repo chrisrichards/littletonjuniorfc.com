@@ -1,0 +1,106 @@
+---
+/**
+ * Shell for the admin pages: layout, the sign-in / admin gate, and the
+ * row add / remove / reorder script the editors share.
+ *
+ * Cloudflare Access protects /admin*, so a visitor who isn't signed in never
+ * reaches this. The admin check is the second gate (see src/lib/squads.ts
+ * roleFor) — the default slot renders only for admins. Pages must still check
+ * `user.role === 'admin'` themselves before reading or writing anything, since
+ * their frontmatter runs before this component renders.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from './Hero.astro';
+import Section from './Section.astro';
+import type { AccessUser } from '../lib/access';
+import { adminExample } from '../lib/squads';
+
+export interface Props {
+  title: string;
+  user: AccessUser | null;
+  active: 'teams' | 'people';
+}
+
+const { title, user, active } = Astro.props;
+const here = Astro.url.pathname;
+---
+
+<BaseLayout title={`${title} | Admin | Littleton Junior FC`} noindex>
+  <Hero variant="banner" title="Admin" />
+
+  <Section width="full">
+    <div class="sched-page admin" id="admin">
+      {
+        !user ? (
+          import.meta.env.DEV ? (
+            <>
+              <h5>Not signed in</h5>
+              <p>
+                Cloudflare Access handles sign-in on the live site. Locally, pick an identity:{' '}
+                <a href={`${here}?as=${adminExample()}`}>{adminExample()}</a> (admin) or{' '}
+                <a href={`${here}?as=nobody@example.com`}>nobody@example.com</a> (refused).
+              </p>
+            </>
+          ) : (
+            <>
+              <h5>Not signed in</h5>
+              <p>
+                Sign-in is handled by Cloudflare Access before you reach this page, so seeing this
+                usually means it did not complete. Try <a href={here}>loading the page again</a>.
+              </p>
+            </>
+          )
+        ) : user.role !== 'admin' ? (
+          <p>
+            <strong>{user.email}</strong> is not a site admin. Admins are the committee on the{' '}
+            <a href="/contact-us">Contact us</a> page.
+          </p>
+        ) : (
+          <>
+            <nav class="admin-nav" aria-label="Admin">
+              <a href="/admin/teams" aria-current={active === 'teams' ? 'page' : undefined}>Teams</a>
+              <a href="/admin/people" aria-current={active === 'people' ? 'page' : undefined}>People</a>
+              <span class="admin-who">Signed in as {user.email}</span>
+            </nav>
+            <slot />
+          </>
+        )
+      }
+    </div>
+  </Section>
+
+  <script is:inline>
+    // Row controls: move up / down, remove, and add from a <template>. Rows post
+    // as parallel arrays in DOM order, so moving a row is all reordering needs.
+    // Without JS the existing rows still edit and save; only add/remove/move
+    // need it.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-row-action], [data-add-row]');
+      if (!btn) return;
+      e.preventDefault();
+      if (btn.hasAttribute('data-add-row')) {
+        var tpl = document.getElementById(btn.getAttribute('data-add-row'));
+        var list = document.getElementById(btn.getAttribute('data-into'));
+        var row = tpl.content.firstElementChild.cloneNode(true);
+        list.appendChild(row);
+        var first = row.querySelector('input:not([type=hidden]), select');
+        if (first) first.focus();
+        return;
+      }
+      var row = btn.closest('[data-row]');
+      var action = btn.getAttribute('data-row-action');
+      if (action === 'up' && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
+      if (action === 'down' && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
+      if (action === 'remove') row.remove();
+      document.querySelectorAll('form[data-dirty-guard]').forEach(function (f) { f.dataset.dirty = '1'; });
+    });
+    // Warn before leaving with unsaved edits.
+    document.querySelectorAll('form[data-dirty-guard]').forEach(function (f) {
+      f.addEventListener('input', function () { f.dataset.dirty = '1'; });
+      f.addEventListener('submit', function () { f.dataset.dirty = ''; });
+    });
+    window.addEventListener('beforeunload', function (e) {
+      if (document.querySelector('form[data-dirty-guard][data-dirty="1"]')) e.preventDefault();
+    });
+  </script>
+</BaseLayout>

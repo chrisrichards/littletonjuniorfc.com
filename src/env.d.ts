@@ -21,6 +21,12 @@ declare namespace Cloudflare {
     ACCESS_AUD: string;
     /** Comma-separated extra admin addresses, kept out of this public repo. */
     ADMIN_EMAILS?: string;
+    /** Admin pages: token that commits people.json / teams.json (secret). */
+    GITHUB_TOKEN?: string;
+    /** Admin pages: 'owner/name' of this repo (var in wrangler.jsonc). */
+    GITHUB_REPO?: string;
+    /** Admin pages: branch to commit to (var in wrangler.jsonc). */
+    GITHUB_BRANCH?: string;
   }
 }
 
@@ -28,4 +34,7 @@ interface Env {
   ACCESS_TEAM_DOMAIN: string;
   ACCESS_AUD: string;
   ADMIN_EMAILS?: string;
+  GITHUB_TOKEN?: string;
+  GITHUB_REPO?: string;
+  GITHUB_BRANCH?: string;
 }

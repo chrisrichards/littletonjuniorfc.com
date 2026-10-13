@@ -2,6 +2,7 @@ import { env } from 'cloudflare:workers';
 import teams from '../content/teams.json';
 import people from '../content/people.json';
 import bookings from '../content/settings/bookings.json';
+import { squadId } from './slug';
 
 /*
  * teams.json is grouped by age (u6, u13, …) with squads nested inside, but a
@@ -19,16 +20,11 @@ export type Squad = {
   managerEmail: string;
 };
 
-export function slug(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
+export { slug } from './slug';
 
 export const squads: Squad[] = teams.flatMap((group) =>
   group.squads.map((s) => ({
-    id: `${group.id}-${slug(s.name)}`,
+    id: squadId(group.id, s.name),
     name: s.name,
     age: group.age,
     label: `${s.name} ${group.age}`,

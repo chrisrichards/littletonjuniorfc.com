@@ -1,0 +1,231 @@
+---
+/*
+ * Admin: edit people.json (committee + age-group coordinators).
+ *
+ * Loads the file from GitHub (not the copy bundled at build time, which may be
+ * behind a Pages CMS save), and saves by committing it back — the push
+ * redeploys the static site. See src/lib/github.ts and README → Admin pages.
+ *
+ * A failed save re-renders the form with what was submitted, so nothing typed
+ * is lost; a successful one redirects back with a message.
+ */
+export const prerender = false;
+
+import AdminPage from '../../components/AdminPage.astro';
+import AdminSaved from '../../components/AdminSaved.astro';
+import { getUser } from '../../lib/access';
+import { githubConfig, secretAdminEmails } from '../../lib/admin-env';
+import { readJson, writeJson } from '../../lib/github';
+import {
+  parsePeople,
+  allowlistFrom,
+  allowlistChange,
+  commitMessage,
+  publishedEmails,
+} from '../../lib/admin';
+import { officialInfoPeople, type Person, type Team } from '../../lib/content-schemas';
+import bookingSettings from '../../content/settings/bookings.json';
+
+const PEOPLE = 'src/content/people.json';
+const TEAMS = 'src/content/teams.json';
+
+const user = await getUser(Astro.request);
+const isAdmin = user?.role === 'admin';
+const gh = isAdmin ? githubConfig() : null;
+
+let people: Person[] = [];
+let sha = '';
+let errors: string[] = [];
+let conflict = false;
+
+if (isAdmin && gh) {
+  try {
+    if (Astro.request.method === 'POST') {
+      const form = await Astro.request.formData();
+      sha = String(form.get('sha') ?? '');
+      ({ people, errors } = parsePeople(form));
+
+      if (!errors.length) {
+        const [before, teams] = await Promise.all([
+          readJson<Person[]>(gh, PEOPLE),
+          readJson<Team[]>(gh, TEAMS),
+        ]);
+        if (before.sha !== sha) {
+          conflict = true;
+        } else if (JSON.stringify(before.data) === JSON.stringify(people)) {
+          return Astro.redirect(`/admin/people?${new URLSearchParams({ ok: 'No changes to save.' })}#admin`, 303);
+        } else {
+          const result = await writeJson(
+            gh,
+            PEOPLE,
+            people,
+            sha,
+            commitMessage(PEOPLE, user!.email, publishedEmails(teams.data, before.data))
+          );
+          if (result.ok) {
+            const change = allowlistChange(
+              allowlistFrom(teams.data, before.data, bookingSettings),
+              allowlistFrom(teams.data, people, bookingSettings),
+              secretAdminEmails()
+            );
+            const params = new URLSearchParams({ ok: 'Saved people.', commit: result.commitSha });
+            if (change.add.length) params.set('add', change.add.join(','));
+            if (change.remove.length) params.set('remove', change.remove.join(','));
+            return Astro.redirect(`/admin/people?${params}#admin`, 303);
+          }
+          if (result.reason === 'conflict') conflict = true;
+          else errors = [result.message];
+        }
+      }
+    } else {
+      ({ data: people, sha } = await readJson<Person[]>(gh, PEOPLE));
+    }
+  } catch (e) {
+    errors = [e instanceof Error ? e.message : String(e)];
+  }
+}
+
+const required = new Set<string>(Object.values(officialInfoPeople));
+const committee = people.filter((p) => p.group === 'committee');
+const coordinators = people.filter((p) => p.group === 'coordinator');
+---
+
+<AdminPage title="People" user={user} active="people">
+  <AdminSaved repo={gh?.repo} />
+
+  {
+    !gh ? (
+      <p class="sched-msg is-err">
+        Saving isn't set up: the Worker needs GITHUB_TOKEN and GITHUB_REPO (see README → Admin pages).
+      </p>
+    ) : (
+      <>
+        {conflict && (
+          <div class="sched-msg is-err">
+            <p>
+              people.json changed since you opened this page (another admin, or a Pages CMS save), so
+              your changes were <strong>not</strong> saved. Your edits are still below. To keep them,
+              note them down, <a href="/admin/people">load the latest version</a>, and apply them again.
+            </p>
+          </div>
+        )}
+        {errors.length > 0 && (
+          <div class="sched-msg is-err">
+            <p>Not saved:</p>
+            <ul>
+              {errors.map((e) => (
+                <li>{e}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <p class="admin-help">
+          Shown on Contact us (and Official Info for the chair, secretary, treasurer and welfare
+          officer). Committee members can also book any pitch. Role and name may use{' '}
+          <code>&lt;br&gt;</code> for a line break.
+        </p>
+
+        <form method="POST" class="admin-form" data-dirty-guard>
+          <input type="hidden" name="sha" value={sha} />
+
+          <h6 class="admin-group">Committee</h6>
+          <div id="committee-rows" class="admin-rows">
+            {committee.map((p) => (
+              <fieldset class="admin-row" data-row>
+                <input type="hidden" name="p_id" value={p.id} />
+                <input type="hidden" name="p_group" value="committee" />
+                <input type="hidden" name="p_ageGroup" value="" />
+                <input type="hidden" name="p_yearLabel" value="" />
+                <label>Role<input name="p_role" value={p.role} required /></label>
+                <label>Name<input name="p_name" value={p.name} required /></label>
+                <label>Email<input name="p_email" type="email" value={p.email} required /></label>
+                <label>Phone<input name="p_phone" value={p.phone ?? ''} /></label>
+                <label class="admin-wide">Note<input name="p_note" value={p.note ?? ''} /></label>
+                <div class="admin-rowbtns">
+                  <button type="button" data-row-action="up" aria-label="Move up">↑</button>
+                  <button type="button" data-row-action="down" aria-label="Move down">↓</button>
+                  {required.has(p.id) ? (
+                    <span class="admin-lock" title="Shown on Official Info">Can't remove</span>
+                  ) : (
+                    <button type="button" data-row-action="remove">Remove</button>
+                  )}
+                </div>
+              </fieldset>
+            ))}
+          </div>
+          <button type="button" class="admin-add" data-add-row="tpl-committee" data-into="committee-rows">
+            + Add committee member
+          </button>
+
+          <h6 class="admin-group">Age group coordinators</h6>
+          <div id="coordinator-rows" class="admin-rows">
+            {coordinators.map((p) => (
+              <fieldset class="admin-row" data-row>
+                <input type="hidden" name="p_id" value={p.id} />
+                <input type="hidden" name="p_group" value="coordinator" />
+                <input type="hidden" name="p_role" value="" />
+                <input type="hidden" name="p_note" value={p.note ?? ''} />
+                <label>Age group<input name="p_ageGroup" value={p.ageGroup ?? ''} placeholder="U6" required /></label>
+                <label>Year label<input name="p_yearLabel" value={p.yearLabel ?? ''} placeholder="Years R-1" required /></label>
+                <label>Name<input name="p_name" value={p.name} required /></label>
+                <label>Email<input name="p_email" type="email" value={p.email} required /></label>
+                <input type="hidden" name="p_phone" value={p.phone ?? ''} />
+                <div class="admin-rowbtns">
+                  <button type="button" data-row-action="up" aria-label="Move up">↑</button>
+                  <button type="button" data-row-action="down" aria-label="Move down">↓</button>
+                  <button type="button" data-row-action="remove">Remove</button>
+                </div>
+              </fieldset>
+            ))}
+          </div>
+          <button type="button" class="admin-add" data-add-row="tpl-coordinator" data-into="coordinator-rows">
+            + Add coordinator
+          </button>
+
+          <div class="sched-form-actions admin-save">
+            <button class="uk-button uk-button-default" type="submit">Save people</button>
+            <a href="/admin/people">Discard changes</a>
+          </div>
+        </form>
+
+        <template id="tpl-committee">
+          <fieldset class="admin-row" data-row>
+            <input type="hidden" name="p_id" value="" />
+            <input type="hidden" name="p_group" value="committee" />
+            <input type="hidden" name="p_ageGroup" value="" />
+            <input type="hidden" name="p_yearLabel" value="" />
+            <label>Role<input name="p_role" required /></label>
+            <label>Name<input name="p_name" required /></label>
+            <label>Email<input name="p_email" type="email" required /></label>
+            <label>Phone<input name="p_phone" /></label>
+            <label class="admin-wide">Note<input name="p_note" /></label>
+            <div class="admin-rowbtns">
+              <button type="button" data-row-action="up" aria-label="Move up">↑</button>
+              <button type="button" data-row-action="down" aria-label="Move down">↓</button>
+              <button type="button" data-row-action="remove">Remove</button>
+            </div>
+          </fieldset>
+        </template>
+        <template id="tpl-coordinator">
+          <fieldset class="admin-row" data-row>
+            <input type="hidden" name="p_id" value="" />
+            <input type="hidden" name="p_group" value="coordinator" />
+            <input type="hidden" name="p_role" value="" />
+            <input type="hidden" name="p_note" value="" />
+            <label>Age group<input name="p_ageGroup" placeholder="U6" required /></label>
+            <label>Year label<input name="p_yearLabel" placeholder="Years R-1" required /></label>
+            <label>Name<input name="p_name" required /></label>
+            <label>Email<input name="p_email" type="email" required /></label>
+            <input type="hidden" name="p_phone" value="" />
+            <div class="admin-rowbtns">
+              <button type="button" data-row-action="up" aria-label="Move up">↑</button>
+              <button type="button" data-row-action="down" aria-label="Move down">↓</button>
+              <button type="button" data-row-action="remove">Remove</button>
+            </div>
+          </fieldset>
+        </template>
+      </>
+    )
+  }
+</AdminPage>

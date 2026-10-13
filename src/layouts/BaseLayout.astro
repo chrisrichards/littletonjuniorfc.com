@@ -7,12 +7,15 @@ interface Props {
   title: string;
   description?: string;
   active?: 'home' | 'teams' | 'official-info' | 'membership' | 'resources' | 'contact-us';
+  /** Keep the page out of search engines (the admin pages). */
+  noindex?: boolean;
 }
 
 const {
   title,
   description = 'Littleton Junior Football Club - boys and girls football from 5 to 18',
   active,
+  noindex = false,
 } = Astro.props;
 
 const navLeft = [
@@ -41,6 +44,7 @@ const navRight = [
     <link rel="icon" type="image/png" sizes="96x96" href="/favico-96.png" />
     <link rel="apple-touch-icon" href="/ljfc-ico-180.png" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
 
     {/* Preload the two self-hosted fonts so display text (BebasKai) and body

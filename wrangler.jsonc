@@ -7,6 +7,11 @@
 		"directory": "./dist",
 		"binding": "ASSETS"
 	},
+	// Admin pages commit people.json / teams.json here (GITHUB_TOKEN is a secret).
+	"vars": {
+		"GITHUB_REPO": "chrisrichards/littletonjuniorfc.com",
+		"GITHUB_BRANCH": "main"
+	},
 	"observability": {
 		"enabled": true
 	},

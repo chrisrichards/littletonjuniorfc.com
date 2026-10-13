@@ -234,12 +234,13 @@ differently:
 
 **A squad changes manager** (the common case):
 
-1. Edit that squad's `managerEmail` and `managerName` in `src/content/teams.json`, then
-   commit and push. Workers Builds deploys it. This also updates the Teams page, which reads
+1. Edit that squad's `managerEmail` and `managerName` — on the [admin Teams page](#admin-pages)
+   (`/admin/teams`), in Pages CMS, or in `src/content/teams.json` directly and push. Workers Builds deploys it. This also updates the Teams page, which reads
    the same file. It does **not** touch Contact Us — that page is built from `people.json`
    (committee + age-group coordinators), a separate list. A coordinator is not a squad
    manager and gets no booking rights from being on it.
-2. In the dashboard, add the new address to **`LJFC Emails`** and remove the old one —
+2. In the dashboard, add the new address to **`LJFC Emails`** and remove the old one (the admin
+   pages list exactly which addresses to add and remove after each save) —
    unless the old one still appears elsewhere in `node scripts/print-allowlist.mjs` (someone
    may manage two squads, or also sit on the committee).
 
@@ -275,6 +276,57 @@ old manager's address and the new manager cannot edit them — `canManage()` ref
 committee admin can edit anything, and doing so rewrites `manager_email` to the current
 manager. So after a handover, have an admin open and re-save any of that squad's future
 bookings, or leave them for the admin to manage.
+
+### Admin pages
+
+`/admin/teams` and `/admin/people` let committee admins (`roleFor()` → `admin`) edit
+`teams.json` and `people.json` from the browser, signed in through Cloudflare Access like the
+booking pages — no GitHub account needed. Pages CMS keeps working alongside them.
+
+They don't write anything at runtime. A save commits the file to `main` through the GitHub
+API, exactly as a Pages CMS save does, and the push triggers the normal Workers Builds deploy,
+so every public page stays static and the change shows up in 1–2 minutes. In more detail:
+
+- **Loaded from GitHub, not the build.** The form shows the file as it is on `main` now, so it
+  includes Pages CMS edits that haven't deployed yet.
+- **No silent overwrites.** Each save carries the version it started from; if the file changed
+  in between (another admin, a Pages CMS save) the save is refused and the edits stay on screen.
+- **Checked before committing** with the same schema the build uses (`src/lib/content-schemas.ts`),
+  plus: valid emails, unique squad names per age group, only `<br>` allowed in fields rendered
+  as HTML, and the four people Official Info shows (`officialInfoPeople`) can't be removed.
+- **Bookings.** A squad's id comes from its age group and name (`u13` + Broncos → `u13-broncos`),
+  so renaming, moving or removing a squad detaches its bookings. The Teams page lists squads with
+  upcoming bookings and asks for confirmation first.
+- **Booking access.** After a save the page lists the addresses to add to / remove from
+  **`LJFC Emails`**. The list itself still has to be edited in the dashboard.
+- **Commits** read `Update src/content/… (via admin pages)` and name the editor only if their
+  address is already published on the site — admins kept in the `ADMIN_EMAILS` secret stay out
+  of this public repo.
+- Age groups (U6–U18) are fixed; only their year labels and squads are editable. Admins can
+  reach the pages from a link on `/schedule/book`.
+
+#### Setting up (once)
+
+1. **Protect the pages.** In Zero Trust → Access → Applications, add the path `/admin*` to the
+   application that already covers `/schedule/book*` and `/api/bookings*`. It must be the same
+   application: the Worker verifies the token against that application's AUD (`ACCESS_AUD`).
+   Until this is done the pages show *"Not signed in"* and change nothing.
+2. **Create a GitHub token.** GitHub → Settings → Developer settings → Fine-grained tokens:
+   repository access **only** `chrisrichards/littletonjuniorfc.com`, permission
+   **Contents: Read and write**, nothing else. Pick an expiry and note it — saves fail with a
+   GitHub 401 once it lapses.
+3. **Give it to the Worker:**
+
+   ```sh
+   npx wrangler secret put GITHUB_TOKEN
+   ```
+
+`GITHUB_REPO` and `GITHUB_BRANCH` are plain vars in `wrangler.jsonc`. Without `GITHUB_TOKEN`
+the pages say saving isn't set up.
+
+Locally, `astro dev` with `?as=chair@littletonjuniorfc.com` signs you in as an admin. Saving
+needs `GITHUB_TOKEN` in `.dev.vars`; set `GITHUB_BRANCH` there to a scratch branch so local
+tests don't commit to `main` and deploy.
 
 ### Still open before cutover
 

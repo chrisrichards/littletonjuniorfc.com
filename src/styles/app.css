@@ -1432,4 +1432,77 @@
     padding: 0 12px;
     background: #8c2b32;
   }
+
+  /* ── Admin pages (/admin/teams, /admin/people) ──────────────────── */
+  .admin-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e3e3e3;
+  }
+  .admin-nav a { font-family: var(--font-display); font-size: 22px; text-transform: uppercase; }
+  .admin-nav a[aria-current='page'] { color: var(--color-dark); }
+  .admin-who { margin-left: auto; color: #8a8a8a; font-size: 14px; }
+  .admin-help { margin-bottom: 20px; color: #6a6a6a; }
+  .admin-group { margin: 24px 0 10px; font-size: 22px; }
+  .admin-rows { display: grid; gap: 10px; }
+  .admin-row,
+  .admin-team {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 8px 12px;
+    align-items: end;
+    margin: 0;
+    padding: 12px;
+    border: 1px solid #e3e3e3;
+    background: #fcfcfc;
+  }
+  .admin-team { display: block; margin-bottom: 20px; background: #fff; }
+  .admin-team legend {
+    padding: 0 6px;
+    font-family: var(--font-display);
+    font-size: 26px;
+    text-transform: uppercase;
+  }
+  .admin-row label,
+  .admin-yearlabel { display: grid; gap: 4px; font-size: 14px; }
+  .admin-yearlabel { max-width: 340px; margin-bottom: 12px; }
+  .admin-wide { grid-column: 1 / -1; }
+  .admin-form input:not([type='checkbox']) {
+    box-sizing: border-box;
+    width: 100%;
+    height: 36px;
+    padding: 0 8px;
+    border: 1px solid #d5d5d5;
+    background: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: inherit;
+  }
+  .admin-rowbtns { display: flex; gap: 6px; align-items: center; }
+  .admin-rowbtns button,
+  .admin-add {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #d5d5d5;
+    background: #fff;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: inherit;
+  }
+  .admin-rowbtns button:hover,
+  .admin-add:hover { border-color: var(--color-brand); color: var(--color-brand); }
+  .admin-lock { color: #8a8a8a; font-size: 13px; }
+  .admin-add { margin-top: 10px; }
+  .admin-save { margin-top: 24px; }
+  .admin-save button { border: none; cursor: pointer; }
+  .admin-confirm { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  .admin-emails { margin: 6px 0 0 20px; }
+  .sched-msg p + p,
+  .sched-msg p + ul { margin-top: 6px; }
+  .sched-msg ul { margin-left: 20px; }
 }

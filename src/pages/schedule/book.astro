@@ -201,6 +201,11 @@ for (let m = 0; m < 24 * 60; m += settings.slotMinutes) {
               </div>
             </form>
 
+            {user.role === 'admin' && (
+              <p>
+                As an admin you can also <a href="/admin/teams">edit teams and people</a>.
+              </p>
+            )}
             <h5 class="sched-upcoming-title">Your upcoming bookings</h5>
             {upcoming.length === 0 ? (
               <p>

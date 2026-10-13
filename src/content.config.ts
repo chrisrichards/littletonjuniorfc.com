@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob, file } from 'astro/loaders';
+import { personSchema, teamSchema } from './lib/content-schemas';
 
 /*
  * Content collections for the Joomla → Astro migration.
@@ -42,33 +43,16 @@ const pages = defineCollection({
 
 const teams = defineCollection({
   loader: file('./src/content/teams.json', { parser: byArrayPosition }),
-  schema: z.object({
-    id: z.string(), // e.g. "u6", "u11", "pan"
-    age: z.string(), // "U6", "U11", "Pan-disability"
-    yearLabel: z.string(), // "Nursery / Year 1", "Year 6"
+  // Shared with the admin Teams page, which writes this file.
+  schema: teamSchema.extend({
     order: z.number(), // derived from array position — not stored in the file
-    squads: z.array(
-      z.object({
-        name: z.string(), // "Hornets", "Raptors"
-        managerName: z.string(),
-        managerEmail: z.string(),
-      })
-    ),
   }),
 });
 
 const people = defineCollection({
   loader: file('./src/content/people.json', { parser: byArrayPosition }),
-  schema: z.object({
-    id: z.string(),
-    role: z.string(),
-    name: z.string(),
-    email: z.string(),
-    phone: z.string().optional(),
-    group: z.enum(['committee', 'coordinator']),
-    ageGroup: z.string().optional(),
-    yearLabel: z.string().optional(),
-    note: z.string().optional(),
+  // Shared with the admin People page, which writes this file.
+  schema: personSchema.extend({
     order: z.number(), // derived from array position — not stored in the file
   }),
 });

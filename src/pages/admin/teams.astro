@@ -1,0 +1,219 @@
+---
+/*
+ * Admin: edit teams.json — each age group's year label and its squads.
+ *
+ * Same load-from-GitHub / save-by-commit flow as the People page (see there).
+ * Age groups themselves (U6–U18) are fixed; see parseTeams in src/lib/admin.ts.
+ *
+ * Bookings reference a squad by an id derived from its age group and name
+ * (u13 + "Broncos" -> u13-broncos), so renaming, moving or removing a squad
+ * detaches its existing bookings. Upcoming ones are checked before saving and
+ * have to be confirmed.
+ */
+export const prerender = false;
+
+import { env } from 'cloudflare:workers';
+import AdminPage from '../../components/AdminPage.astro';
+import AdminSaved from '../../components/AdminSaved.astro';
+import { getUser } from '../../lib/access';
+import { githubConfig, secretAdminEmails } from '../../lib/admin-env';
+import { readJson, writeJson } from '../../lib/github';
+import {
+  parseTeams,
+  removedSquadIds,
+  allowlistFrom,
+  allowlistChange,
+  commitMessage,
+  publishedEmails,
+} from '../../lib/admin';
+import type { Person, Team } from '../../lib/content-schemas';
+import { today } from '../../lib/dates';
+import bookingSettings from '../../content/settings/bookings.json';
+
+const PEOPLE = 'src/content/people.json';
+const TEAMS = 'src/content/teams.json';
+
+const user = await getUser(Astro.request);
+const isAdmin = user?.role === 'admin';
+const gh = isAdmin ? githubConfig() : null;
+
+let teams: Team[] = [];
+let sha = '';
+let errors: string[] = [];
+let conflict = false;
+let orphans: { squad_id: string; n: number }[] = [];
+
+/** Upcoming, not-deleted bookings on squads this save would remove. */
+async function upcomingOn(ids: string[]) {
+  if (!ids.length) return [];
+  const { results } = await env.DB.prepare(
+    `SELECT squad_id, COUNT(*) AS n FROM bookings
+      WHERE cancelled_at IS NULL AND date >= ? AND squad_id IN (${ids.map(() => '?').join(',')})
+      GROUP BY squad_id ORDER BY squad_id`
+  )
+    .bind(today(), ...ids)
+    .all<{ squad_id: string; n: number }>();
+  return results;
+}
+
+if (isAdmin && gh) {
+  try {
+    if (Astro.request.method === 'POST') {
+      const form = await Astro.request.formData();
+      sha = String(form.get('sha') ?? '');
+      const [before, people] = await Promise.all([
+        readJson<Team[]>(gh, TEAMS),
+        readJson<Person[]>(gh, PEOPLE),
+      ]);
+      ({ teams, errors } = parseTeams(form, before.data));
+
+      if (!errors.length) {
+        if (before.sha !== sha) {
+          conflict = true;
+        } else if (JSON.stringify(before.data) === JSON.stringify(teams)) {
+          return Astro.redirect(`/admin/teams?${new URLSearchParams({ ok: 'No changes to save.' })}#admin`, 303);
+        } else {
+          orphans = await upcomingOn(removedSquadIds(before.data, teams));
+          if (!orphans.length || form.get('confirm_orphans') === 'yes') {
+            const result = await writeJson(
+              gh,
+              TEAMS,
+              teams,
+              sha,
+              commitMessage(TEAMS, user!.email, publishedEmails(before.data, people.data))
+            );
+            if (result.ok) {
+              const change = allowlistChange(
+                allowlistFrom(before.data, people.data, bookingSettings),
+                allowlistFrom(teams, people.data, bookingSettings),
+                secretAdminEmails()
+              );
+              const params = new URLSearchParams({ ok: 'Saved teams.', commit: result.commitSha });
+              if (change.add.length) params.set('add', change.add.join(','));
+              if (change.remove.length) params.set('remove', change.remove.join(','));
+              return Astro.redirect(`/admin/teams?${params}#admin`, 303);
+            }
+            orphans = [];
+            if (result.reason === 'conflict') conflict = true;
+            else errors = [result.message];
+          }
+        }
+      }
+    } else {
+      ({ data: teams, sha } = await readJson<Team[]>(gh, TEAMS));
+    }
+  } catch (e) {
+    errors = [e instanceof Error ? e.message : String(e)];
+  }
+}
+---
+
+<AdminPage title="Teams" user={user} active="teams">
+  <AdminSaved repo={gh?.repo} />
+
+  {
+    !gh ? (
+      <p class="sched-msg is-err">
+        Saving isn't set up: the Worker needs GITHUB_TOKEN and GITHUB_REPO (see README → Admin pages).
+      </p>
+    ) : (
+      <>
+        {conflict && (
+          <div class="sched-msg is-err">
+            <p>
+              teams.json changed since you opened this page (another admin, or a Pages CMS save), so
+              your changes were <strong>not</strong> saved. Your edits are still below. To keep them,
+              note them down, <a href="/admin/teams">load the latest version</a>, and apply them again.
+            </p>
+          </div>
+        )}
+        {errors.length > 0 && (
+          <div class="sched-msg is-err">
+            <p>Not saved:</p>
+            <ul>
+              {errors.map((e) => (
+                <li>{e}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <p class="admin-help">
+          Squad managers can book pitches for their squad. The year label is shown on the Teams page
+          as written — update the squad count in it when you add or remove a squad.
+        </p>
+
+        <form method="POST" class="admin-form" data-dirty-guard>
+          <input type="hidden" name="sha" value={sha} />
+
+          {orphans.length > 0 && (
+            <div class="sched-msg is-err">
+              <p>
+                Not saved yet: these squads are renamed, moved or removed, and still have upcoming
+                bookings. Those bookings stay on the schedule under their old team name, but are no
+                longer linked to a squad — editing one means picking its team again.
+              </p>
+              <ul>
+                {orphans.map((o) => (
+                  <li>
+                    {o.squad_id}: {o.n} upcoming booking{o.n === 1 ? '' : 's'}
+                  </li>
+                ))}
+              </ul>
+              <label class="admin-confirm">
+                <input type="checkbox" name="confirm_orphans" value="yes" /> Save anyway
+              </label>
+            </div>
+          )}
+
+          {teams.map((g) => (
+            <fieldset class="admin-team">
+              <legend>{g.age}</legend>
+              <input type="hidden" name="g_id" value={g.id} />
+              <label class="admin-yearlabel">
+                Year label
+                <input name="g_yearLabel" value={g.yearLabel} required />
+              </label>
+              <div id={`squads-${g.id}`} class="admin-rows">
+                {g.squads.map((s) => (
+                  <div class="admin-row admin-squad" data-row>
+                    <input type="hidden" name="s_group" value={g.id} />
+                    <label>Squad<input name="s_name" value={s.name} required /></label>
+                    <label>Manager<input name="s_managerName" value={s.managerName} required /></label>
+                    <label>Manager email<input name="s_managerEmail" type="email" value={s.managerEmail} required /></label>
+                    <div class="admin-rowbtns">
+                      <button type="button" data-row-action="up" aria-label="Move up">↑</button>
+                      <button type="button" data-row-action="down" aria-label="Move down">↓</button>
+                      <button type="button" data-row-action="remove">Remove</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button type="button" class="admin-add" data-add-row={`tpl-squad-${g.id}`} data-into={`squads-${g.id}`}>
+                + Add {g.age} squad
+              </button>
+              <template id={`tpl-squad-${g.id}`}>
+                <div class="admin-row admin-squad" data-row>
+                  <input type="hidden" name="s_group" value={g.id} />
+                  <label>Squad<input name="s_name" required /></label>
+                  <label>Manager<input name="s_managerName" required /></label>
+                  <label>Manager email<input name="s_managerEmail" type="email" required /></label>
+                  <div class="admin-rowbtns">
+                    <button type="button" data-row-action="up" aria-label="Move up">↑</button>
+                    <button type="button" data-row-action="down" aria-label="Move down">↓</button>
+                    <button type="button" data-row-action="remove">Remove</button>
+                  </div>
+                </div>
+              </template>
+            </fieldset>
+          ))}
+
+          <div class="sched-form-actions admin-save">
+            <button class="uk-button uk-button-default" type="submit">Save teams</button>
+            <a href="/admin/teams">Discard changes</a>
+          </div>
+        </form>
+      </>
+    )
+  }
+</AdminPage>

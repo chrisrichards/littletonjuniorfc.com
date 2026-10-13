@@ -1,0 +1,49 @@
+---
+/**
+ * The "saved" message after an admin save redirects back to the page:
+ * ?ok=<message>&commit=<sha>&add=<emails>&remove=<emails>.
+ *
+ * Saving changes the repo, not the "LJFC Emails" Cloudflare list, so the
+ * addresses that list now needs adding or removing are spelled out here.
+ */
+export interface Props {
+  repo: string | undefined;
+}
+const { repo } = Astro.props;
+const q = Astro.url.searchParams;
+const ok = q.get('ok');
+const commit = q.get('commit') ?? '';
+const list = (k: string) => (q.get(k) ?? '').split(',').filter(Boolean);
+const add = list('add');
+const remove = list('remove');
+// Only a bare hex sha is linked: the URL is built here, never taken from the query.
+const commitUrl = repo && /^[0-9a-f]{7,40}$/.test(commit) ? `https://github.com/${repo}/commit/${commit}` : null;
+---
+
+{
+  ok && (
+    <div class="sched-msg is-ok">
+      <p>
+        {ok}{' '}
+        {commitUrl && (
+          <>
+            (<a href={commitUrl}>commit {commit.slice(0, 7)}</a>)
+          </>
+        )}
+      </p>
+      {commitUrl && <p>The website updates once the deploy finishes, usually in 1–2 minutes.</p>}
+      {(add.length > 0 || remove.length > 0) && (
+        <>
+          <p>
+            Update the <strong>LJFC Emails</strong> list in Cloudflare (Zero Trust → Reusable
+            components → Lists) so booking access matches:
+          </p>
+          <ul class="admin-emails">
+            {add.map((e) => <li>Add {e}</li>)}
+            {remove.map((e) => <li>Remove {e}</li>)}
+          </ul>
+        </>
+      )}
+    </div>
+  )
+}
