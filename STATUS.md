@@ -338,7 +338,7 @@ launch blocker.
 - `settings/bookings.json` — booking-system settings
 
 ### Vendored assets (under `public/`)
-- `templates/yootheme/fonts/` — BebasKai + TradeGothic LT only (licensed for the domain — see `~/.claude/projects/.../memory/font-licensing.md`). All styling now lives in `src/styles/app.css`.
+- `fonts/` — BebasKai + TradeGothic LT only (licensed for the domain — see `~/.claude/projects/.../memory/font-licensing.md`). All styling now lives in `src/styles/app.css`.
 - `images/heros/`, `images/home/`, `images/contacts/`, etc.
 - _(removed in the Tailwind migration: theme/custom/overrides.css, uikit\*.js, yootheme theme.js.)_
 
