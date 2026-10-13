@@ -53,6 +53,7 @@ content:
         label: Role
         type: string
         required: true
+        description: 'Rendered as HTML: use <br> to force a line break, &amp; for "&".'
 
       - name: name
         label: Name

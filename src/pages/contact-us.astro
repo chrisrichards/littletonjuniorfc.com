@@ -38,7 +38,7 @@ const allRows = [
             {row.map((p) =>
               kind === 'committee' ? (
                 <Card cta={{ label: 'Email', href: `mailto:${p.data.email}` }}>
-                  <h3>{p.data.role}</h3>
+                  <h3 set:html={p.data.role} />
                   <h4 set:html={p.data.name} />
                   {p.data.note && <p class="note">{p.data.note}</p>}
                   {p.data.phone && <p>{p.data.phone}</p>}

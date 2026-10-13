@@ -30,8 +30,10 @@ const sectionColours: Record<string, 'grey' | 'blue'> = {
 const stayInRightColumn = new Set(['Forms & Guides']);
 
 // Sections whose row 1 cards should stay dark grey (no alternation).
-// Row 2+ in a greyOnly section still uses .gb + .swap so positions 2
-// and 4 re-tint blue (Boot Room Foundation / Sports Survival Guide).
+// Row 1 still takes .gb for its CTA colours (live: blue, dark, dark,
+// blue) — .greyonly holds the cards dark. Row 2+ uses .gb + .swap so
+// positions 2 and 4 re-tint blue (Boot Room Foundation / Sports
+// Survival Guide).
 const greyOnlySections = new Set(['Coaching Tools']);
 
 const sectionOrder = Object.keys(sectionColours);
@@ -105,11 +107,12 @@ function buttonLabel(action: 'download' | 'visit' | 'link') {
           : 'grid grid-cols-2 md:grid-cols-4';
         const cols = twoCol ? 2 : 4;
         const padCount = (cols - (row.length % cols)) % cols;
-        const useGb = !isGreyOnly || rowIdx > 0;
+        const greyOnlyRow = isGreyOnly && rowIdx === 0;
         const useSwap = rowIdx > 0 && !stays;
         const wrap = [
           'offinfo4x4',
-          useGb && 'gb',
+          'gb',
+          greyOnlyRow && 'greyonly',
           'alternates',
           'second',
           modifier,

@@ -166,6 +166,10 @@
   .uk-section {
     padding: 5px 0;
   }
+  /* Stacked sections: only the first carries a top pad, so every white gap
+     between sections is 5px (not 5+5). The hero is pt-0/pb-0, so the section
+     after it keeps its 5px. */
+  .uk-section:not(.hero) + .uk-section { padding-top: 0; }
   /* The hero is the positioned ancestor for its absolute headerText overlay.
      (Scoped to .hero — making every section relative regresses other pages.) */
   .hero {
@@ -478,6 +482,13 @@
   }
   .wellsafeimg .el-title {
     margin-top: -7px !important; /* beats the .wellsafeimg h3.el-title{margin:0} above */
+  }
+  /* Membership: side by side (≥960) the 2×2 card column is taller than the
+     square image (gutters), leaving a 17px gap above the footer. Stretch the
+     image cell to the column height so it ends level with the cards (5px). */
+  @media (min-width: 960px) {
+    .membership-img .wellsafeimg,
+    .membership-img .wellsafeimg .card-grid { height: 100%; }
   }
   .wellsafeimg .el-image {
     position: absolute;
@@ -895,9 +906,6 @@
   #homesquares-section { padding-top: 0; }
   #sponsors-section { padding-top: 0; margin-bottom: 0 !important; }
   #alternates2, #alternates3, #alternates4 { padding-top: 0; }
-  /* Contact-us rows are one section each: drop the stacked 5px top padding so
-     rows sit 5px apart (live), matching the column gutter. */
-  .contactus .uk-section + .uk-section { padding-top: 0; }
 
   /* Teams age-card display type (overrides.css). */
   #u6-9 .el-content h2, #u10-13 .el-content h2,
@@ -911,7 +919,8 @@
   }
   /* Closing dashed line under the last <p> (live had an empty trailing <p>).
      Only where <p>s carry the dashed top border — not the teams age cards. */
-  .alternates:is(.blue, .grey, .contacts) .el-content > p:last-of-type { border-bottom: 1px dashed #fff; }
+  .alternates:is(.blue, .grey, .contacts) .el-content > p:last-of-type,
+  .homesquares.resources .el-content > p:last-of-type { border-bottom: 1px dashed #fff; }
   /* …except a contact card ending on its note (Secretary): live's empty <p>
      only followed a phone number. */
   .alternates.contacts .el-content > p.note:last-of-type { border-bottom: 0; }
@@ -1008,6 +1017,8 @@
   .alternates.grey :is(.uk-grid-match, .card-grid) > div:nth-child(odd) .el-item > div:last-child a:hover { background-color: #fff; color: var(--color-dark); }
 
   .grey .uk-card-primary { background-color: var(--color-dark) !important; }
+  /* Resources Coaching Tools row 1: .gb CTA colours, but every card dark. */
+  .alternates.second.gb.greyonly .card-grid > div:nth-child(n) .el-item { background-color: var(--color-dark); }
 
   /* Row margin tweaks (.blue/.grey stacks). */
   .alternates.blue:nth-child(1) { margin-bottom: 0 !important; }
@@ -1050,8 +1061,9 @@
 
   /* Sponsors. */
   .sponsors .el-item { padding: 0; }
+  /* relative so it paints above the absolute .el-image (live: uk-panel). */
   .sponsors .el-item .el-content {
-    text-align: left; margin: 0 20px; line-height: 18px; font-size: 16px; letter-spacing: -0.03em;
+    position: relative; text-align: left; margin: 20px 20px 0; line-height: 18px; font-size: 16px; letter-spacing: -0.03em;
   }
 
   /* Teams u18 panel row. */
@@ -1067,6 +1079,28 @@
   #membership > div > div:nth-child(4) .el-item.uk-card-primary { background-color: var(--color-brand) !important; }
   #membership > div > div:nth-child(2) .el-item.uk-card-primary,
   #membership > div > div:nth-child(3) .el-item.uk-card-primary { background-color: var(--color-dark) !important; }
+
+  /* ── Live per-breakpoint values the transcribed blocks above miss ── */
+  /* Official-info action cards (.alternates.first.blue/.grey), measured
+     on live: 8% ≤450, 10% 641–768, 0 15% 769–959, 40px from 1025. */
+  @media (max-width: 450px) {
+    .alternates.first:is(.blue, .grey) .el-item { padding: 8%; }
+  }
+  @media (min-width: 641px) and (max-width: 768px) {
+    .alternates.first:is(.blue, .grey) .el-item { padding: 10%; }
+  }
+  @media (min-width: 769px) and (max-width: 959px) {
+    .alternates.first:is(.blue, .grey) .el-item { padding: 0 15%; }
+  }
+  @media (min-width: 1025px) {
+    .alternates.first:is(.blue, .grey) .el-item { padding: 40px; }
+  }
+  /* Resources featured cards (Our Ethos / Player Development): live keeps
+     18/24 except 14/16 at ≤480 and 641–768; beats the 11px homesquares rule. */
+  .homesquares.resources .el-content p { font-size: 18px !important; line-height: 24px !important; }
+  @media (max-width: 480px), (min-width: 641px) and (max-width: 768px) {
+    .homesquares.resources .el-content p { font-size: 14px !important; line-height: 16px !important; }
+  }
 
   /* Resources .second.gb.swap colour swap (≥961). */
   @media (min-width: 961px) {
@@ -1089,6 +1123,9 @@
     .contactus .alternates.first .js-filter > div:nth-of-type(2) > div, .contactus .alternates.first .js-filter > div:nth-of-type(3) > div { background-color: var(--color-dark) !important; }
     .contactus .alternates.second .js-filter > div:nth-of-type(1) > div, .contactus .alternates.first .js-filter > div:nth-of-type(4) > div { background-color: var(--color-brand) !important; }
     .contactus .alternates.second .js-filter > div:nth-of-type(2) > div, .contactus .alternates.first .js-filter > div:nth-of-type(3) > div { background-color: var(--color-dark) !important; }
+    /* 2-col checkerboard: each Email CTA takes the opposite colour to its card. */
+    .contactus .alternates .js-filter > div:is(:nth-of-type(1), :nth-of-type(4)) .el-item > div:last-child a { background-color: var(--color-dark) !important; }
+    .contactus .alternates .js-filter > div:is(:nth-of-type(2), :nth-of-type(3)) .el-item > div:last-child a { background-color: var(--color-brand) !important; }
     #charter h3, #membership h3 { font-size: 18px; line-height: 18px; margin: 0 0 5px; }
     #charter .offinfo4x4 .el-item { padding: 8%; }
     .el-title { left: 0 !important; padding-left: 5% !important; font-size: 40px !important; line-height: 35px !important; }
@@ -1186,11 +1223,14 @@
   .drawer.is-open .drawer__bar { transform: translateX(0); }
   .drawer__close {
     position: absolute; top: 20px; right: 20px;
-    background: none; border: none; color: #fff; cursor: pointer; padding: 0;
+    background: none; border: none; color: #fff; cursor: pointer; padding: 5px;
   }
   .drawer__close:hover { color: var(--color-brand); }
-  .drawer__nav { list-style: none; margin: 0; padding: 30px 0 0; }
-  .drawer__nav a { display: block; color: #fff; font-size: 20px; }
+  .drawer__nav { list-style: none; margin: 0; padding: 0; }
+  .drawer__nav a {
+    display: block; padding: 5px 0; color: #fff;
+    font-family: var(--font-display); font-size: 20px; line-height: 34px; text-transform: uppercase;
+  }
   .drawer__nav a:hover { color: var(--color-brand); }
   .drawer__nav li.active a { color: var(--color-brand); }
 }

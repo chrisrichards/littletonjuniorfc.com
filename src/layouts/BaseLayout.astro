@@ -124,7 +124,8 @@ const navRight = [
               {
                 [...navLeft, ...navRight].map((item) => (
                   <li class={active === item.key ? 'active' : ''}>
-                    <a href={item.href} set:html={item.label} />
+                    {/* One line each in the drawer — the <br> is for the desktop navbar. */}
+                    <a href={item.href}>{item.label.replace(/\s*<br\s*\/?>\s*/gi, ' ')}</a>
                   </li>
                 ))
               }

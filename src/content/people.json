@@ -30,7 +30,7 @@
   },
   {
     "id": "welfare-officer",
-    "role": "Welfare Officer",
+    "role": "Welfare<br>Officer",
     "name": "Adam Stacey",
     "email": "cwo@littletonjuniorfc.com",
     "phone": "07784 692766",
@@ -46,7 +46,7 @@
   },
   {
     "id": "vice-chair-kit-equipment",
-    "role": "Vice chair, Kit & Equipment",
+    "role": "Vice chair,<br>Kit &amp; Equipment",
     "name": "Sean McPike",
     "email": "sean.mcpike@hotmail.co.uk",
     "group": "committee"

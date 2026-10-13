@@ -32,7 +32,7 @@ export type CardCta = {
 export interface Props {
   // Content props — render `<h2>` / `<h3>` / `<h4>` / `<p>` if set
   heading?: string; // <h2> — used on teams nav cards. Defaults to h3.
-  title?: string; // <h3> — most common
+  title?: string; // <h3> — most common. set:html so callers can include <br>
   subtitle?: string; // <h4>. set:html so callers can include <br>
   phone?: string; // dedicated <p>
   body?: string; // <p>. set:html so callers can include <em>/<br>
@@ -128,7 +128,7 @@ const cardClass = `el-item uk-card-${colour} uk-card-body [&>*:first-child]:mt-0
           ) : (
             <>
               {heading && <h2>{heading}</h2>}
-              {title && <h3>{title}</h3>}
+              {title && <h3 set:html={title} />}
               {contentLabel === 'Contact' && <h4>Contact</h4>}
               {subtitle && <h4 set:html={subtitle} />}
               {phone && <p>{phone}</p>}
