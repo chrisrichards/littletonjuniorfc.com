@@ -181,7 +181,7 @@ const navRight = [
               <div class="uk-width-1-1@m">
                 <div class="footer" id="footer-4">
                   <p>
-                    © Littleton Junior Football Club | <a href="/privacy-policy">Privacy</a> | <a href="/terms-conditions">Terms</a>
+                    © Littleton Junior Football Club | <a href="/privacy-policy">Privacy</a> | <a href="/terms-conditions">Terms</a><span id="footer-admin" hidden> | <a href="/admin">Admin</a></span>
                   </p>
                 </div>
               </div>
@@ -194,6 +194,14 @@ const navRight = [
     {/* Page-level overrides moved to public/templates/yootheme/css/overrides.css
         and loaded via <link> above. Astro's <style is:global> in dev mode
         loads styles via Vite HMR which had timing/cache quirks. */}
+
+    <script is:inline>
+      // Footer "Admin" link — shown when src/middleware.ts has flagged this
+      // browser as a signed-in admin. A hint only; /admin enforces access.
+      if (/(?:^|;\s*)ljfc_admin=1(?:;|$)/.test(document.cookie)) {
+        document.getElementById('footer-admin').hidden = false;
+      }
+    </script>
 
     <script is:inline>
       // Mobile off-canvas drawer — tiny vanilla replacement for UIkit's
