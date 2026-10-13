@@ -1,4 +1,5 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
@@ -36,6 +37,20 @@ type Section = {
   cards: Card[];
 };
 
+// Committee contacts come from people.json (edited in Pages CMS) so this page
+// and Contact Us can't drift. Card titles stay here: this page's wording
+// differs ("Chair" vs "Chairman", "Treasurer" vs "Treasurers").
+async function committee(id: string) {
+  const entry = await getEntry('people', id);
+  if (!entry) throw new Error(`people.json has no "${id}" entry`);
+  return entry.data;
+}
+const chair = await committee('chairman');
+const secretary = await committee('secretary');
+const treasurer = await committee('treasurer');
+const welfare = await committee('welfare-officer');
+const mailto = (email: string) => ({ label: 'Email', href: `mailto:${email}` });
+
 const sections: Section[] = [
   {
     id: 'welfare',
@@ -50,7 +65,7 @@ const sections: Section[] = [
       { title: 'Whistle blowing', body: "Reveal and raise concerns over misconduct or malpractice. Anyone with concerns can contact The FA's safeguarding team, the police, children's social care or the NSPCC." },
     ],
     cards: [
-      { title: 'Club Welfare<br>Officer', subtitle: 'Adam Stacey', phone: '07784 692766', cta: { label: 'Email', href: 'mailto:cwo@littletonjuniorfc.com' } },
+      { title: 'Club Welfare<br>Officer', subtitle: welfare.name, phone: welfare.phone, cta: mailto(welfare.email) },
       { title: 'County<br>Welfare<br>Officer', subtitle: 'Mel Gill', phone: '07885 807321', cta: { label: 'Email', href: 'mailto:Melanie.Gill@HampshireFA.com' } },
       { title: 'FA<br>Safeguarding<br>Team', phone: '0800 169 1863', body: 'Ext 6300 or 6400', cta: { label: 'Email', href: 'mailto:safeguarding@thefa.com' } },
       { title: 'Childline', phone: '0800 1111', cta: { label: 'Visit', href: 'https://www.childline.org.uk/' } },
@@ -105,10 +120,10 @@ const sections: Section[] = [
     image: '/images/official-info/committee.jpg',
     intro: [],
     cards: [
-      { title: 'Chair', subtitle: 'Ethu Crorie', cta: { label: 'Email', href: 'mailto:chair@littletonjuniorfc.com' } },
-      { title: 'Secretary', subtitle: 'Mike Knowles', cta: { label: 'Email', href: 'mailto:secretary@littletonjuniorfc.com' } },
-      { title: 'Treasurers', subtitle: 'Stephen Porter <br>& Emilie Dumoulin', cta: { label: 'Email', href: 'mailto:treasurer@littletonjuniorfc.com' } },
-      { title: 'Welfare<br>Officer', subtitle: 'Adam Stacey', phone: '07784 692766', cta: { label: 'Email', href: 'mailto:cwo@littletonjuniorfc.com' } },
+      { title: 'Chair', subtitle: chair.name, cta: mailto(chair.email) },
+      { title: 'Secretary', subtitle: secretary.name, cta: mailto(secretary.email) },
+      { title: 'Treasurer', subtitle: treasurer.name, cta: mailto(treasurer.email) },
+      { title: 'Welfare<br>Officer', subtitle: welfare.name, phone: welfare.phone, cta: mailto(welfare.email) },
     ],
   },
 ];
