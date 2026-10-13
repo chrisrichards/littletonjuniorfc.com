@@ -895,6 +895,9 @@
   #homesquares-section { padding-top: 0; }
   #sponsors-section { padding-top: 0; margin-bottom: 0 !important; }
   #alternates2, #alternates3, #alternates4 { padding-top: 0; }
+  /* Contact-us rows are one section each: drop the stacked 5px top padding so
+     rows sit 5px apart (live), matching the column gutter. */
+  .contactus .uk-section + .uk-section { padding-top: 0; }
 
   /* Teams age-card display type (overrides.css). */
   #u6-9 .el-content h2, #u10-13 .el-content h2,
@@ -906,7 +909,12 @@
     font-size: 24px; margin: 0; line-height: 24px;
     font-family: var(--font-display); color: #fff;
   }
-  .alternates .el-content > p:last-of-type { border-bottom: 1px dashed #fff; }
+  /* Closing dashed line under the last <p> (live had an empty trailing <p>).
+     Only where <p>s carry the dashed top border — not the teams age cards. */
+  .alternates:is(.blue, .grey, .contacts) .el-content > p:last-of-type { border-bottom: 1px dashed #fff; }
+  /* …except a contact card ending on its note (Secretary): live's empty <p>
+     only followed a phone number. */
+  .alternates.contacts .el-content > p.note:last-of-type { border-bottom: 0; }
 
   /* Home squares CTA + sponsors image (overrides.css). */
   #homesquares .el-item > .uk-margin-top a { background-color: var(--color-brand); color: #fff; }
