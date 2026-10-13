@@ -9,7 +9,7 @@
   {
     "id": "treasurers",
     "role": "Treasurers",
-    "name": "Stephen Porter <br>& Emilie Dumoulin",
+    "name": "Emilie Dumoulin",
     "email": "treasurer@littletonjuniorfc.com",
     "group": "committee"
   },
@@ -23,7 +23,7 @@
   {
     "id": "secretary",
     "role": "Secretary",
-    "name": "Mike Knowles",
+    "name": "Stephen Porter",
     "email": "secretary@littletonjuniorfc.com",
     "group": "committee",
     "note": "If you would like to join the club, please contact the relevant Age Group Coordinator listed below."
@@ -31,9 +31,9 @@
   {
     "id": "welfare-officer",
     "role": "Welfare<br>Officer",
-    "name": "Adam Stacey",
+    "name": "Andy Vertannes",
     "email": "cwo@littletonjuniorfc.com",
-    "phone": "07784 692766",
+    "phone": "07733 996432",
     "group": "committee",
     "note": "Welfare calls only"
   },
@@ -61,8 +61,8 @@
   {
     "id": "u6-coordinator",
     "role": "U6 Coordinator",
-    "name": "Phil Denny",
-    "email": "littletonjuniorfc25@gmail.com",
+    "name": "Sam Oakley",
+    "email": "littletonjuniorfc26@gmail.com",
     "group": "coordinator",
     "ageGroup": "U6",
     "yearLabel": "Years R-1"
@@ -70,8 +70,8 @@
   {
     "id": "u7-coordinator",
     "role": "U7 Coordinator",
-    "name": "Ed Green-Wilkinson",
-    "email": "littletonjuniorfc24@gmail.com",
+    "name": "Phil Denny",
+    "email": "littletonjuniorfc25@gmail.com",
     "group": "coordinator",
     "ageGroup": "U7",
     "yearLabel": "Year 2"
@@ -79,8 +79,8 @@
   {
     "id": "u8-coordinator",
     "role": "U8 Coordinator",
-    "name": "Eddie McKeown",
-    "email": "mckeown.edward7@gmail.com",
+    "name": "Ed Green-Wilkinson",
+    "email": "littletonjuniorfc24@gmail.com",
     "group": "coordinator",
     "ageGroup": "U8",
     "yearLabel": "Year 3"
@@ -88,8 +88,8 @@
   {
     "id": "u9-coordinator",
     "role": "U9 Coordinator",
-    "name": "Stephen Porter",
-    "email": "stephenjohnporter@outlook.com",
+    "name": "Eddie McKeown",
+    "email": "mckeown.edward7@gmail.com",
     "group": "coordinator",
     "ageGroup": "U9",
     "yearLabel": "Year 4"
@@ -97,8 +97,8 @@
   {
     "id": "u10-coordinator",
     "role": "U10 Coordinator",
-    "name": "Adam Stacey",
-    "email": "ajwstacey@icloud.com",
+    "name": "Stephen Porter",
+    "email": "stephenjohnporter@outlook.com",
     "group": "coordinator",
     "ageGroup": "U10",
     "yearLabel": "Year 5"
@@ -106,8 +106,8 @@
   {
     "id": "u11-coordinator",
     "role": "U11 Coordinator",
-    "name": "Simon Fletcher",
-    "email": "fletchdownunder@gmail.com",
+    "name": "Joe Egan",
+    "email": "josephrobertoegan@hotmail.com",
     "group": "coordinator",
     "ageGroup": "U11",
     "yearLabel": "Year 6"
@@ -115,8 +115,8 @@
   {
     "id": "u12-coordinator",
     "role": "U12 Coordinator",
-    "name": "Andy Vertannes",
-    "email": "andyvertannes@hotmail.co.uk",
+    "name": "Simon Fletcher",
+    "email": "fletchdownunder@gmail.com",
     "group": "coordinator",
     "ageGroup": "U12",
     "yearLabel": "Year 7"
@@ -124,8 +124,8 @@
   {
     "id": "u13-coordinator",
     "role": "U13 Coordinator",
-    "name": "Andrew Johnson",
-    "email": "ajingwell@googlemail.com",
+    "name": "Andy Vertannes",
+    "email": "andyvertannes@hotmail.co.uk",
     "group": "coordinator",
     "ageGroup": "U13",
     "yearLabel": "Year 8"
@@ -133,8 +133,8 @@
   {
     "id": "u14-coordinator",
     "role": "U14 Coordinator",
-    "name": "Chris Edwards",
-    "email": "Chris@christash.co.uk",
+    "name": "Andrew Johnson",
+    "email": "ajingwell@googlemail.com",
     "group": "coordinator",
     "ageGroup": "U14",
     "yearLabel": "Year 9"
@@ -142,8 +142,8 @@
   {
     "id": "u15-coordinator",
     "role": "U15 Coordinator",
-    "name": "Tom Luker",
-    "email": "tomluker@hotmail.com",
+    "name": "Chris Edwards",
+    "email": "Chris@christash.co.uk",
     "group": "coordinator",
     "ageGroup": "U15",
     "yearLabel": "Year 10"
@@ -151,8 +151,8 @@
   {
     "id": "u16-coordinator",
     "role": "U16 Coordinator",
-    "name": "Mike Knowles",
-    "email": "secretary@littletonjuniorfc.com",
+    "name": "Tom Luker",
+    "email": "tomluker@hotmail.com",
     "group": "coordinator",
     "ageGroup": "U16",
     "yearLabel": "Year 11"
@@ -160,8 +160,8 @@
   {
     "id": "u18-coordinator",
     "role": "U18 Coordinator",
-    "name": "Ian Davies",
-    "email": "eon_line@hotmail.com",
+    "name": "Paul Burgess",
+    "email": "paul@burgeagency.com",
     "group": "coordinator",
     "ageGroup": "U18",
     "yearLabel": "Years 12–13"
