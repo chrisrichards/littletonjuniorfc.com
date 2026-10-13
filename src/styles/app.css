@@ -299,6 +299,12 @@
   .uk-card-secondary > :not([class*='uk-card-media']) {
     color: #fff;
   }
+  /* UIkit's inverse link colour: links in a card are white, not brand blue
+     (else e.g. an iOS auto-linked phone number vanishes on a blue card). */
+  .uk-card-primary.uk-card-body a,
+  .uk-card-secondary.uk-card-body a {
+    color: #fff;
+  }
 
   /* Images fill their column by default (custom.css `.uk-section img`). */
   .uk-section img,
@@ -760,7 +766,7 @@
     .contacts .uk-card-body { padding: 10%; }
     .alternates.contacts h3 { font-size: 17px; line-height: 17px; }
     .alternates.contacts h4 { font-size: 14px; line-height: 14px; }
-    .alternates.contacts .el-item p { font-size: 11px; line-height: 11px; }
+    .alternates.contacts .el-item p { font-size: 11px !important; line-height: 11px !important; } /* beats .alternates .el-item p below (live: 11px) */
     .homesquares.resources h3 { font-size: 36px; line-height: 36px; }
     .homesquares.resources p { font-size: 15px; line-height: 15px; }
     .homesquares.resources .el-content { width: 180px; }
